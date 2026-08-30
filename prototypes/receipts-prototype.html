@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Receiptly — Receipts</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #ECE6FF;
+    --ink: #14121F;
+    --yellow: #F4FF5A;
+    --pink: #FF6FB0;
+    --mint: #79F2C0;
+    --lilac: #C9B8FF;
+    --orange: #FFA84D;
+    --sky: #6FD8FF;
+    --white: #FFFFFF;
+  }
+
+  html, body {
+    width: 100%;
+    background: var(--bg);
+    background-image: radial-gradient(var(--ink) 1px, transparent 1px);
+    background-size: 22px 22px;
+    background-position: -8px -8px;
+    font-family: 'Space Grotesk', sans-serif;
+    color: var(--ink);
+  }
+
+  .page { min-height: 100vh; display: flex; justify-content: center; padding: 40px 18px; }
+  .app { width: 100%; max-width: 400px; }
+
+  .top-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .wordmark { font-family: 'Archivo Black', sans-serif; font-size: 24px; }
+  .wordmark span {
+    background: var(--pink); padding: 0 6px; border: 3px solid var(--ink);
+    display: inline-block; transform: rotate(-3deg); box-shadow: 4px 4px 0 var(--ink);
+  }
+  .avatar {
+    width: 38px; height: 38px; border-radius: 50%; background: var(--mint);
+    border: 3px solid var(--ink); display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 13px;
+  }
+
+  .toggle-group {
+    display: flex; gap: 8px; margin-bottom: 18px;
+  }
+  .toggle-btn {
+    flex: 1; padding: 10px; text-align: center; font-weight: 600; font-size: 13px;
+    background: var(--white); border: 3px solid var(--ink); cursor: pointer;
+    box-shadow: 4px 4px 0 var(--ink); transition: transform 0.08s ease, box-shadow 0.08s ease;
+  }
+  .toggle-btn.active { background: var(--yellow); }
+  .toggle-btn:active { transform: translate(4px,4px); box-shadow: 0 0 0 var(--ink); }
+
+  .total-wrap {
+    position: relative;
+    margin-bottom: 30px;
+    transform: rotate(-1.5deg);
+  }
+  .total-stack-1, .total-stack-2 {
+    position: absolute; inset: 0; border: 3px solid var(--ink);
+  }
+  .total-stack-1 { background: var(--mint); transform: rotate(3deg) translate(3px, 3px); }
+  .total-stack-2 { background: var(--pink); transform: rotate(6deg) translate(6px, 6px); }
+  .total-card {
+    position: relative;
+    background: var(--ink); color: var(--yellow);
+    background-image:
+      radial-gradient(rgba(244,255,90,0.14) 2px, transparent 2px);
+    background-size: 14px 14px;
+    border: 3px solid var(--ink); box-shadow: 6px 6px 0 var(--ink);
+    padding: 16px 18px;
+    display: flex; align-items: baseline; justify-content: space-between;
+    overflow: hidden;
+  }
+  .total-label { font-family: 'Caveat', cursive; font-weight: 700; font-size: 18px; color: var(--mint); }
+  .total-amount { font-family: 'Archivo Black', sans-serif; font-size: 26px; }
+  .streak-badge {
+    position: absolute;
+    top: -14px; right: -10px;
+    background: var(--pink); color: var(--ink);
+    border: 2.5px solid var(--ink);
+    border-radius: 50%;
+    width: 52px; height: 52px;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+    font-size: 10px; font-weight: 700;
+    transform: rotate(12deg);
+    box-shadow: 3px 3px 0 var(--ink);
+  }
+  .streak-badge b { font-family: 'Archivo Black', sans-serif; font-size: 13px; }
+
+  .section-title {
+    font-family: 'Caveat', cursive; font-weight: 700; font-size: 21px;
+    margin-bottom: 12px; transform: rotate(-1.5deg); display: inline-block;
+  }
+
+  .cat-card {
+    background: var(--white); border: 3px solid var(--ink);
+    box-shadow: 5px 5px 0 var(--ink); margin-bottom: 12px;
+    overflow: hidden; cursor: pointer;
+  }
+  .cat-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 14px;
+  }
+  .cat-left { display: flex; align-items: center; gap: 10px; }
+  .cat-icon {
+    width: 34px; height: 34px; border-radius: 50%; border: 2.5px solid var(--ink);
+    display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;
+  }
+  .cat-icon.food { background: var(--orange); }
+  .cat-icon.transport { background: var(--mint); }
+  .cat-icon.rent { background: var(--sky); }
+  .cat-icon.other { background: var(--lilac); }
+  .cat-name { font-weight: 700; font-size: 14px; }
+  .cat-count { font-size: 11px; opacity: 0.6; }
+  .cat-right { display: flex; align-items: center; gap: 8px; }
+  .cat-amt { font-weight: 700; font-size: 14px; }
+  .chevron { font-size: 14px; transition: transform 0.2s ease; }
+  .cat-card.open .chevron { transform: rotate(180deg); }
+
+  .bar-track {
+    height: 10px; background: var(--bg); border-top: 2.5px solid var(--ink); position: relative; overflow: hidden;
+  }
+  .bar-fill {
+    position: absolute; inset: 0; transform-origin: left; transform: scaleX(0);
+    transition: transform 0.7s cubic-bezier(0.2,0.8,0.3,1);
+  }
+  .bar-fill.food { background: var(--orange); }
+  .bar-fill.transport { background: var(--mint); }
+  .bar-fill.rent { background: var(--sky); }
+  .bar-fill.other { background: var(--lilac); }
+  .cat-card.animate .bar-fill { transform: scaleX(var(--pct)); }
+
+  .cat-body {
+    max-height: 0; overflow: hidden; transition: max-height 0.25s ease;
+    border-top: 0px solid var(--ink);
+  }
+  .cat-card.open .cat-body { max-height: 200px; border-top: 3px solid var(--ink); }
+  .tx-row {
+    display: flex; justify-content: space-between; padding: 9px 14px;
+    font-size: 12.5px; border-bottom: 1.5px dashed #d8d2f5;
+  }
+  .tx-row:last-child { border-bottom: none; }
+  .tx-name { opacity: 0.85; }
+  .tx-amt { font-weight: 600; }
+
+  .hint {
+    text-align: center; font-size: 11.5px; opacity: 0.55; margin-top: 16px;
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="app">
+
+    <div class="top-row">
+      <div class="wordmark">receipt<span>ly</span></div>
+      <div class="avatar">RP</div>
+    </div>
+
+    <div class="toggle-group">
+      <div class="toggle-btn" id="btn-week">this week</div>
+      <div class="toggle-btn active" id="btn-month">this month</div>
+    </div>
+
+    <div class="total-wrap">
+      <div class="total-stack-1"></div>
+      <div class="total-stack-2"></div>
+      <div class="total-card">
+        <div>
+          <div class="total-label">total flowing out</div>
+          <div class="total-amount" id="total-amt">₹0</div>
+        </div>
+        <div style="font-size:28px;">💸</div>
+      </div>
+      <div class="streak-badge">day<b>18</b></div>
+    </div>
+
+    <div class="section-title">tap a category to open it up</div>
+
+    <div class="cat-card" data-pct="0.44" id="cat-food">
+      <div class="cat-head">
+        <div class="cat-left">
+          <div class="cat-icon food">🍜</div>
+          <div>
+            <div class="cat-name">Food</div>
+            <div class="cat-count">6 transactions</div>
+          </div>
+        </div>
+        <div class="cat-right">
+          <div class="cat-amt">₹3,100</div>
+          <span class="chevron">▾</span>
+        </div>
+      </div>
+      <div class="bar-track"><div class="bar-fill food"></div></div>
+      <div class="cat-body">
+        <div class="tx-row"><span class="tx-name">Campus canteen</span><span class="tx-amt">₹180</span></div>
+        <div class="tx-row"><span class="tx-name">Groceries</span><span class="tx-amt">₹420</span></div>
+        <div class="tx-row"><span class="tx-name">Zomato</span><span class="tx-amt">₹260</span></div>
+      </div>
+    </div>
+
+    <div class="cat-card" data-pct="0.28" id="cat-transport">
+      <div class="cat-head">
+        <div class="cat-left">
+          <div class="cat-icon transport">🚕</div>
+          <div>
+            <div class="cat-name">Transport</div>
+            <div class="cat-count">9 transactions</div>
+          </div>
+        </div>
+        <div class="cat-right">
+          <div class="cat-amt">₹1,980</div>
+          <span class="chevron">▾</span>
+        </div>
+      </div>
+      <div class="bar-track"><div class="bar-fill transport"></div></div>
+      <div class="cat-body">
+        <div class="tx-row"><span class="tx-name">Auto fare</span><span class="tx-amt">₹90</span></div>
+        <div class="tx-row"><span class="tx-name">Metro card top-up</span><span class="tx-amt">₹500</span></div>
+        <div class="tx-row"><span class="tx-name">Cab home</span><span class="tx-amt">₹210</span></div>
+      </div>
+    </div>
+
+    <div class="cat-card" data-pct="0.21" id="cat-rent">
+      <div class="cat-head">
+        <div class="cat-left">
+          <div class="cat-icon rent">🏠</div>
+          <div>
+            <div class="cat-name">PG bills</div>
+            <div class="cat-count">2 transactions</div>
+          </div>
+        </div>
+        <div class="cat-right">
+          <div class="cat-amt">₹1,500</div>
+          <span class="chevron">▾</span>
+        </div>
+      </div>
+      <div class="bar-track"><div class="bar-fill rent"></div></div>
+      <div class="cat-body">
+        <div class="tx-row"><span class="tx-name">Wifi split</span><span class="tx-amt">₹300</span></div>
+        <div class="tx-row"><span class="tx-name">Electricity split</span><span class="tx-amt">₹1,200</span></div>
+      </div>
+    </div>
+
+    <div class="cat-card" data-pct="0.07" id="cat-other">
+      <div class="cat-head">
+        <div class="cat-left">
+          <div class="cat-icon other">✨</div>
+          <div>
+            <div class="cat-name">Other</div>
+            <div class="cat-count">3 transactions</div>
+          </div>
+        </div>
+        <div class="cat-right">
+          <div class="cat-amt">₹520</div>
+          <span class="chevron">▾</span>
+        </div>
+      </div>
+      <div class="bar-track"><div class="bar-fill other"></div></div>
+      <div class="cat-body">
+        <div class="tx-row"><span class="tx-name">Printouts</span><span class="tx-amt">₹60</span></div>
+        <div class="tx-row"><span class="tx-name">Stationery</span><span class="tx-amt">₹160</span></div>
+        <div class="tx-row"><span class="tx-name">Duolingo super</span><span class="tx-amt">₹300</span></div>
+      </div>
+    </div>
+
+    <div class="hint">bars fill in on load · tap any card to expand</div>
+
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.cat-card').forEach(function(card) {
+    var pct = card.getAttribute('data-pct');
+    card.style.setProperty('--pct', pct);
+    var head = card.querySelector('.cat-head');
+    head.addEventListener('click', function() {
+      var isOpen = card.classList.contains('open');
+      document.querySelectorAll('.cat-card.open').forEach(function(c) {
+        if (c !== card) c.classList.remove('open');
+      });
+      card.classList.toggle('open', !isOpen);
+    });
+  });
+
+  setTimeout(function() {
+    document.querySelectorAll('.cat-card').forEach(function(card) {
+      card.classList.add('animate');
+    });
+  }, 150);
+
+  var btnWeek = document.getElementById('btn-week');
+  var btnMonth = document.getElementById('btn-month');
+  var totalAmt = document.getElementById('total-amt');
+
+  function countTo(target) {
+    var start = 0;
+    var duration = 700;
+    var startTime = null;
+    function step(ts) {
+      if (!startTime) startTime = ts;
+      var progress = Math.min((ts - startTime) / duration, 1);
+      var eased = 1 - Math.pow(1 - progress, 3);
+      var value = Math.round(start + (target - start) * eased);
+      totalAmt.textContent = '\u20B9' + value.toLocaleString('en-IN');
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  btnWeek.addEventListener('click', function() {
+    btnWeek.classList.add('active');
+    btnMonth.classList.remove('active');
+    countTo(2140);
+  });
+  btnMonth.addEventListener('click', function() {
+    btnMonth.classList.add('active');
+    btnWeek.classList.remove('active');
+    countTo(8240);
+  });
+
+  setTimeout(function() { countTo(8240); }, 200);
+</script>
+
+</body>
+</html>

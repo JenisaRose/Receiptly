@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Receiptly — Today</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #ECE6FF;
+    --ink: #14121F;
+    --yellow: #F4FF5A;
+    --pink: #FF6FB0;
+    --mint: #79F2C0;
+    --lilac: #C9B8FF;
+    --orange: #FFA84D;
+    --white: #FFFFFF;
+  }
+
+  html, body {
+    width: 100%;
+    background: var(--bg);
+    background-image: radial-gradient(var(--ink) 1px, transparent 1px);
+    background-size: 22px 22px;
+    background-position: -8px -8px;
+    font-family: 'Space Grotesk', sans-serif;
+    color: var(--ink);
+  }
+
+  .page {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 40px 18px;
+  }
+
+  .app { width: 100%; max-width: 400px; }
+
+  .top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 22px;
+  }
+  .wordmark {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 21px;
+    letter-spacing: -0.01em;
+  }
+  .wordmark span {
+    background: var(--yellow);
+    padding: 0 6px;
+    border: 3px solid var(--ink);
+    display: inline-block;
+    transform: rotate(-3deg);
+    box-shadow: 4px 4px 0 var(--ink);
+  }
+  .avatar {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: var(--pink);
+    border: 3px solid var(--ink);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px;
+  }
+
+  .badge-wrap {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    padding: 18px 0 26px;
+  }
+
+  .tape {
+    position: absolute;
+    top: -6px;
+    width: 90px;
+    height: 26px;
+    background: var(--mint);
+    border: 2.5px solid var(--ink);
+    opacity: 0.92;
+    transform: rotate(-5deg);
+    z-index: 3;
+  }
+
+  .badge {
+    position: relative;
+    width: 236px;
+    height: 236px;
+    background: var(--yellow);
+    border: 4px solid var(--ink);
+    border-radius: 50%;
+    box-shadow: 9px 9px 0 var(--ink);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transform: rotate(-4deg);
+    animation: pop 0.45s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+  }
+  @keyframes pop {
+    from { transform: rotate(-4deg) scale(0.6); opacity: 0; }
+    to { transform: rotate(-4deg) scale(1); opacity: 1; }
+  }
+
+  .badge-eyebrow {
+    font-family: 'Caveat', cursive;
+    font-weight: 700;
+    font-size: 19px;
+    color: var(--ink);
+    transform: rotate(3deg);
+  }
+  .badge-amount {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 52px;
+    line-height: 1;
+    margin: 2px 0;
+    transform: rotate(3deg);
+  }
+  .badge-amount span { font-size: 24px; }
+  .badge-tag {
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--ink);
+    color: var(--yellow);
+    padding: 3px 10px;
+    border-radius: 20px;
+    transform: rotate(3deg);
+    letter-spacing: 0.02em;
+  }
+
+  .sparkle {
+    position: absolute;
+    font-size: 22px;
+  }
+  .sparkle.s1 { top: 6px; right: 4px; }
+  .sparkle.s2 { bottom: 10px; left: -2px; }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .stat-card {
+    background: var(--white);
+    border: 3px solid var(--ink);
+    box-shadow: 5px 5px 0 var(--ink);
+    padding: 12px 14px;
+  }
+  .stat-card.pink { background: var(--pink); }
+  .stat-card.mint { background: var(--mint); }
+  .stat-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    opacity: 0.75;
+  }
+  .stat-value {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 20px;
+    margin-top: 4px;
+  }
+
+  .progress-block {
+    background: var(--white);
+    border: 3px solid var(--ink);
+    box-shadow: 5px 5px 0 var(--ink);
+    padding: 14px 16px;
+    margin-bottom: 16px;
+  }
+  .progress-top {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .bar-track {
+    height: 16px;
+    background: var(--bg);
+    border: 2.5px solid var(--ink);
+    position: relative;
+    overflow: hidden;
+  }
+  .bar-fill {
+    position: absolute;
+    inset: 0;
+    width: 60%;
+    background: repeating-linear-gradient(135deg, var(--lilac), var(--lilac) 8px, var(--pink) 8px, var(--pink) 16px);
+    border-right: 2.5px solid var(--ink);
+    animation: fillBar 1s ease 0.2s both;
+    transform-origin: left;
+  }
+  @keyframes fillBar {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+
+  .entries-title {
+    display: inline-block;
+    font-family: 'Caveat', cursive;
+    font-weight: 700;
+    font-size: 22px;
+    margin-bottom: 10px;
+    transform: rotate(-2deg);
+  }
+
+  .entry {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--white);
+    border: 2.5px solid var(--ink);
+    padding: 10px 14px;
+    margin-bottom: 8px;
+  }
+  .entry-left { display: flex; align-items: center; gap: 10px; }
+  .entry-emoji {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    border: 2px solid var(--ink);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .entry-emoji.food { background: var(--orange); }
+  .entry-emoji.transport { background: var(--mint); }
+  .entry-emoji.cash { background: var(--lilac); }
+  .entry-name { font-size: 13px; font-weight: 600; }
+  .entry-date { font-size: 10.5px; opacity: 0.6; }
+  .entry-amt { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 13.5px; }
+  .entry-amt.credit { color: #1F9A5A; }
+  .entry-amt.debit { color: #D6335A; }
+
+  .add-btn {
+    width: 100%;
+    margin-top: 6px;
+    padding: 15px;
+    background: var(--ink);
+    color: var(--yellow);
+    border: 3px solid var(--ink);
+    box-shadow: 6px 6px 0 var(--pink);
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    transition: transform 0.08s ease, box-shadow 0.08s ease;
+  }
+  .add-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0 0 0 var(--pink);
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="app">
+
+    <div class="top-row">
+      <div class="wordmark">receipt<span>ly</span></div>
+      <div class="avatar">RP</div>
+    </div>
+
+    <div class="badge-wrap">
+      <div class="tape"></div>
+      <div class="badge">
+        <span class="sparkle s1">✦</span>
+        <span class="sparkle s2">✦</span>
+        <div class="badge-eyebrow">today you can spend</div>
+        <div class="badge-amount"><span>₹</span>642</div>
+        <div class="badge-tag">on pace 🔥</div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card pink">
+        <div class="stat-label">Spent so far</div>
+        <div class="stat-value">₹8,240</div>
+      </div>
+      <div class="stat-card mint">
+        <div class="stat-label">Days left</div>
+        <div class="stat-value">12</div>
+      </div>
+    </div>
+
+    <div class="progress-block">
+      <div class="progress-top">
+        <span>month progress</span>
+        <span>day 18 / 30</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill"></div></div>
+    </div>
+
+    <div class="entries-title">recent taps 💸</div>
+
+    <div class="entry">
+      <div class="entry-left">
+        <div class="entry-emoji food">🍜</div>
+        <div>
+          <div class="entry-name">Groceries</div>
+          <div class="entry-date">28 Aug</div>
+        </div>
+      </div>
+      <div class="entry-amt debit">– ₹420</div>
+    </div>
+
+    <div class="entry">
+      <div class="entry-left">
+        <div class="entry-emoji transport">🚕</div>
+        <div>
+          <div class="entry-name">Auto fare</div>
+          <div class="entry-date">27 Aug</div>
+        </div>
+      </div>
+      <div class="entry-amt debit">– ₹90</div>
+    </div>
+
+    <div class="entry">
+      <div class="entry-left">
+        <div class="entry-emoji cash">💰</div>
+        <div>
+          <div class="entry-name">Stipend credit</div>
+          <div class="entry-date">26 Aug</div>
+        </div>
+      </div>
+      <div class="entry-amt credit">+ ₹6,000</div>
+    </div>
+
+    <button class="add-btn">+ log an expense</button>
+
+  </div>
+</div>
+
+</body>
+</html>

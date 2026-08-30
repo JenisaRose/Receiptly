@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Receiptly — Trends</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #ECE6FF;
+    --ink: #14121F;
+    --yellow: #F4FF5A;
+    --pink: #FF6FB0;
+    --mint: #79F2C0;
+    --lilac: #C9B8FF;
+    --orange: #FFA84D;
+    --sky: #6FD8FF;
+    --white: #FFFFFF;
+  }
+
+  html, body {
+    width: 100%;
+    background: var(--bg);
+    background-image: radial-gradient(var(--ink) 1px, transparent 1px);
+    background-size: 22px 22px;
+    background-position: -8px -8px;
+    font-family: 'Space Grotesk', sans-serif;
+    color: var(--ink);
+  }
+
+  .page { min-height: 100vh; display: flex; justify-content: center; padding: 40px 18px; }
+  .app { width: 100%; max-width: 400px; }
+
+  .top-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .wordmark { font-family: 'Archivo Black', sans-serif; font-size: 24px; }
+  .wordmark span {
+    background: var(--sky); padding: 0 6px; border: 3px solid var(--ink);
+    display: inline-block; transform: rotate(-3deg); box-shadow: 4px 4px 0 var(--ink);
+  }
+  .avatar {
+    width: 38px; height: 38px; border-radius: 50%; background: var(--lilac);
+    border: 3px solid var(--ink); display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 13px;
+  }
+
+  .toggle-group { display: flex; gap: 8px; margin-bottom: 22px; }
+  .toggle-btn {
+    flex: 1; padding: 10px; text-align: center; font-weight: 600; font-size: 13px;
+    background: var(--white); border: 3px solid var(--ink); cursor: pointer;
+    box-shadow: 4px 4px 0 var(--ink); transition: transform 0.08s ease, box-shadow 0.08s ease;
+  }
+  .toggle-btn.active { background: var(--yellow); }
+  .toggle-btn:active { transform: translate(4px,4px); box-shadow: 0 0 0 var(--ink); }
+
+  /* ---- verdict sticker ---- */
+  .verdict-wrap {
+    position: relative; display: flex; justify-content: center;
+    padding: 16px 0 30px;
+  }
+  .tape {
+    position: absolute; top: -4px; width: 96px; height: 26px;
+    background: var(--yellow); border: 2.5px solid var(--ink);
+    opacity: 0.92; transform: rotate(-5deg); z-index: 3;
+  }
+  .verdict {
+    position: relative;
+    width: 300px;
+    background: var(--mint);
+    border: 4px solid var(--ink);
+    box-shadow: 8px 8px 0 var(--ink);
+    padding: 16px 18px 18px;
+    text-align: center;
+    transform: rotate(-2deg);
+    animation: pop 0.45s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+  }
+  .verdict.warn { background: var(--yellow); }
+  .verdict.over { background: var(--pink); }
+  @keyframes pop {
+    from { transform: rotate(-2deg) scale(0.7); opacity: 0; }
+    to { transform: rotate(-2deg) scale(1); opacity: 1; }
+  }
+  .verdict-eyebrow {
+    font-family: 'Caveat', cursive; font-weight: 700; font-size: 18px;
+    transform: rotate(1.5deg);
+  }
+  .verdict-big {
+    font-family: 'Archivo Black', sans-serif; font-size: 34px; line-height: 1.05;
+    margin: 3px 0 2px; transform: rotate(1.5deg);
+  }
+  .verdict-sub { font-size: 12px; font-weight: 600; transform: rotate(1.5deg); }
+  .sparkle { position: absolute; font-size: 20px; }
+  .sparkle.s1 { top: 6px; right: 6px; }
+  .sparkle.s2 { bottom: 6px; left: 2px; }
+
+  /* ---- chart card w/ stacked depth ---- */
+  .chart-wrap { position: relative; margin-bottom: 26px; transform: rotate(-0.6deg); }
+  .chart-stack-1, .chart-stack-2 { position: absolute; inset: 0; border: 3px solid var(--ink); }
+  .chart-stack-1 { background: var(--lilac); transform: rotate(2deg) translate(3px, 3px); }
+  .chart-stack-2 { background: var(--sky);   transform: rotate(4deg) translate(6px, 6px); }
+  .chart-card {
+    position: relative; background: var(--white);
+    border: 3px solid var(--ink); box-shadow: 6px 6px 0 var(--ink);
+    padding: 14px 16px 16px;
+  }
+  .chart-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .chart-title { font-weight: 700; font-size: 14px; }
+  .chart-avg-chip {
+    font-size: 11px; font-weight: 700; background: var(--ink); color: var(--yellow);
+    padding: 2px 8px; border-radius: 20px;
+  }
+
+  .chart-area { position: relative; height: 172px; }
+  .avg-line {
+    position: absolute; left: 0; right: 0; border-top: 2.5px dashed var(--ink);
+    opacity: 0.55; z-index: 2; transition: bottom 0.4s ease;
+  }
+  .chart {
+    position: absolute; inset: 0;
+    display: flex; align-items: flex-end; gap: 7px;
+    border-bottom: 3px solid var(--ink);
+  }
+  .bar-col {
+    flex: 1; height: 100%;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    cursor: pointer;
+  }
+  .bar {
+    width: 100%; height: 0;
+    background: var(--lilac); border: 2.5px solid var(--ink); border-bottom: none;
+    transition: height 0.6s cubic-bezier(0.2,0.8,0.3,1), background 0.15s ease;
+  }
+  .bar-col.peak .bar { background: var(--orange); }
+  .bar-col.sel .bar { background: var(--pink); border-width: 3px; }
+  .x-labels { display: flex; gap: 7px; margin-top: 7px; }
+  .x-labels span {
+    flex: 1; text-align: center; font-size: 10.5px; font-weight: 600; opacity: 0.7;
+  }
+  .x-labels span.sel { opacity: 1; text-decoration: underline; }
+
+  .pick {
+    margin-top: 14px; border-top: 3px solid var(--ink); padding-top: 11px;
+    display: flex; align-items: baseline; justify-content: space-between;
+  }
+  .pick-month { font-family: 'Caveat', cursive; font-weight: 700; font-size: 19px; }
+  .pick-right { text-align: right; }
+  .pick-amt { font-family: 'Archivo Black', sans-serif; font-size: 20px; }
+  .pick-sub { font-size: 11px; opacity: 0.6; }
+
+  .section-title {
+    font-family: 'Caveat', cursive; font-weight: 700; font-size: 21px;
+    margin-bottom: 12px; transform: rotate(-1.5deg); display: inline-block;
+  }
+
+  .pat {
+    display: flex; align-items: center; gap: 11px;
+    background: var(--white); border: 3px solid var(--ink);
+    box-shadow: 5px 5px 0 var(--ink); padding: 12px 14px; margin-bottom: 12px;
+  }
+  .pat:nth-child(2) { transform: rotate(-1deg); }
+  .pat:nth-child(3) { transform: rotate(0.8deg); }
+  .pat:nth-child(4) { transform: rotate(-0.6deg); }
+  .pat-emoji {
+    width: 36px; height: 36px; border-radius: 50%; border: 2.5px solid var(--ink);
+    display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0;
+  }
+  .pat-emoji.a { background: var(--pink); }
+  .pat-emoji.b { background: var(--orange); }
+  .pat-emoji.c { background: var(--mint); }
+  .pat-text { font-size: 13px; font-weight: 700; line-height: 1.25; }
+  .pat-text small {
+    display: block; font-family: 'Caveat', cursive; font-weight: 600;
+    font-size: 13.5px; opacity: 0.7; margin-top: 1px;
+  }
+
+  .dow-card {
+    background: var(--white); border: 3px solid var(--ink);
+    box-shadow: 5px 5px 0 var(--ink); padding: 14px 16px 12px; margin-top: 18px;
+  }
+  .dow-title {
+    font-family: 'Caveat', cursive; font-weight: 700; font-size: 18px;
+    margin-bottom: 12px; display: inline-block; transform: rotate(-1deg);
+  }
+  .dow { display: flex; align-items: flex-end; gap: 6px; height: 84px; }
+  .dow-col { flex: 1; height: 100%; display: flex; align-items: flex-end; }
+  .dow-bar {
+    width: 100%; height: 0; background: var(--mint);
+    border: 2.5px solid var(--ink); border-bottom: none;
+    transition: height 0.55s cubic-bezier(0.2,0.8,0.3,1);
+  }
+  .dow-col.hi .dow-bar { background: var(--orange); }
+  .dow-labels { display: flex; gap: 6px; margin-top: 6px; }
+  .dow-labels span { flex: 1; text-align: center; font-size: 10px; font-weight: 600; opacity: 0.65; }
+
+  .hint { text-align: center; font-size: 11.5px; opacity: 0.55; margin-top: 18px; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="app">
+
+    <div class="top-row">
+      <div class="wordmark">receipt<span>ly</span></div>
+      <div class="avatar">RP</div>
+    </div>
+
+    <div class="toggle-group">
+      <div class="toggle-btn active" id="btn-months">6 months</div>
+      <div class="toggle-btn" id="btn-weeks">8 weeks</div>
+    </div>
+
+    <div class="verdict-wrap">
+      <div class="tape"></div>
+      <div class="verdict" id="verdict">
+        <span class="sparkle s1">✦</span>
+        <span class="sparkle s2">✦</span>
+        <div class="verdict-eyebrow" id="v-eyebrow">this month vs usual</div>
+        <div class="verdict-big" id="v-big">0%</div>
+        <div class="verdict-sub" id="v-sub">than your 6-month average</div>
+      </div>
+    </div>
+
+    <div class="chart-wrap">
+      <div class="chart-stack-1"></div>
+      <div class="chart-stack-2"></div>
+      <div class="chart-card">
+        <div class="chart-head">
+          <div class="chart-title" id="chart-title">spending per month</div>
+          <div class="chart-avg-chip" id="avg-chip">avg ₹0</div>
+        </div>
+        <div class="chart-area">
+          <div class="avg-line" id="avg-line"></div>
+          <div class="chart" id="chart"></div>
+        </div>
+        <div class="x-labels" id="x-labels"></div>
+        <div class="pick">
+          <div class="pick-month" id="pick-month">—</div>
+          <div class="pick-right">
+            <div class="pick-amt" id="pick-amt">₹0</div>
+            <div class="pick-sub" id="pick-sub">most on —</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">patterns we spotted</div>
+
+    <div class="pat">
+      <div class="pat-emoji a">🔥</div>
+      <div class="pat-text">Weekends run 2.4x your weekdays
+        <small>Sat + Sun take ₹2,700 of a ₹6,800 month</small>
+      </div>
+    </div>
+    <div class="pat">
+      <div class="pat-emoji b">🍜</div>
+      <div class="pat-text">Food's been your #1 for 4 months straight
+        <small>but it dropped ₹700 vs July — heading the right way</small>
+      </div>
+    </div>
+    <div class="pat">
+      <div class="pat-emoji c">📉</div>
+      <div class="pat-text">3 of your last 4 months came in under ₹8,500
+        <small>your spending's trending down, nice work</small>
+      </div>
+    </div>
+
+    <div class="dow-card">
+      <div class="dow-title">when the money actually leaves</div>
+      <div class="dow" id="dow"></div>
+      <div class="dow-labels">
+        <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+      </div>
+    </div>
+
+    <div class="hint">bars grow in on load · tap a bar to break down that period</div>
+
+  </div>
+</div>
+
+<script>
+  var DATA = {
+    months: {
+      title: 'spending per month',
+      eyebrow: 'this month vs usual',
+      subBase: 'than your 6-month average',
+      series: [
+        { label: 'Mar', total: 9100, top: 'Rent ₹3,000' },
+        { label: 'Apr', total: 8600, top: 'Food ₹3,200' },
+        { label: 'May', total: 8300, top: 'Food ₹2,900' },
+        { label: 'Jun', total: 7900, top: 'Travel ₹2,600' },
+        { label: 'Jul', total: 8500, top: 'Food ₹3,100' },
+        { label: 'Aug', total: 6800, top: 'Food ₹2,400' }
+      ]
+    },
+    weeks: {
+      title: 'spending per week',
+      eyebrow: 'this week vs usual',
+      subBase: 'than your typical week',
+      series: [
+        { label: 'W1', total: 2300, top: 'Food ₹900' },
+        { label: 'W2', total: 1980, top: 'Travel ₹700' },
+        { label: 'W3', total: 2450, top: 'Food ₹1,050' },
+        { label: 'W4', total: 2100, top: 'Food ₹850' },
+        { label: 'W5', total: 1750, top: 'Bills ₹800' },
+        { label: 'W6', total: 2200, top: 'Food ₹950' },
+        { label: 'W7', total: 1600, top: 'Food ₹600' },
+        { label: 'W8', total: 2140, top: 'Food ₹880' }
+      ]
+    }
+  };
+
+  var DOW = [620, 480, 540, 700, 1180, 1460, 1240];
+
+  var chart = document.getElementById('chart');
+  var xLabels = document.getElementById('x-labels');
+  var avgLine = document.getElementById('avg-line');
+  var avgChip = document.getElementById('avg-chip');
+  var chartTitle = document.getElementById('chart-title');
+  var pickMonth = document.getElementById('pick-month');
+  var pickAmt = document.getElementById('pick-amt');
+  var pickSub = document.getElementById('pick-sub');
+  var verdict = document.getElementById('verdict');
+  var vEyebrow = document.getElementById('v-eyebrow');
+  var vBig = document.getElementById('v-big');
+  var vSub = document.getElementById('v-sub');
+
+  var current = 'months';
+  var selIndex = 0;
+  var pickRaf = null;
+
+  function rupee(n) { return '₹' + Math.round(n).toLocaleString('en-IN'); }
+
+  function countPick(target) {
+    if (pickRaf) cancelAnimationFrame(pickRaf);
+    var start = 0, duration = 500, t0 = null;
+    function step(ts) {
+      if (!t0) t0 = ts;
+      var p = Math.min((ts - t0) / duration, 1);
+      var eased = 1 - Math.pow(1 - p, 3);
+      pickAmt.textContent = rupee(start + (target - start) * eased);
+      if (p < 1) pickRaf = requestAnimationFrame(step);
+    }
+    pickRaf = requestAnimationFrame(step);
+  }
+
+  function selectBar(i) {
+    selIndex = i;
+    var d = DATA[current];
+    var row = d.series[i];
+    document.querySelectorAll('.bar-col').forEach(function (c, idx) {
+      c.classList.toggle('sel', idx === i);
+    });
+    document.querySelectorAll('.x-labels span').forEach(function (s, idx) {
+      s.classList.toggle('sel', idx === i);
+    });
+    pickMonth.textContent = row.label === row.label.toUpperCase() && row.label[0] === 'W'
+      ? 'week ' + row.label.slice(1)
+      : ({ Mar: 'March', Apr: 'April', May: 'May', Jun: 'June', Jul: 'July', Aug: 'August' }[row.label] || row.label);
+    pickSub.textContent = 'most on ' + row.top;
+    countPick(row.total);
+  }
+
+  function render(key) {
+    current = key;
+    var d = DATA[key];
+    var vals = d.series.map(function (r) { return r.total; });
+    var max = Math.max.apply(null, vals) * 1.1;
+    var avg = vals.reduce(function (a, b) { return a + b; }, 0) / vals.length;
+    var peakIdx = vals.indexOf(Math.max.apply(null, vals));
+
+    chartTitle.textContent = d.title;
+    avgChip.textContent = 'avg ' + rupee(avg);
+
+    chart.innerHTML = '';
+    xLabels.innerHTML = '';
+    d.series.forEach(function (row, i) {
+      var col = document.createElement('div');
+      col.className = 'bar-col' + (i === peakIdx ? ' peak' : '');
+      var bar = document.createElement('div');
+      bar.className = 'bar';
+      col.appendChild(bar);
+      col.addEventListener('click', function () { selectBar(i); });
+      chart.appendChild(col);
+
+      var lab = document.createElement('span');
+      lab.textContent = row.label;
+      xLabels.appendChild(lab);
+
+      requestAnimationFrame(function () {
+        setTimeout(function () { bar.style.height = (row.total / max * 100) + '%'; }, 60 * i);
+      });
+    });
+
+    setTimeout(function () {
+      avgLine.style.bottom = (avg / max * 100) + '%';
+    }, 120);
+
+    // verdict: last period vs average
+    var last = vals[vals.length - 1];
+    var delta = (last - avg) / avg * 100;
+    var absd = Math.abs(delta);
+    vEyebrow.textContent = d.eyebrow;
+    verdict.classList.remove('warn', 'over');
+    var word, tail;
+    if (delta <= 0.5) {
+      word = 'lower'; tail = ' 📉';
+    } else if (delta < 10) {
+      word = 'higher'; tail = ' — still fine 👍'; verdict.classList.add('warn');
+    } else {
+      word = 'higher'; tail = ' — keep an eye on it 👀'; verdict.classList.add('over');
+    }
+    vSub.textContent = d.subBase + tail;
+    countVerdict(absd, word);
+
+    selectBar(vals.length - 1);
+  }
+
+  var vRaf = null;
+  function countVerdict(target, word) {
+    if (vRaf) cancelAnimationFrame(vRaf);
+    var duration = 650, t0 = null;
+    function step(ts) {
+      if (!t0) t0 = ts;
+      var p = Math.min((ts - t0) / duration, 1);
+      var eased = 1 - Math.pow(1 - p, 3);
+      vBig.textContent = Math.round(target * eased) + '% ' + word;
+      if (p < 1) vRaf = requestAnimationFrame(step);
+    }
+    vRaf = requestAnimationFrame(step);
+  }
+
+  // day-of-week bars
+  var dow = document.getElementById('dow');
+  var dowMax = Math.max.apply(null, DOW) * 1.1;
+  var dowPeak = DOW.indexOf(Math.max.apply(null, DOW));
+  DOW.forEach(function (v, i) {
+    var col = document.createElement('div');
+    col.className = 'dow-col' + (i === dowPeak ? ' hi' : '');
+    var bar = document.createElement('div');
+    bar.className = 'dow-bar';
+    col.appendChild(bar);
+    dow.appendChild(col);
+    requestAnimationFrame(function () {
+      setTimeout(function () { bar.style.height = (v / dowMax * 100) + '%'; }, 400 + 45 * i);
+    });
+  });
+
+  var btnMonths = document.getElementById('btn-months');
+  var btnWeeks = document.getElementById('btn-weeks');
+  btnMonths.addEventListener('click', function () {
+    btnMonths.classList.add('active'); btnWeeks.classList.remove('active');
+    render('months');
+  });
+  btnWeeks.addEventListener('click', function () {
+    btnWeeks.classList.add('active'); btnMonths.classList.remove('active');
+    render('weeks');
+  });
+
+  setTimeout(function () { render('months'); }, 180);
+</script>
+
+</body>
+</html>

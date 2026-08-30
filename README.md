@@ -1,0 +1,108 @@
+# Receiptly
+
+**A personal budget tracker that answers one question: _"is my spending okay right now?"_ — instantly, without making you do the math.**
+
+Most budget apps show you a pile of numbers and leave you to work out whether you're fine. Receiptly leads with the answer: a single "safe to spend today" figure, and every screen is built to communicate status at a glance.
+
+> **Status:** UI prototype complete (vanilla HTML/CSS/JS). React + Tailwind rebuild in progress — see [Roadmap](#roadmap).
+
+---
+
+## What it does
+
+Receiptly takes your income, your locked-in bills, and what you've set aside for goals, subtracts what you've already spent, and divides what's left by the days remaining in the month. That's your **safe-to-spend-today** number. Log an expense and it recalculates on the spot.
+
+### Screens
+
+| Screen | What it does |
+| --- | --- |
+| **Today** | Hero "safe to spend" figure. A tap reveals the full working — `income − bills − goals − spent ÷ days left` — so the number is never a black box. A **"what if I spend ₹X/day" slider** projects where you'll land at month-end. |
+| **Receipts** | Spending broken down by category, week/month toggle, tap a category to expand its transactions. |
+| **Trends** | 6-month / 8-week bar chart with a running average line, tap-a-bar detail, auto-detected spending patterns, and a day-of-week breakdown. |
+| **Envelopes** | The "give every rupee a job" method as visual budget jars — on-track / getting-close / over states, with live rebalancing. |
+| **Bills** | Recurring payments on a timeline with a day countdown; the next 7 days are flagged, and the total feeds the safe-to-spend calculation. |
+| **Reflect** | Month-end recap — a stat collage plus a calendar heatmap of every day's spend. |
+
+The standout features — the transparent calculation, the what-if simulator, and envelope budgeting — are what set it apart from a standard expense-logger.
+
+---
+
+## Design system: neubrutalism
+
+Deliberately not the default "AI app" look. The whole UI runs on:
+
+- Flat, saturated colours — **no gradients, no blur, no glassmorphism**
+- Hard offset shadows only (`box-shadow: 6px 6px 0` — never soft/blurred)
+- Thick black borders, rotated "sticker" elements, washi-tape accents, a dotted-grid background
+- Buttons that physically press down on click (shadow collapses, block shifts)
+- Depth built from stacked rotated colour blocks, not drop shadows
+
+**Palette:** lavender `#ECE6FF` · near-black `#14121F` · yellow `#F4FF5A` · pink `#FF6FB0` · mint `#79F2C0` · lilac `#C9B8FF` · orange `#FFA84D` · sky `#6FD8FF`
+
+**Type:** Archivo Black (headers / numbers) · Space Grotesk (body) · Caveat (handwritten annotations)
+
+---
+
+## Tech
+
+**Prototype (this repo, now):** single-file HTML + CSS + vanilla JS. No build step, no dependencies. Used to lock the UI and interactions before adding a framework.
+
+**In progress:** React + Tailwind CSS + Framer Motion, `localStorage` persistence.
+
+**Planned (v2):** MERN backend (Node / Express / MongoDB) once the front-end is solid.
+
+---
+
+## Roadmap
+
+- [x] Design system + Today / Receipts / Trends prototypes
+- [x] Combined multi-view app shell with sidebar + mobile bottom-nav
+- [x] Envelopes, Bills, Reflect screens
+- [ ] Scaffold Vite + React + Tailwind, port screens to components
+- [ ] Shared data model + `localStorage` persistence (currently each screen has its own mock data)
+- [ ] Deploy to Vercel
+- [ ] MERN backend + auth
+
+---
+
+## Running the prototype
+
+No install needed — open the file in a browser:
+
+```
+prototypes/receiptly-app.html
+```
+
+Resize the window narrow to see the mobile layout (sidebar collapses to a bottom nav). Keyboard: `1`–`6` switch screens, `n` opens the log-expense modal.
+
+---
+
+## Repo structure
+
+```
+Receiptly/
+├── prototypes/
+│   ├── receiptly-app.html      ← current: full multi-view app
+│   ├── today-prototype.html    ← early single-screen explorations
+│   ├── receipts-prototype.html
+│   └── trends-prototype.html
+└── README.md
+```
+
+The React app will live at the repo root once scaffolded.
+
+---
+
+## Screenshots
+
+_Add curated screenshots here — open `prototypes/receiptly-app.html`, screenshot the Today / Envelopes / Reflect screens, drop the images in a `docs/` folder and link them below._
+
+<!--
+![Today](docs/today.png)
+![Envelopes](docs/envelopes.png)
+![Reflect](docs/reflect.png)
+-->
+
+---
+
+Built by [@JenisaRose](https://github.com/JenisaRose).
