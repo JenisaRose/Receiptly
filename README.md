@@ -4,13 +4,13 @@
 
 Most budget apps show you a pile of numbers and leave you to work out whether you're fine. Receiptly leads with the answer: a single "safe to spend today" figure, and every screen is built to communicate status at a glance.
 
-> **Status:** UI prototype complete (vanilla HTML/CSS/JS). React + Tailwind rebuild in progress — see [Roadmap](#roadmap).
+> **Status:** React app running with all six screens. Persistence, polish and deploy in progress — see [Roadmap](#roadmap).
 
 ---
 
 ## What it does
 
-Receiptly takes your income, your locked-in bills, and what you've set aside for goals, subtracts what you've already spent, and divides what's left by the days remaining in the month. That's your **safe-to-spend-today** number. Log an expense and it recalculates on the spot.
+Receiptly takes your income, your locked-in bills, and what you've set aside for goals, subtracts what you've already spent, and divides what's left by the days remaining in the month. That's your **safe-to-spend-today** number. Log an expense and every screen recalculates on the spot.
 
 ### Screens
 
@@ -41,61 +41,79 @@ Deliberately not the default "AI app" look. The whole UI runs on:
 
 **Type:** Archivo Black (headers / numbers) · Space Grotesk (body) · Caveat (handwritten annotations)
 
+The tokens live in [`src/index.css`](src/index.css) as Tailwind theme variables.
+
 ---
 
 ## Tech
 
-**Prototype (this repo, now):** single-file HTML + CSS + vanilla JS. No build step, no dependencies. Used to lock the UI and interactions before adding a framework.
+- **React 19** + **Vite**
+- **Tailwind CSS v4** (CSS-first `@theme` config)
+- **Framer Motion** for entrances, count-ups and layout animation
+- **React Router** for the six screens
+- **localStorage** for persistence — a shared budget store ([`src/store/`](src/store)) that every screen reads from; logging an expense updates Today, Receipts and Envelopes together
+- **Planned (v2):** MERN backend (Node / Express / MongoDB) with auth
 
-**In progress:** React + Tailwind CSS + Framer Motion, `localStorage` persistence.
-
-**Planned (v2):** MERN backend (Node / Express / MongoDB) once the front-end is solid.
+The app seeds a realistic demo month on first run. `↺ reset demo data` (in the sidebar / below the nav on mobile) puts it back.
 
 ---
 
 ## Roadmap
 
-- [x] Design system + Today / Receipts / Trends prototypes
-- [x] Combined multi-view app shell with sidebar + mobile bottom-nav
-- [x] Envelopes, Bills, Reflect screens
-- [ ] Scaffold Vite + React + Tailwind, port screens to components
-- [ ] Shared data model + `localStorage` persistence (currently each screen has its own mock data)
+- [x] Design system + standalone screen prototypes
+- [x] Vite + React + Tailwind app shell — sidebar on desktop, bottom-nav on mobile
+- [x] All six screens ported to components
+- [x] Shared budget store with `localStorage` persistence
+- [ ] Polish: empty states, reduced-motion pass, real "share receipt" export
 - [ ] Deploy to Vercel
-- [ ] MERN backend + auth
+- [ ] MERN backend + auth + multi-device sync
 
 ---
 
-## Running the prototype
+## Running it
 
-No install needed — open the file in a browser:
-
+```bash
+npm install
+npm run dev
 ```
-prototypes/receiptly-app.html
+
+Then open the printed localhost URL. Keyboard: `1`–`6` switch screens, `n` opens the log-expense modal.
+
+```bash
+npm run build     # production build to dist/
+npm run preview   # serve the production build
+npm run lint      # oxlint
 ```
 
-Resize the window narrow to see the mobile layout (sidebar collapses to a bottom nav). Keyboard: `1`–`6` switch screens, `n` opens the log-expense modal.
+The earlier standalone prototypes still open straight in a browser — see [`prototypes/`](prototypes).
 
 ---
 
-## Repo structure
+## Project structure
 
 ```
 Receiptly/
-├── prototypes/
-│   ├── receiptly-app.html      ← current: full multi-view app
-│   ├── today-prototype.html    ← early single-screen explorations
-│   ├── receipts-prototype.html
-│   └── trends-prototype.html
-└── README.md
+├── src/
+│   ├── components/
+│   │   ├── layout/      AppShell, Sidebar, BottomNav
+│   │   ├── ui/          Card, Money, ProgressBar, SegmentedToggle
+│   │   ├── LogExpenseModal.jsx
+│   │   └── WhatIf.jsx
+│   ├── screens/         Today, Receipts, Trends, Envelopes, Bills, Reflect
+│   ├── store/           budget store (state + derived selectors + persistence)
+│   ├── data/            seed month + historical mock data
+│   ├── hooks/           useCountUp
+│   ├── lib/             formatting + theme class maps
+│   └── index.css        Tailwind theme tokens + base styles
+├── prototypes/          pre-React HTML explorations
+└── index.html
 ```
-
-The React app will live at the repo root once scaffolded.
 
 ---
 
 ## Screenshots
 
-_Add curated screenshots here — open `prototypes/receiptly-app.html`, screenshot the Today / Envelopes / Reflect screens, drop the images in a `docs/` folder and link them below._
+_Run the app, screenshot the Today / Envelopes / Reflect screens, drop the images in a `docs/` folder and link them below._
 
 <!--
 ![Today](docs/today.png)
