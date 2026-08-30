@@ -1,15 +1,18 @@
-import { animate } from 'framer-motion'
+import { animate, useReducedMotion } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 
 /**
  * Animate a number towards `target`. Starts from 0 on mount, then from the
- * current displayed value whenever `target` changes.
+ * current displayed value whenever `target` changes. Shows the target instantly
+ * when the user prefers reduced motion.
  */
 export function useCountUp(target, { duration = 0.7 } = {}) {
+  const reduced = useReducedMotion()
   const [display, setDisplay] = useState(0)
   const from = useRef(0)
 
   useEffect(() => {
+    if (reduced) return
     const controls = animate(from.current, target, {
       duration,
       ease: [0.22, 1, 0.36, 1],
@@ -19,7 +22,7 @@ export function useCountUp(target, { duration = 0.7 } = {}) {
       },
     })
     return () => controls.stop()
-  }, [target, duration])
+  }, [target, duration, reduced])
 
-  return Math.round(display)
+  return reduced ? target : Math.round(display)
 }
