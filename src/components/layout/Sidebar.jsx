@@ -1,6 +1,5 @@
 import { NavLink } from 'react-router-dom'
 import { NAV_ACTIVE_BG } from '../../lib/theme'
-import ResetDemo from '../ResetDemo'
 import { NAV } from './navItems'
 import Wordmark from './Wordmark'
 
@@ -43,10 +42,9 @@ export default function Sidebar({ onLogExpense }) {
           N
         </kbd>
       </button>
-      <div className="mt-3 flex flex-col items-center gap-1">
-        <p className="text-[10.5px] opacity-50">v1 · saved on this device · keys 1–6</p>
-        <ResetDemo />
-      </div>
+      <p className="mt-3 text-center text-[10.5px] opacity-50">
+        v1 · saved on this device · settings in the avatar
+      </p>
     </aside>
   )
 }

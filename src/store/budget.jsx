@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { makeSeed } from '../data/seed'
+import { slugId } from '../lib/slug'
 import {
   dayOfWeekSpend,
   monthReflection,
@@ -26,6 +27,14 @@ import {
 } from './selectors'
 
 const pad = (n) => String(n).padStart(2, '0')
+
+const NEW_CATEGORY_BUDGET = 1000
+
+const without = (obj, key) => {
+  const copy = { ...obj }
+  delete copy[key]
+  return copy
+}
 
 /** Compose the pure selectors into the object screens read via useBudget(). */
 function derive(state) {
@@ -147,6 +156,69 @@ export function BudgetProvider({ children }) {
     }))
   }, [])
 
+  const addCategory = useCallback(({ label, emoji, color }) => {
+    setState((s) => {
+      const id = slugId(label, s.categories)
+      const cat = {
+        id,
+        label: label.trim() || 'New category',
+        emoji: emoji || '🏷️',
+        color: color || 'lilac',
+      }
+      const normal = s.categories.filter((c) => !c.kind)
+      const system = s.categories.filter((c) => c.kind)
+      return {
+        ...s,
+        categories: [...normal, cat, ...system],
+        budgets: {
+          ...s.budgets,
+          default: { ...s.budgets.default, [id]: NEW_CATEGORY_BUDGET },
+        },
+      }
+    })
+  }, [])
+
+  const renameCategory = useCallback(({ id, label, emoji, color }) => {
+    setState((s) => ({
+      ...s,
+      categories: s.categories.map((c) =>
+        c.id === id
+          ? {
+              ...c,
+              label: label?.trim() || c.label,
+              emoji: emoji || c.emoji,
+              color: color || c.color,
+            }
+          : c,
+      ),
+    }))
+  }, [])
+
+  const deleteCategory = useCallback(({ id, reassignToId }) => {
+    setState((s) => {
+      const cat = s.categories.find((c) => c.id === id)
+      if (!cat || cat.isDefault || cat.kind) return s
+      const inUse = s.transactions.some((t) => t.categoryId === id)
+      if (inUse && !reassignToId) return s
+      return {
+        ...s,
+        transactions: inUse
+          ? s.transactions.map((t) =>
+              t.categoryId === id ? { ...t, categoryId: reassignToId } : t,
+            )
+          : s.transactions,
+        categories: s.categories.filter((c) => c.id !== id),
+        budgets: {
+          ...s.budgets,
+          default: without(s.budgets.default, id),
+          byMonth: Object.fromEntries(
+            Object.entries(s.budgets.byMonth).map(([k, v]) => [k, without(v, id)]),
+          ),
+        },
+      }
+    })
+  }, [])
+
   const resetDemo = useCallback(() => setState(makeSeed()), [])
 
   const value = useMemo(
@@ -156,6 +228,9 @@ export function BudgetProvider({ children }) {
       addTransaction,
       deleteTransaction,
       adjustEnvelope,
+      addCategory,
+      renameCategory,
+      deleteCategory,
       setSelectedMonth,
       stepMonth,
       goToCurrentMonth,
@@ -166,6 +241,9 @@ export function BudgetProvider({ children }) {
       addTransaction,
       deleteTransaction,
       adjustEnvelope,
+      addCategory,
+      renameCategory,
+      deleteCategory,
       setSelectedMonth,
       stepMonth,
       goToCurrentMonth,

@@ -12,6 +12,9 @@ export const BG = {
   sky: 'bg-sky',
 }
 
+/** Colours a user can pick for a custom category. */
+export const PALETTE = ['orange', 'mint', 'sky', 'pink', 'lilac', 'yellow']
+
 export const NAV_ACTIVE_BG = {
   today: 'bg-lilac',
   receipts: 'bg-mint',
