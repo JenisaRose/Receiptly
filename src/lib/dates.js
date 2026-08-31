@@ -41,3 +41,15 @@ export function monthRange(from, to) {
   }
   return out
 }
+
+/** "2026-08-18" + n days, as an ISO date string (TZ-safe). */
+export function addDays(iso, n) {
+  const d = new Date(iso + 'T12:00:00Z')
+  d.setUTCDate(d.getUTCDate() + n)
+  return d.toISOString().slice(0, 10)
+}
+
+/** Weekday of an ISO date with Monday = 0 … Sunday = 6. */
+export function weekdayMon0(iso) {
+  return (new Date(iso + 'T12:00:00Z').getUTCDay() + 6) % 7
+}

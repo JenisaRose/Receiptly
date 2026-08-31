@@ -1,5 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { makeSeed } from '../data/seed'
+import {
+  dayOfWeekSpend,
+  monthReflection,
+  spendingPatterns,
+  trendsByMonth,
+  trendsByWeek,
+} from './analytics'
 import { persistence } from './persistence'
 import { BudgetContext } from './budgetContext'
 import {
@@ -55,6 +62,11 @@ function derive(state) {
     allocatedTotal: Object.values(budget).reduce((s, n) => s + n, 0),
 
     categoryUsage: (id) => categoryUsage(state, id),
+
+    trends: { months: trendsByMonth(state), weeks: trendsByWeek(state) },
+    dayOfWeekSpend: dayOfWeekSpend(state),
+    patterns: spendingPatterns(state),
+    reflection: monthReflection(state),
   }
 }
 
