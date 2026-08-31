@@ -1,6 +1,7 @@
-import { motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { useState } from 'react'
 import Money from '../components/ui/Money'
+import ShareReceiptModal from '../features/export/ShareReceiptModal'
 import { rupee } from '../lib/format'
 import { HEAT_LEVELS, heatLevel } from '../lib/theme'
 import { useBudget } from '../store/budgetContext'
@@ -10,7 +11,7 @@ const TONE = { mint: 'bg-mint', sky: 'bg-sky', lilac: 'bg-lilac', pink: 'bg-pink
 export default function Reflect() {
   const b = useBudget()
   const r = b.reflection
-  const [toast, setToast] = useState(false)
+  const [sharing, setSharing] = useState(false)
 
   if (r.total === 0) {
     return (
@@ -84,25 +85,16 @@ export default function Reflect() {
       </div>
 
       <button
-        onClick={() => {
-          setToast(true)
-          setTimeout(() => setToast(false), 2600)
-        }}
+        onClick={() => setSharing(true)}
         className="press w-full border-[3px] border-ink bg-ink py-3 font-display text-sm text-yellow shadow-[5px_5px_0_var(--color-sky)]"
         style={{ '--press-x': '5px', '--press-y': '5px' }}
       >
         make a shareable receipt 🧾
       </button>
 
-      {toast && (
-        <motion.p
-          initial={{ y: 40, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          className="fixed bottom-24 left-1/2 z-50 -translate-x-1/2 border-[3px] border-ink bg-mint px-4 py-2 text-[13px] font-bold shadow-hard-sm"
-        >
-          receipt saved to your photos 🧾
-        </motion.p>
-      )}
+      <AnimatePresence>
+        {sharing && <ShareReceiptModal onClose={() => setSharing(false)} />}
+      </AnimatePresence>
     </div>
   )
 }
