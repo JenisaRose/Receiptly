@@ -3,6 +3,7 @@ import { useState } from 'react'
 import Card from '../components/ui/Card'
 import Money from '../components/ui/Money'
 import ProgressBar from '../components/ui/ProgressBar'
+import DeleteTxButton from '../components/DeleteTxButton'
 import WhatIf from '../components/WhatIf'
 import { useCountUp } from '../hooks/useCountUp'
 import { inr, rupee } from '../lib/format'
@@ -259,9 +260,12 @@ function EntryRow({ entry, cat, monthAbbr }) {
           </p>
         </div>
       </div>
-      <span className={`text-[13.5px] font-bold ${out ? 'text-[#d6335a]' : 'text-[#1f9a5a]'}`}>
-        {out ? '– ' : '+ '}₹{inr(Math.abs(entry.amount))}
-      </span>
+      <div className="flex items-center gap-2">
+        <span className={`text-[13.5px] font-bold ${out ? 'text-[#d6335a]' : 'text-[#1f9a5a]'}`}>
+          {out ? '– ' : '+ '}₹{inr(Math.abs(entry.amount))}
+        </span>
+        <DeleteTxButton tx={entry} monthAbbr={monthAbbr} />
+      </div>
     </motion.div>
   )
 }
