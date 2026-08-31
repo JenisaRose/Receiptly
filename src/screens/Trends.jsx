@@ -6,6 +6,7 @@ import SegmentedToggle from '../components/ui/SegmentedToggle'
 import { MONTH_NAMES } from '../lib/dates'
 import { rupee } from '../lib/format'
 import { BG } from '../lib/theme'
+import { INSIGHT_TONE } from '../store/insights/engine'
 import { useBudget } from '../store/budgetContext'
 
 export default function Trends() {
@@ -124,29 +125,29 @@ export default function Trends() {
         />
       )}
 
-      {/* patterns */}
-      {b.patterns.length > 0 && (
+      {/* insights */}
+      {b.insights.length > 0 && (
         <>
           <h2 className="inline-block -rotate-1 font-hand text-[21px] font-bold">
             patterns we spotted
           </h2>
           <div className="space-y-3">
-            {b.patterns.map((p, i) => (
+            {b.insights.map((ins, i) => (
               <div
-                key={p.text}
+                key={ins.id + i}
                 className={`flex items-center gap-2.5 border-[3px] border-ink bg-white p-3 shadow-hard-sm ${
                   i % 2 ? 'rotate-[0.8deg]' : '-rotate-[0.8deg]'
                 }`}
               >
                 <span
-                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-[2.5px] border-ink text-[17px] ${BG[p.color]}`}
+                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-[2.5px] border-ink text-[17px] ${BG[INSIGHT_TONE[ins.tone]]}`}
                 >
-                  {p.emoji}
+                  {ins.emoji}
                 </span>
                 <span className="text-[13px] font-bold leading-tight">
-                  {p.text}
+                  {ins.headline}
                   <span className="block font-hand text-[13.5px] font-semibold opacity-70">
-                    {p.note}
+                    {ins.detail}
                   </span>
                 </span>
               </div>

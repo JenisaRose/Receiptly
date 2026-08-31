@@ -10,8 +10,9 @@
  *   migration.
  * - `clock.todayISO` is the app's notion of "now" (fixed for the demo).
  *
- * Demo context: it is the 18th of August 2026. March–July are generated so
- * Trends and Reflect have real history to compute from; August is hand-written.
+ * Demo context: it is the 18th of August 2026. Sept 2025 – July 2026 are
+ * generated (deterministic RNG) so Trends, Reflect and the insights engine
+ * have a full year of real history to compute from; August is hand-written.
  */
 
 export const SCHEMA_VERSION = 2
@@ -103,8 +104,8 @@ function genMonth(ym, { spend, freelance = 0 }, seed) {
   add(1, 'income', 'Stipend', 18000)
   if (freelance) add(12, 'income', 'Freelance gig', freelance)
 
-  add(5, 'home', 'Wifi split', -300)
-  add(5, 'home', 'Electricity split', -(1000 + Math.round(rand() * 500)))
+  add(4, 'home', 'Wifi split', -300)
+  add(6 + Math.floor(rand() * 16), 'home', 'Electricity split', -(1000 + Math.round(rand() * 500)))
 
   let placed = out.filter((t) => t.amount < 0).reduce((s, t) => s - t.amount, 0)
   const count = 16 + Math.floor(rand() * 5)
@@ -138,19 +139,34 @@ function genMonth(ym, { spend, freelance = 0 }, seed) {
   return out.sort((a, b) => a.date.localeCompare(b.date))
 }
 
-const HISTORY = [
-  ...genMonth('2026-03', { spend: 9100 }, 30326),
-  ...genMonth('2026-04', { spend: 8600, freelance: 2000 }, 40426),
-  ...genMonth('2026-05', { spend: 8300 }, 50526),
-  ...genMonth('2026-06', { spend: 7900, freelance: 3500 }, 60626),
-  ...genMonth('2026-07', { spend: 8500, freelance: 1500 }, 70726),
+// A year of history so any 6-month analysis window is full of real data.
+// Totals drift gently upward (~₹6.6k → ₹8.5k) to give trends something to say.
+const HISTORY_MONTHS = [
+  { key: '2025-09', spend: 6600, freelance: 0 },
+  { key: '2025-10', spend: 7000, freelance: 2500 },
+  { key: '2025-11', spend: 6800, freelance: 0 },
+  { key: '2025-12', spend: 8200, freelance: 4000 },
+  { key: '2026-01', spend: 7100, freelance: 0 },
+  { key: '2026-02', spend: 7400, freelance: 1500 },
+  { key: '2026-03', spend: 9100, freelance: 0 },
+  { key: '2026-04', spend: 8600, freelance: 2000 },
+  { key: '2026-05', spend: 8300, freelance: 0 },
+  { key: '2026-06', spend: 7900, freelance: 3500 },
+  { key: '2026-07', spend: 8500, freelance: 1500 },
 ]
+
+const HISTORY = HISTORY_MONTHS.flatMap((m, i) =>
+  genMonth(m.key, m, Number(m.key.replace('-', '')) * 7 + i),
+)
 
 const ALL_BILL_IDS = BILLS.map((b) => b.id)
 
 /** Build a fresh copy of the seed state (used on first run and on reset). */
 export function makeSeed() {
   const transactions = [...HISTORY, ...AUGUST].map((t, i) => ({ id: `t${pad(i + 1)}`, ...t }))
+
+  const billPayments = { '2026-08': ['b1', 'b2', 'b3'] }
+  for (const m of HISTORY_MONTHS) billPayments[m.key] = [...ALL_BILL_IDS]
 
   return {
     schemaVersion: SCHEMA_VERSION,
@@ -161,14 +177,7 @@ export function makeSeed() {
     transactions,
 
     bills: BILLS.map((b) => ({ ...b })),
-    billPayments: {
-      '2026-03': [...ALL_BILL_IDS],
-      '2026-04': [...ALL_BILL_IDS],
-      '2026-05': [...ALL_BILL_IDS],
-      '2026-06': [...ALL_BILL_IDS],
-      '2026-07': [...ALL_BILL_IDS],
-      '2026-08': ['b1', 'b2', 'b3'],
-    },
+    billPayments,
 
     budgets: {
       default: { food: 5000, transport: 2500, home: 2000, fun: 1500, other: 1500, buffer: 3500 },

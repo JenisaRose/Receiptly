@@ -1,13 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { makeSeed } from '../data/seed'
 import { slugId } from '../lib/slug'
-import {
-  dayOfWeekSpend,
-  monthReflection,
-  spendingPatterns,
-  trendsByMonth,
-  trendsByWeek,
-} from './analytics'
+import { dayOfWeekSpend, monthReflection, trendsByMonth, trendsByWeek } from './analytics'
+import { runInsights } from './insights/engine'
 import { persistence } from './persistence'
 import { BudgetContext } from './budgetContext'
 import {
@@ -74,7 +69,7 @@ function derive(state) {
 
     trends: { months: trendsByMonth(state), weeks: trendsByWeek(state) },
     dayOfWeekSpend: dayOfWeekSpend(state),
-    patterns: spendingPatterns(state),
+    insights: runInsights(state),
     reflection: monthReflection(state),
   }
 }
