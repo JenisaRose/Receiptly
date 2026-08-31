@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { useState } from 'react'
+import EmptyState from '../components/EmptyState'
 import Money from '../components/ui/Money'
 import ShareReceiptModal from '../features/export/ShareReceiptModal'
 import { rupee } from '../lib/format'
@@ -15,12 +16,11 @@ export default function Reflect() {
 
   if (r.total === 0) {
     return (
-      <div className="border-[3px] border-dashed border-ink/40 p-8 text-center">
-        <p className="font-hand text-[20px] font-bold opacity-70">
-          nothing to reflect on for {r.monthLabel} yet
-        </p>
-        <p className="mt-1 text-[12px] opacity-55">log a few days and the recap fills in</p>
-      </div>
+      <EmptyState
+        emoji="🌙"
+        title={`nothing to reflect on for ${r.monthLabel} yet`}
+        hint="log a few days and the recap fills in"
+      />
     )
   }
 

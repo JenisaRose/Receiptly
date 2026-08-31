@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { useMemo, useState } from 'react'
+import EmptyState from '../components/EmptyState'
 import Money from '../components/ui/Money'
 import SegmentedToggle from '../components/ui/SegmentedToggle'
 import { MONTH_NAMES } from '../lib/dates'
@@ -116,9 +117,11 @@ export default function Trends() {
       </div>
 
       {!hasData && (
-        <p className="border-[3px] border-dashed border-ink/40 p-5 text-center font-hand text-[16px] font-bold opacity-65">
-          not enough history yet — keep logging and the shape shows up
-        </p>
+        <EmptyState
+          emoji="📊"
+          title="not enough history yet"
+          hint="keep logging and the shape shows up"
+        />
       )}
 
       {/* patterns */}

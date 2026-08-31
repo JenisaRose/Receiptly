@@ -4,6 +4,7 @@ import Card from '../components/ui/Card'
 import Money from '../components/ui/Money'
 import ProgressBar from '../components/ui/ProgressBar'
 import DeleteTxButton from '../components/DeleteTxButton'
+import EmptyState from '../components/EmptyState'
 import WhatIf from '../components/WhatIf'
 import { useCountUp } from '../hooks/useCountUp'
 import { inr, rupee } from '../lib/format'
@@ -137,12 +138,11 @@ export default function Today({ onLogExpense }) {
             ))}
           </div>
         ) : (
-          <div className="border-[3px] border-dashed border-ink/40 p-6 text-center">
-            <p className="font-hand text-[18px] font-bold opacity-70">
-              nothing logged for {label} yet
-            </p>
-            <p className="mt-1 text-[12px] opacity-55">tap ＋ to plan an expense ahead</p>
-          </div>
+          <EmptyState
+            emoji="🗓️"
+            title={`nothing logged for ${label} yet`}
+            hint="tap ＋ to plan an expense ahead"
+          />
         )}
         <button
           onClick={onLogExpense}
