@@ -4,7 +4,6 @@ import Card from '../components/ui/Card'
 import Money from '../components/ui/Money'
 import ProgressBar from '../components/ui/ProgressBar'
 import WhatIf from '../components/WhatIf'
-import { CATEGORIES } from '../data/seed'
 import { useCountUp } from '../hooks/useCountUp'
 import { inr, rupee } from '../lib/format'
 import { BG } from '../lib/theme'
@@ -127,7 +126,12 @@ export default function Today({ onLogExpense }) {
         </h2>
         <div className="space-y-2">
           {b.thisMonthEntries.slice(0, 6).map((e) => (
-            <EntryRow key={e.id} entry={e} />
+            <EntryRow
+              key={e.id}
+              entry={e}
+              cat={b.categoryMap[e.categoryId]}
+              monthAbbr={b.month.label.slice(0, 3)}
+            />
           ))}
         </div>
         <button
@@ -164,8 +168,8 @@ function Line({ k, v, minus }) {
   )
 }
 
-function EntryRow({ entry }) {
-  const meta = CATEGORIES[entry.category] ?? CATEGORIES.other
+function EntryRow({ entry, cat, monthAbbr }) {
+  const meta = cat ?? { emoji: '📦', color: 'lilac' }
   const out = entry.amount < 0
   const day = Number(entry.date.slice(-2))
   return (
@@ -183,7 +187,9 @@ function EntryRow({ entry }) {
         </span>
         <div>
           <p className="text-[13px] font-semibold">{entry.name}</p>
-          <p className="text-[10.5px] opacity-60">{day} Aug</p>
+          <p className="text-[10.5px] opacity-60">
+            {day} {monthAbbr}
+          </p>
         </div>
       </div>
       <span className={`text-[13.5px] font-bold ${out ? 'text-[#d6335a]' : 'text-[#1f9a5a]'}`}>

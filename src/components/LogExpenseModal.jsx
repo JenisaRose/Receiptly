@@ -1,18 +1,15 @@
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
-import { CATEGORIES } from '../data/seed'
 import { useBudget } from '../store/budgetContext'
-
-const PICKABLE = ['food', 'transport', 'home', 'fun', 'other']
 
 /**
  * Rendered only while open (via <AnimatePresence> in AppShell), so it always
  * mounts with fresh form state.
  */
 export default function LogExpenseModal({ onClose }) {
-  const { addExpense } = useBudget()
+  const { addTransaction, spendableCategories } = useBudget()
   const [amount, setAmount] = useState('')
-  const [category, setCategory] = useState('food')
+  const [category, setCategory] = useState(spendableCategories[0]?.id ?? 'food')
   const [note, setNote] = useState('')
   const [error, setError] = useState(false)
 
@@ -31,7 +28,7 @@ export default function LogExpenseModal({ onClose }) {
       setError(true)
       return
     }
-    addExpense({ amount: value, category, name: note.trim() })
+    addTransaction({ amount: value, categoryId: category, name: note.trim() })
     onClose()
   }
 
@@ -71,16 +68,16 @@ export default function LogExpenseModal({ onClose }) {
 
         <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-wide">category</label>
         <div className="mb-4 flex flex-wrap gap-1.5">
-          {PICKABLE.map((id) => (
+          {spendableCategories.map((c) => (
             <button
-              key={id}
+              key={c.id}
               type="button"
-              onClick={() => setCategory(id)}
+              onClick={() => setCategory(c.id)}
               className={`flex items-center gap-1.5 border-[2.5px] border-ink px-2.5 py-1.5 text-[12px] font-bold ${
-                category === id ? 'bg-yellow shadow-hard-xs' : 'bg-white'
+                category === c.id ? 'bg-yellow shadow-hard-xs' : 'bg-white'
               }`}
             >
-              {CATEGORIES[id].emoji} {CATEGORIES[id].label}
+              {c.emoji} {c.label}
             </button>
           ))}
         </div>
