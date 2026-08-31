@@ -54,12 +54,22 @@ export default function Reflect() {
 
       <div className="border-[3px] border-ink bg-white p-4 shadow-hard-sm">
         <p className="mb-3 text-[13px] font-bold">every day in {r.monthLabel}, by spend</p>
+        <div className="mb-1.5 grid grid-cols-7 gap-1.5 text-[9px] font-bold opacity-45">
+          {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
+            <span key={i} className="text-center">
+              {d}
+            </span>
+          ))}
+        </div>
         <motion.div
           className="grid grid-cols-7 gap-1.5"
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, delay: 0.15 }}
         >
+          {Array.from({ length: r.firstWeekday }).map((_, i) => (
+            <div key={`pad-${i}`} aria-hidden />
+          ))}
           {r.heat.map((v, i) => {
             const lvl = heatLevel(v)
             return (

@@ -5,6 +5,11 @@ export const MONTH_NAMES = [
 
 const p2 = (n) => String(n).padStart(2, '0')
 
+/** Real "now" as a local ISO date, e.g. "2026-08-31". */
+export function todayISO(now = new Date()) {
+  return `${now.getFullYear()}-${p2(now.getMonth() + 1)}-${p2(now.getDate())}`
+}
+
 /** "2026-08" -> "2026-09" (delta can be negative). */
 export function shiftMonth(key, delta) {
   let [y, m] = key.split('-').map(Number)

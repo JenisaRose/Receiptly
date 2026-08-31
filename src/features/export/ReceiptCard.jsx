@@ -53,7 +53,7 @@ const ReceiptCard = forwardRef(function ReceiptCard(_props, ref) {
       </div>
 
       <div className="grid grid-cols-2 gap-2 py-3 text-[11px] font-semibold">
-        <p>🍜 {r.cards[0].v} led the month</p>
+        <p>🥇 {r.cards[0].v} led the month</p>
         <p>
           🧊 {r.cards[1].v} no-spend day{r.cards[1].v === '1' ? '' : 's'}
         </p>
@@ -64,7 +64,7 @@ const ReceiptCard = forwardRef(function ReceiptCard(_props, ref) {
       <p className="border-t-[3px] border-dashed border-ink pt-3 text-center font-hand text-[15px] font-bold">
         {r.note}
       </p>
-      <p className="mt-2 text-center text-[9px] opacity-45">made with Receiptly</p>
+      <p className="mt-2 text-center text-[9px] opacity-45">made with Receiptly · receiptly-rho.vercel.app</p>
     </div>
   )
 })

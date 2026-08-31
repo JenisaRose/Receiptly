@@ -1,6 +1,6 @@
 /** Read models for Trends and Reflect, computed from real transactions. */
 
-import { MONTH_NAMES, addDays, daysInMonth, shiftMonth } from '../lib/dates'
+import { MONTH_NAMES, addDays, daysInMonth, shiftMonth, weekdayMon0 } from '../lib/dates'
 import { rupee } from '../lib/format'
 import {
   dayOfWeekSpend,
@@ -100,6 +100,8 @@ export function monthReflection(state) {
 
   return {
     monthLabel: m.label,
+    monthKey: key,
+    firstWeekday: weekdayMon0(`${key}-01`), // 0 = Mon … 6 = Sun
     total,
     vsPrev,
     note,

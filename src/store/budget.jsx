@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { makeSeed } from '../data/seed'
+import { todayISO } from '../lib/dates'
 import { slugId } from '../lib/slug'
 import { dayOfWeekSpend, monthReflection, trendsByMonth, trendsByWeek } from './analytics'
 import { runInsights } from './insights/engine'
@@ -74,8 +75,27 @@ function derive(state) {
   }
 }
 
+/** "today" is always real-now, never whatever was frozen into storage. */
+function initState() {
+  const loaded = persistence.loadSync()
+  const base = loaded ?? makeSeed()
+  const today = todayISO()
+  const currentMonth = today.slice(0, 7)
+  const months = availableMonths({ ...base, clock: { todayISO: today } })
+  return {
+    ...base,
+    clock: { ...base.clock, todayISO: today },
+    ui: {
+      ...base.ui,
+      selectedMonth: months.includes(base.ui.selectedMonth)
+        ? base.ui.selectedMonth
+        : currentMonth,
+    },
+  }
+}
+
 export function BudgetProvider({ children }) {
-  const [state, setState] = useState(() => persistence.loadSync() ?? makeSeed())
+  const [state, setState] = useState(initState)
 
   useEffect(() => {
     // drop the transient `fresh` flag so reloads don't re-animate old rows
