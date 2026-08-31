@@ -3,6 +3,7 @@ import { makeSeed } from '../data/seed'
 import { todayISO } from '../lib/dates'
 import { slugId } from '../lib/slug'
 import { dayOfWeekSpend, monthReflection, trendsByMonth, trendsByWeek } from './analytics'
+import { envelopeForecast, monthForecast } from './forecast'
 import { runInsights } from './insights/engine'
 import { persistence } from './persistence'
 import { BudgetContext } from './budgetContext'
@@ -72,14 +73,27 @@ function derive(state) {
     dayOfWeekSpend: dayOfWeekSpend(state),
     insights: runInsights(state),
     reflection: monthReflection(state),
+    forecast: monthForecast(state),
+    envelopeForecast: envelopeForecast(state),
   }
+}
+
+/** Real "now", or an `?today=YYYY-MM-DD` override for demos and screenshots. */
+function resolveToday() {
+  try {
+    const q = new URLSearchParams(window.location.search).get('today')
+    if (/^\d{4}-\d{2}-\d{2}$/.test(q)) return q
+  } catch {
+    /* no window / bad URL */
+  }
+  return todayISO()
 }
 
 /** "today" is always real-now, never whatever was frozen into storage. */
 function initState() {
+  const today = resolveToday()
   const loaded = persistence.loadSync()
-  const base = loaded ?? makeSeed()
-  const today = todayISO()
+  const base = loaded ?? makeSeed(today)
   const currentMonth = today.slice(0, 7)
   const months = availableMonths({ ...base, clock: { todayISO: today } })
   return {

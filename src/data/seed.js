@@ -166,7 +166,8 @@ export function makeSeed(iso = todayISO()) {
     billPayments,
 
     budgets: {
-      default: { food: 5000, transport: 2500, home: 2000, fun: 1500, other: 1500, buffer: 3500 },
+      // a real, slightly tight plan so the forecast has something to say
+      default: { food: 3800, transport: 2500, home: 2200, fun: 900, other: 700, buffer: 2800 },
       byMonth: {},
       bufferRollover: 500,
     },

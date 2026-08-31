@@ -5,6 +5,7 @@ import Money from '../components/ui/Money'
 import ProgressBar from '../components/ui/ProgressBar'
 import DeleteTxButton from '../components/DeleteTxButton'
 import EmptyState from '../components/EmptyState'
+import Forecast from '../components/Forecast'
 import WhatIf from '../components/WhatIf'
 import { useCountUp } from '../hooks/useCountUp'
 import { inr, rupee } from '../lib/format'
@@ -97,6 +98,8 @@ export default function Today({ onLogExpense }) {
       {/* transparent breakdown — current & past only */}
       {isCurrent && <CurrentBreakdown b={b} />}
       {isPast && <PastBreakdown b={b} />}
+
+      {isCurrent && b.forecast && <Forecast f={b.forecast} />}
 
       {isCurrent && (
         <WhatIf
