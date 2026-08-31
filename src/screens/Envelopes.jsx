@@ -9,7 +9,7 @@ export default function Envelopes() {
   const b = useBudget()
   const [openId, setOpenId] = useState(null)
 
-  const rolled = b.envelopes.find((e) => e.rolledOver)?.rolledOver ?? 0
+  const rolled = b.envelopesResolved.find((e) => e.rolledOver)?.rolledOver ?? 0
 
   return (
     <div className="space-y-4">

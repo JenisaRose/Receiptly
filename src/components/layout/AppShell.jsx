@@ -2,7 +2,8 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useCallback, useEffect, useState } from 'react'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import LogExpenseModal from '../LogExpenseModal'
-import ResetDemo from '../ResetDemo'
+import MonthSwitcher from '../MonthSwitcher'
+import SettingsSheet from '../SettingsSheet'
 import Today from '../../screens/Today'
 import Receipts from '../../screens/Receipts'
 import Trends from '../../screens/Trends'
@@ -17,6 +18,7 @@ export default function AppShell() {
   const location = useLocation()
   const navigate = useNavigate()
   const [logOpen, setLogOpen] = useState(false)
+  const [settingsOpen, setSettingsOpen] = useState(false)
 
   const openLog = useCallback(() => setLogOpen(true), [])
 
@@ -49,10 +51,17 @@ export default function AppShell() {
               <p className="text-[10px] font-bold tracking-[0.18em] opacity-45">RECEIPTLY</p>
               <h1 className="mt-0.5 font-display text-[26px] lg:text-[28px]">{current.label}</h1>
             </div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-full border-[3px] border-ink bg-pink text-sm font-bold">
+            <button
+              onClick={() => setSettingsOpen(true)}
+              aria-label="Settings"
+              className="press flex h-10 w-10 items-center justify-center rounded-full border-[3px] border-ink bg-pink text-sm font-bold shadow-hard-xs"
+              style={{ '--press-x': '3px', '--press-y': '3px' }}
+            >
               RP
-            </div>
+            </button>
           </header>
+
+          <MonthSwitcher />
 
           <AnimatePresence mode="wait">
             <motion.div
@@ -73,10 +82,6 @@ export default function AppShell() {
               </Routes>
             </motion.div>
           </AnimatePresence>
-
-          <div className="mt-8 flex justify-center lg:hidden">
-            <ResetDemo />
-          </div>
         </div>
       </main>
 
@@ -93,6 +98,10 @@ export default function AppShell() {
 
       <AnimatePresence>
         {logOpen && <LogExpenseModal onClose={() => setLogOpen(false)} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {settingsOpen && <SettingsSheet onClose={() => setSettingsOpen(false)} />}
       </AnimatePresence>
     </div>
   )

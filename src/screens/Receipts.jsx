@@ -1,5 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { useState } from 'react'
+import DeleteTxButton from '../components/DeleteTxButton'
+import EmptyState from '../components/EmptyState'
 import Money from '../components/ui/Money'
 import SegmentedToggle from '../components/ui/SegmentedToggle'
 import { inr } from '../lib/format'
@@ -97,10 +99,13 @@ export default function Receipts() {
                     {cat.txs.map((t) => (
                       <div
                         key={t.id}
-                        className="flex justify-between border-b border-dashed border-[#d8d2f5] px-3.5 py-2.5 text-[12.5px] last:border-b-0"
+                        className="flex items-center justify-between gap-2 border-b border-dashed border-[#d8d2f5] px-3.5 py-2.5 text-[12.5px] last:border-b-0"
                       >
                         <span className="opacity-85">{t.name}</span>
-                        <span className="font-semibold">₹{inr(Math.abs(t.amount))}</span>
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold">₹{inr(Math.abs(t.amount))}</span>
+                          <DeleteTxButton tx={t} />
+                        </div>
                       </div>
                     ))}
                   </motion.div>
@@ -110,9 +115,11 @@ export default function Receipts() {
           )
         })}
         {cats.length === 0 && (
-          <p className="border-[3px] border-dashed border-ink/40 p-6 text-center text-sm opacity-60">
-            nothing logged {scope === 'week' ? 'this week' : 'this month'} yet.
-          </p>
+          <EmptyState
+            emoji="🧾"
+            title={`nothing logged ${scope === 'week' ? 'this week' : 'this month'} yet`}
+            hint="tap ＋ to add one"
+          />
         )}
       </div>
     </div>

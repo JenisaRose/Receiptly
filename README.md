@@ -4,7 +4,7 @@
 
 Most budget apps show you a pile of numbers and leave you to work out whether you're fine. Receiptly leads with the answer: a single "safe to spend today" figure, and every screen is built to communicate status at a glance.
 
-> **Status:** React app running with all six screens. Persistence, polish and deploy in progress — see [Roadmap](#roadmap).
+> **Status:** Live at **[receiptly-rho.vercel.app](https://receiptly-rho.vercel.app)**. All six screens, multi-month, editable categories, PNG export. Next up: a real insights engine and a first-run onboarding flow — see [Roadmap](#roadmap).
 
 ---
 
@@ -12,18 +12,20 @@ Most budget apps show you a pile of numbers and leave you to work out whether yo
 
 Receiptly takes your income, your locked-in bills, and what you've set aside for goals, subtracts what you've already spent, and divides what's left by the days remaining in the month. That's your **safe-to-spend-today** number. Log an expense and every screen recalculates on the spot.
 
+Navigate between months with the `‹ August 2026 ›` switcher — every screen answers for the selected month. Past months show a read-only recap; future months show the plan.
+
 ### Screens
 
 | Screen | What it does |
 | --- | --- |
 | **Today** | Hero "safe to spend" figure. A tap reveals the full working — `income − bills − goals − spent ÷ days left` — so the number is never a black box. A **"what if I spend ₹X/day" slider** projects where you'll land at month-end. |
-| **Receipts** | Spending broken down by category, week/month toggle, tap a category to expand its transactions. |
-| **Trends** | 6-month / 8-week bar chart with a running average line, tap-a-bar detail, auto-detected spending patterns, and a day-of-week breakdown. |
+| **Receipts** | Spending broken down by category, week/month toggle, tap a category to expand (and delete) its transactions. |
+| **Trends** | 6-month / 8-week bar chart with a running average line, tap-a-bar detail, computed spending patterns, and a day-of-week breakdown. |
 | **Envelopes** | The "give every rupee a job" method as visual budget jars — on-track / getting-close / over states, with live rebalancing. |
 | **Bills** | Recurring payments on a timeline with a day countdown; the next 7 days are flagged, and the total feeds the safe-to-spend calculation. |
-| **Reflect** | Month-end recap — a stat collage plus a calendar heatmap of every day's spend. |
+| **Reflect** | Month-end recap — biggest category, no-spend days, priciest day, a calendar spend heatmap — and a **shareable PNG receipt**. |
 
-The standout features — the transparent calculation, the what-if simulator, and envelope budgeting — are what set it apart from a standard expense-logger.
+The standout features — the transparent calculation, the what-if simulator, and envelope budgeting — are what set it apart from a standard expense-logger. Categories are user-editable (add / rename / recolour, delete with reassignment) from the settings sheet behind the avatar.
 
 ---
 
@@ -49,23 +51,28 @@ The tokens live in [`src/index.css`](src/index.css) as Tailwind theme variables.
 
 - **React 19** + **Vite**
 - **Tailwind CSS v4** (CSS-first `@theme` config)
-- **Framer Motion** for entrances, count-ups and layout animation
+- **Framer Motion** for entrances, count-ups and layout animation (respects `prefers-reduced-motion`)
 - **React Router** for the six screens
-- **localStorage** for persistence — a shared budget store ([`src/store/`](src/store)) that every screen reads from; logging an expense updates Today, Receipts and Envelopes together
+- **modern-screenshot** for the PNG receipt export (code-split, loaded on demand)
+- **localStorage** for persistence — a normalised store ([`src/store/`](src/store)) where `transactions` is the single source of truth and per-month config falls back to defaults, so nothing is duplicated per month. `src/store/persistence.js` is the one seam the backend will replace
 - **Planned (v2):** MERN backend (Node / Express / MongoDB) with auth
 
-The app seeds a realistic demo month on first run. `↺ reset demo data` (in the sidebar / below the nav on mobile) puts it back.
+The app seeds a realistic demo (March–August 2026) on first run; March–July are generated deterministically so Trends and Reflect have real history. `↺ reset demo data` (settings sheet, behind the avatar) puts it back.
 
 ---
 
 ## Roadmap
 
 - [x] Design system + standalone screen prototypes
-- [x] Vite + React + Tailwind app shell — sidebar on desktop, bottom-nav on mobile
-- [x] All six screens ported to components
-- [x] Shared budget store with `localStorage` persistence
-- [ ] Polish: empty states, reduced-motion pass, real "share receipt" export
-- [ ] Deploy to Vercel
+- [x] Vite + React + Tailwind app shell, all six screens as components
+- [x] Normalised store + `localStorage` persistence, deployed to Vercel
+- [x] Multiple months · editable categories · delete transactions · reduced-motion
+- [x] Trends & Reflect computed from real data · shareable PNG receipt
+- [ ] Real insights engine (from actual spending, not templated)
+- [ ] Spending forecast / month-end projection
+- [ ] Reflect "Wrapped" story mode
+- [ ] First-run onboarding wizard
+- [ ] Then: quick-add presets · search · recurring · split · multiple goals · receipt scan · PWA · dark mode · tests + CI
 - [ ] MERN backend + auth + multi-device sync
 
 ---
@@ -77,7 +84,7 @@ npm install
 npm run dev
 ```
 
-Then open the printed localhost URL. Keyboard: `1`–`6` switch screens, `n` opens the log-expense modal.
+Then open the printed localhost URL. Keyboard: `1`–`6` switch screens, `n` opens the log-expense modal. Narrow the window to see the mobile layout (sidebar → bottom nav + FAB).
 
 ```bash
 npm run build     # production build to dist/
@@ -97,15 +104,20 @@ Receiptly/
 │   ├── components/
 │   │   ├── layout/      AppShell, Sidebar, BottomNav
 │   │   ├── ui/          Card, Money, ProgressBar, SegmentedToggle
-│   │   ├── LogExpenseModal.jsx
-│   │   └── WhatIf.jsx
+│   │   ├── MonthSwitcher · SettingsSheet · CategoryManager
+│   │   ├── LogExpenseModal · ConfirmDialog · EmptyState · WhatIf
 │   ├── screens/         Today, Receipts, Trends, Envelopes, Bills, Reflect
-│   ├── store/           budget store (state + derived selectors + persistence)
-│   ├── data/            seed month + historical mock data
-│   ├── hooks/           useCountUp
-│   ├── lib/             formatting + theme class maps
-│   └── index.css        Tailwind theme tokens + base styles
-├── prototypes/          pre-React HTML explorations
+│   ├── store/
+│   │   ├── budget.jsx        provider — composes selectors, holds actions
+│   │   ├── selectors.js      pure read models (all answer for selectedMonth)
+│   │   ├── analytics.js      Trends / Reflect / pattern computation
+│   │   └── persistence.js    load / save / migrate — the backend seam
+│   ├── features/export/  ReceiptCard, exporters registry, share modal
+│   ├── data/seed.js      normalised first-run demo (Mar–Aug 2026)
+│   ├── hooks/            useCountUp
+│   ├── lib/              formatting · dates · slug · theme class maps
+│   └── index.css         Tailwind theme tokens + base styles
+├── prototypes/           pre-React HTML explorations
 └── index.html
 ```
 

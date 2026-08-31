@@ -1,174 +1,254 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { BILLS, CATEGORIES, ENTRIES, ENVELOPES, GOAL, MONTH } from '../data/seed'
+import { makeSeed } from '../data/seed'
+import { slugId } from '../lib/slug'
+import {
+  dayOfWeekSpend,
+  monthReflection,
+  spendingPatterns,
+  trendsByMonth,
+  trendsByWeek,
+} from './analytics'
+import { persistence } from './persistence'
 import { BudgetContext } from './budgetContext'
-
-const STORAGE_KEY = 'receiptly.v1'
+import {
+  availableMonths,
+  billSummary,
+  budgetForMonth,
+  categoryBreakdown,
+  categoryMap,
+  categoryUsage,
+  envelopes,
+  financials,
+  monthContext,
+  monthTransactions,
+  safeToSpend,
+  spendableCategories,
+  totalOut,
+} from './selectors'
 
 const pad = (n) => String(n).padStart(2, '0')
 
-function freshState() {
-  return { month: MONTH, goal: GOAL, entries: ENTRIES, envelopes: ENVELOPES, bills: BILLS }
+const NEW_CATEGORY_BUDGET = 1000
+
+const without = (obj, key) => {
+  const copy = { ...obj }
+  delete copy[key]
+  return copy
 }
 
-function loadState() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (raw) return { ...freshState(), ...JSON.parse(raw) }
-  } catch {
-    /* corrupt or unavailable storage — fall back to seed */
-  }
-  return freshState()
-}
-
-/** Everything computed from raw state lives here so screens stay dumb. */
-function derive({ month, entries, envelopes, bills }) {
-  const monthPrefix = `${month.year}-${pad(month.monthNum)}`
-  const todayIso = `${monthPrefix}-${pad(month.dayOfMonth)}`
-  const weekStartDay = month.dayOfMonth - 6
-
-  const thisMonth = entries.filter((e) => e.date.startsWith(monthPrefix))
-  const spends = thisMonth.filter((e) => e.amount < 0)
-  const credits = thisMonth.filter((e) => e.amount > 0)
-
-  const income = credits.reduce((sum, e) => sum + e.amount, 0)
-  const spentSoFar = spends.reduce((sum, e) => sum + Math.abs(e.amount), 0)
-  const daysLeft = Math.max(1, month.daysInMonth - month.dayOfMonth)
-
-  const upcomingBills = bills
-    .filter((b) => !b.paid && b.dueDay >= month.dayOfMonth)
-    .sort((a, b) => a.dueDay - b.dueDay)
-  const upcomingBillsTotal = upcomingBills.reduce((s, b) => s + b.amount, 0)
-  const billsTotal = bills.reduce((s, b) => s + b.amount, 0)
-  const next7Total = bills
-    .filter((b) => !b.paid && b.dueDay >= month.dayOfMonth && b.dueDay <= month.dayOfMonth + 7)
-    .reduce((s, b) => s + b.amount, 0)
-
-  const spendable = income - upcomingBillsTotal - month.goalSetAside
-  const leftToSpend = spendable - spentSoFar
-  const safeToday = Math.max(0, Math.round(leftToSpend / daysLeft))
-
-  // spend grouped by category (month + week views)
-  const groupBy = (list) => {
-    const map = {}
-    for (const e of list) {
-      const g = (map[e.category] ??= { spent: 0, txs: [] })
-      g.spent += Math.abs(e.amount)
-      g.txs.push(e)
-    }
-    return map
-  }
-  const byCategoryMonth = groupBy(spends)
-  const byCategoryWeek = groupBy(
-    spends.filter((e) => Number(e.date.slice(-2)) >= weekStartDay),
-  )
-
-  const categoryBreakdown = (scope) => {
-    const src = scope === 'week' ? byCategoryWeek : byCategoryMonth
-    return Object.entries(src)
-      .map(([id, g]) => ({
-        id,
-        ...CATEGORIES[id],
-        spent: g.spent,
-        count: g.txs.length,
-        txs: [...g.txs].sort((a, b) => b.date.localeCompare(a.date)),
-      }))
-      .sort((a, b) => b.spent - a.spent)
-  }
-  const totalOut = (scope) =>
-    Object.values(scope === 'week' ? byCategoryWeek : byCategoryMonth).reduce(
-      (sum, g) => sum + g.spent,
-      0,
-    )
-
-  const envelopesResolved = envelopes
-    .map((env) => {
-      const meta = CATEGORIES[env.id] ?? {}
-      const spent = byCategoryMonth[env.id]?.spent ?? 0
-      const ratio = env.allocated > 0 ? spent / env.allocated : 0
-      const status = ratio > 1 ? 'over' : ratio >= 0.85 ? 'close' : 'ok'
-      return {
-        ...env,
-        label: env.label ?? meta.label ?? env.id,
-        emoji: env.emoji ?? meta.emoji ?? '📦',
-        color: env.color ?? meta.color ?? 'lilac',
-        spent,
-        remaining: env.allocated - spent,
-        ratio,
-        status,
-      }
-    })
-    .sort((a, b) => b.ratio - a.ratio)
-  const allocatedTotal = envelopes.reduce((s, e) => s + e.allocated, 0)
+/** Compose the pure selectors into the object screens read via useBudget(). */
+function derive(state) {
+  const month = monthContext(state)
+  const { income, spentSoFar } = financials(state)
+  const bills = billSummary(state)
+  const safe = safeToSpend(state)
+  const budget = budgetForMonth(state)
 
   return {
-    todayIso,
-    thisMonthEntries: [...thisMonth].sort((a, b) => b.date.localeCompare(a.date)),
+    month,
+    availableMonths: availableMonths(state),
+    goal: state.goal,
+    categories: state.categories,
+    categoryMap: categoryMap(state),
+    spendableCategories: spendableCategories(state),
+
+    thisMonthEntries: monthTransactions(state),
     income,
     spentSoFar,
-    daysLeft,
-    upcomingBills,
-    upcomingBillsTotal,
-    billsTotal,
-    next7Total,
-    spendable,
-    leftToSpend,
-    safeToday,
-    categoryBreakdown,
-    totalOut,
-    envelopesResolved,
-    allocatedTotal,
+    daysLeft: month.daysLeft,
+    ...safe,
+
+    bills: bills.bills,
+    upcomingBills: bills.upcoming,
+    upcomingBillsTotal: bills.upcomingTotal,
+    billsTotal: bills.billsTotal,
+    next7Total: bills.next7Total,
+
+    categoryBreakdown: (scope) => categoryBreakdown(state, scope),
+    totalOut: (scope) => totalOut(state, scope),
+
+    envelopesResolved: envelopes(state),
+    allocatedTotal: Object.values(budget).reduce((s, n) => s + n, 0),
+
+    categoryUsage: (id) => categoryUsage(state, id),
+
+    trends: { months: trendsByMonth(state), weeks: trendsByWeek(state) },
+    dayOfWeekSpend: dayOfWeekSpend(state),
+    patterns: spendingPatterns(state),
+    reflection: monthReflection(state),
   }
 }
 
 export function BudgetProvider({ children }) {
-  const [state, setState] = useState(loadState)
+  const [state, setState] = useState(() => persistence.loadSync() ?? makeSeed())
 
   useEffect(() => {
-    try {
-      // drop the transient `fresh` flag so reloads don't re-animate old rows
-      const clean = {
-        ...state,
-        entries: state.entries.map((e) => {
-          const copy = { ...e }
-          delete copy.fresh
-          return copy
-        }),
-      }
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(clean))
-    } catch {
-      /* storage full or blocked — the app still works for this session */
+    // drop the transient `fresh` flag so reloads don't re-animate old rows
+    const clean = {
+      ...state,
+      transactions: state.transactions.map((t) => {
+        const copy = { ...t }
+        delete copy.fresh
+        return copy
+      }),
     }
+    persistence.save(clean)
   }, [state])
 
-  const addExpense = useCallback(({ amount, category, name }) => {
+  const addTransaction = useCallback(({ date, categoryId, name, amount }) => {
     setState((s) => {
-      const iso = `${s.month.year}-${pad(s.month.monthNum)}-${pad(s.month.dayOfMonth)}`
-      const entry = {
-        id: `e${Date.now()}`,
+      const m = monthContext(s)
+      const iso =
+        date ??
+        (m.isCurrent
+          ? s.clock.todayISO
+          : `${m.year}-${pad(m.monthNum)}-${pad(Math.min(m.dayOfMonth || 1, m.daysInMonth))}`)
+      const tx = {
+        id: `t${Date.now()}`,
         date: iso,
-        category,
-        name: name || CATEGORIES[category]?.label || 'Expense',
+        categoryId,
+        name: name || s.categories.find((c) => c.id === categoryId)?.label || 'Expense',
         amount: -Math.abs(amount),
         fresh: true,
       }
-      return { ...s, entries: [entry, ...s.entries] }
+      return { ...s, transactions: [tx, ...s.transactions] }
     })
   }, [])
 
+  const deleteTransaction = useCallback((id) => {
+    setState((s) => ({ ...s, transactions: s.transactions.filter((t) => t.id !== id) }))
+  }, [])
+
   const adjustEnvelope = useCallback((id, delta) => {
+    setState((s) => {
+      const key = s.ui.selectedMonth
+      const current = { ...s.budgets.default, ...(s.budgets.byMonth[key] ?? {}) }
+      const next = Math.max(0, (current[id] ?? 0) + delta)
+      return {
+        ...s,
+        budgets: {
+          ...s.budgets,
+          byMonth: { ...s.budgets.byMonth, [key]: { ...(s.budgets.byMonth[key] ?? {}), [id]: next } },
+        },
+      }
+    })
+  }, [])
+
+  const setSelectedMonth = useCallback((key) => {
+    setState((s) => {
+      if (!availableMonths(s).includes(key)) return s
+      return { ...s, ui: { ...s.ui, selectedMonth: key } }
+    })
+  }, [])
+
+  const stepMonth = useCallback((delta) => {
+    setState((s) => {
+      const months = availableMonths(s)
+      const next = months[months.indexOf(s.ui.selectedMonth) + delta]
+      return next ? { ...s, ui: { ...s.ui, selectedMonth: next } } : s
+    })
+  }, [])
+
+  const goToCurrentMonth = useCallback(() => {
     setState((s) => ({
       ...s,
-      envelopes: s.envelopes.map((e) =>
-        e.id === id ? { ...e, allocated: Math.max(0, e.allocated + delta) } : e,
+      ui: { ...s.ui, selectedMonth: s.clock.todayISO.slice(0, 7) },
+    }))
+  }, [])
+
+  const addCategory = useCallback(({ label, emoji, color }) => {
+    setState((s) => {
+      const id = slugId(label, s.categories)
+      const cat = {
+        id,
+        label: label.trim() || 'New category',
+        emoji: emoji || '🏷️',
+        color: color || 'lilac',
+      }
+      const normal = s.categories.filter((c) => !c.kind)
+      const system = s.categories.filter((c) => c.kind)
+      return {
+        ...s,
+        categories: [...normal, cat, ...system],
+        budgets: {
+          ...s.budgets,
+          default: { ...s.budgets.default, [id]: NEW_CATEGORY_BUDGET },
+        },
+      }
+    })
+  }, [])
+
+  const renameCategory = useCallback(({ id, label, emoji, color }) => {
+    setState((s) => ({
+      ...s,
+      categories: s.categories.map((c) =>
+        c.id === id
+          ? {
+              ...c,
+              label: label?.trim() || c.label,
+              emoji: emoji || c.emoji,
+              color: color || c.color,
+            }
+          : c,
       ),
     }))
   }, [])
 
-  const resetDemo = useCallback(() => setState(freshState()), [])
+  const deleteCategory = useCallback(({ id, reassignToId }) => {
+    setState((s) => {
+      const cat = s.categories.find((c) => c.id === id)
+      if (!cat || cat.isDefault || cat.kind) return s
+      const inUse = s.transactions.some((t) => t.categoryId === id)
+      if (inUse && !reassignToId) return s
+      return {
+        ...s,
+        transactions: inUse
+          ? s.transactions.map((t) =>
+              t.categoryId === id ? { ...t, categoryId: reassignToId } : t,
+            )
+          : s.transactions,
+        categories: s.categories.filter((c) => c.id !== id),
+        budgets: {
+          ...s.budgets,
+          default: without(s.budgets.default, id),
+          byMonth: Object.fromEntries(
+            Object.entries(s.budgets.byMonth).map(([k, v]) => [k, without(v, id)]),
+          ),
+        },
+      }
+    })
+  }, [])
+
+  const resetDemo = useCallback(() => setState(makeSeed()), [])
 
   const value = useMemo(
-    () => ({ ...state, ...derive(state), addExpense, adjustEnvelope, resetDemo }),
-    [state, addExpense, adjustEnvelope, resetDemo],
+    () => ({
+      ...state,
+      ...derive(state),
+      addTransaction,
+      deleteTransaction,
+      adjustEnvelope,
+      addCategory,
+      renameCategory,
+      deleteCategory,
+      setSelectedMonth,
+      stepMonth,
+      goToCurrentMonth,
+      resetDemo,
+    }),
+    [
+      state,
+      addTransaction,
+      deleteTransaction,
+      adjustEnvelope,
+      addCategory,
+      renameCategory,
+      deleteCategory,
+      setSelectedMonth,
+      stepMonth,
+      goToCurrentMonth,
+      resetDemo,
+    ],
   )
 
   return <BudgetContext.Provider value={value}>{children}</BudgetContext.Provider>
