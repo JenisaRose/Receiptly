@@ -3,6 +3,7 @@ import { makeSeed } from '../data/seed'
 import { persistence } from './persistence'
 import { BudgetContext } from './budgetContext'
 import {
+  availableMonths,
   billSummary,
   budgetForMonth,
   categoryBreakdown,
@@ -29,6 +30,7 @@ function derive(state) {
 
   return {
     month,
+    availableMonths: availableMonths(state),
     goal: state.goal,
     categories: state.categories,
     categoryMap: categoryMap(state),
@@ -111,6 +113,28 @@ export function BudgetProvider({ children }) {
     })
   }, [])
 
+  const setSelectedMonth = useCallback((key) => {
+    setState((s) => {
+      if (!availableMonths(s).includes(key)) return s
+      return { ...s, ui: { ...s.ui, selectedMonth: key } }
+    })
+  }, [])
+
+  const stepMonth = useCallback((delta) => {
+    setState((s) => {
+      const months = availableMonths(s)
+      const next = months[months.indexOf(s.ui.selectedMonth) + delta]
+      return next ? { ...s, ui: { ...s.ui, selectedMonth: next } } : s
+    })
+  }, [])
+
+  const goToCurrentMonth = useCallback(() => {
+    setState((s) => ({
+      ...s,
+      ui: { ...s.ui, selectedMonth: s.clock.todayISO.slice(0, 7) },
+    }))
+  }, [])
+
   const resetDemo = useCallback(() => setState(makeSeed()), [])
 
   const value = useMemo(
@@ -120,9 +144,21 @@ export function BudgetProvider({ children }) {
       addTransaction,
       deleteTransaction,
       adjustEnvelope,
+      setSelectedMonth,
+      stepMonth,
+      goToCurrentMonth,
       resetDemo,
     }),
-    [state, addTransaction, deleteTransaction, adjustEnvelope, resetDemo],
+    [
+      state,
+      addTransaction,
+      deleteTransaction,
+      adjustEnvelope,
+      setSelectedMonth,
+      stepMonth,
+      goToCurrentMonth,
+      resetDemo,
+    ],
   )
 
   return <BudgetContext.Provider value={value}>{children}</BudgetContext.Provider>

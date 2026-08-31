@@ -10,7 +10,8 @@
  *   migration.
  * - `clock.todayISO` is the app's notion of "now" (fixed for the demo).
  *
- * Demo context: it is the 18th of August 2026.
+ * Demo context: it is the 18th of August 2026. March–July are generated so
+ * Trends and Reflect have real history to compute from; August is hand-written.
  */
 
 export const SCHEMA_VERSION = 2
@@ -25,35 +26,6 @@ export const DEFAULT_CATEGORIES = [
   { id: 'income', label: 'Income', emoji: '💰', color: 'yellow', isDefault: true, kind: 'income' },
 ]
 
-/** amount < 0 = money out, amount > 0 = money in. dates are ISO (YYYY-MM-DD). */
-const TRANSACTIONS = [
-  { id: 't01', date: '2026-08-01', categoryId: 'income', name: 'Stipend', amount: 18000 },
-  { id: 't02', date: '2026-08-01', categoryId: 'transport', name: 'Metro card top-up', amount: -500 },
-  { id: 't03', date: '2026-08-02', categoryId: 'food', name: 'Groceries', amount: -520 },
-  { id: 't04', date: '2026-08-03', categoryId: 'transport', name: 'Auto fare', amount: -90 },
-  { id: 't05', date: '2026-08-04', categoryId: 'food', name: 'Campus canteen', amount: -180 },
-  { id: 't06', date: '2026-08-04', categoryId: 'other', name: 'Printouts', amount: -60 },
-  { id: 't07', date: '2026-08-05', categoryId: 'home', name: 'Wifi split', amount: -300 },
-  { id: 't08', date: '2026-08-05', categoryId: 'home', name: 'Electricity split', amount: -1200 },
-  { id: 't09', date: '2026-08-06', categoryId: 'transport', name: 'Cab home', amount: -210 },
-  { id: 't10', date: '2026-08-07', categoryId: 'food', name: 'Zomato', amount: -260 },
-  { id: 't11', date: '2026-08-08', categoryId: 'transport', name: 'Fuel share', amount: -600 },
-  { id: 't12', date: '2026-08-08', categoryId: 'other', name: 'Stationery', amount: -160 },
-  { id: 't13', date: '2026-08-09', categoryId: 'food', name: 'Chai + snacks', amount: -140 },
-  { id: 't14', date: '2026-08-09', categoryId: 'fun', name: 'Movie ticket', amount: -350 },
-  { id: 't15', date: '2026-08-10', categoryId: 'transport', name: 'Auto fare', amount: -80 },
-  { id: 't16', date: '2026-08-11', categoryId: 'food', name: 'Dinner out', amount: -840 },
-  { id: 't17', date: '2026-08-12', categoryId: 'income', name: 'Freelance gig', amount: 6000 },
-  { id: 't18', date: '2026-08-12', categoryId: 'transport', name: 'Metro card top-up', amount: -500 },
-  { id: 't19', date: '2026-08-13', categoryId: 'food', name: 'Groceries', amount: -430 },
-  { id: 't20', date: '2026-08-14', categoryId: 'transport', name: 'Cab (rain)', amount: -300 },
-  { id: 't21', date: '2026-08-14', categoryId: 'other', name: 'Medicines', amount: -240 },
-  { id: 't22', date: '2026-08-15', categoryId: 'food', name: 'Bakery', amount: -180 },
-  { id: 't23', date: '2026-08-16', categoryId: 'transport', name: 'Auto fares', amount: -400 },
-  { id: 't24', date: '2026-08-16', categoryId: 'home', name: 'Cleaning supplies', amount: -250 },
-  { id: 't25', date: '2026-08-17', categoryId: 'food', name: 'Zomato', amount: -450 },
-]
-
 const BILLS = [
   { id: 'b1', name: 'Electricity split', emoji: '💡', amount: 1200, dueDay: 5, freq: 'monthly' },
   { id: 'b2', name: 'Wifi split', emoji: '📶', amount: 300, dueDay: 5, freq: 'monthly' },
@@ -64,18 +36,139 @@ const BILLS = [
   { id: 'b7', name: 'PG room rent', emoji: '🏠', amount: 4000, dueDay: 28, freq: 'monthly' },
 ]
 
+/** amount < 0 = money out, amount > 0 = money in. dates are ISO (YYYY-MM-DD). */
+const AUGUST = [
+  { date: '2026-08-01', categoryId: 'income', name: 'Stipend', amount: 18000 },
+  { date: '2026-08-01', categoryId: 'transport', name: 'Metro card top-up', amount: -500 },
+  { date: '2026-08-02', categoryId: 'food', name: 'Groceries', amount: -520 },
+  { date: '2026-08-03', categoryId: 'transport', name: 'Auto fare', amount: -90 },
+  { date: '2026-08-04', categoryId: 'food', name: 'Campus canteen', amount: -180 },
+  { date: '2026-08-04', categoryId: 'other', name: 'Printouts', amount: -60 },
+  { date: '2026-08-05', categoryId: 'home', name: 'Wifi split', amount: -300 },
+  { date: '2026-08-05', categoryId: 'home', name: 'Electricity split', amount: -1200 },
+  { date: '2026-08-06', categoryId: 'transport', name: 'Cab home', amount: -210 },
+  { date: '2026-08-07', categoryId: 'food', name: 'Zomato', amount: -260 },
+  { date: '2026-08-08', categoryId: 'transport', name: 'Fuel share', amount: -600 },
+  { date: '2026-08-08', categoryId: 'other', name: 'Stationery', amount: -160 },
+  { date: '2026-08-09', categoryId: 'food', name: 'Chai + snacks', amount: -140 },
+  { date: '2026-08-09', categoryId: 'fun', name: 'Movie ticket', amount: -350 },
+  { date: '2026-08-10', categoryId: 'transport', name: 'Auto fare', amount: -80 },
+  { date: '2026-08-11', categoryId: 'food', name: 'Dinner out', amount: -840 },
+  { date: '2026-08-12', categoryId: 'income', name: 'Freelance gig', amount: 6000 },
+  { date: '2026-08-12', categoryId: 'transport', name: 'Metro card top-up', amount: -500 },
+  { date: '2026-08-13', categoryId: 'food', name: 'Groceries', amount: -430 },
+  { date: '2026-08-14', categoryId: 'transport', name: 'Cab (rain)', amount: -300 },
+  { date: '2026-08-14', categoryId: 'other', name: 'Medicines', amount: -240 },
+  { date: '2026-08-15', categoryId: 'food', name: 'Bakery', amount: -180 },
+  { date: '2026-08-16', categoryId: 'transport', name: 'Auto fares', amount: -400 },
+  { date: '2026-08-16', categoryId: 'home', name: 'Cleaning supplies', amount: -250 },
+  { date: '2026-08-17', categoryId: 'food', name: 'Zomato', amount: -450 },
+]
+
+// --- generated history -------------------------------------------------------
+
+function mulberry32(seed) {
+  return function () {
+    seed |= 0
+    seed = (seed + 0x6d2b79f5) | 0
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed)
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+
+const CATALOG = {
+  food: ['Groceries', 'Campus canteen', 'Zomato', 'Swiggy', 'Chai + snacks', 'Bakery', 'Dinner out'],
+  transport: ['Auto fare', 'Metro card top-up', 'Cab home', 'Fuel share', 'Bus pass'],
+  fun: ['Movie night', 'Arcade', 'New book', 'Gig ticket', 'Bowling'],
+  other: ['Printouts', 'Stationery', 'Medicines', 'Small gift', 'Phone case'],
+}
+const MIX = [
+  ['food', 0.44],
+  ['transport', 0.3],
+  ['fun', 0.12],
+  ['other', 0.14],
+]
+const pad = (n) => String(n).padStart(2, '0')
+
+/** One month of realistic-looking spend totalling roughly `spend`. */
+function genMonth(ym, { spend, freelance = 0 }, seed) {
+  const rand = mulberry32(seed)
+  const [y, m] = ym.split('-').map(Number)
+  const daysInMonth = new Date(y, m, 0).getDate()
+  const out = []
+  const add = (day, categoryId, name, amount) =>
+    out.push({ date: `${ym}-${pad(day)}`, categoryId, name, amount: Math.round(amount) })
+
+  add(1, 'income', 'Stipend', 18000)
+  if (freelance) add(12, 'income', 'Freelance gig', freelance)
+
+  add(5, 'home', 'Wifi split', -300)
+  add(5, 'home', 'Electricity split', -(1000 + Math.round(rand() * 500)))
+
+  let placed = out.filter((t) => t.amount < 0).reduce((s, t) => s - t.amount, 0)
+  const count = 16 + Math.floor(rand() * 5)
+  const draws = []
+  for (let i = 0; i < count; i++) {
+    const r = rand()
+    let acc = 0
+    let cat = 'food'
+    for (const [c, w] of MIX) {
+      acc += w
+      if (r <= acc) {
+        cat = c
+        break
+      }
+    }
+    const day = 1 + Math.floor(rand() * daysInMonth)
+    const dow = new Date(y, m - 1, day).getDay()
+    const weekend = dow === 0 || dow === 6
+    draws.push({
+      cat,
+      day,
+      name: CATALOG[cat][Math.floor(rand() * CATALOG[cat].length)],
+      weight: rand() * (weekend ? 2 : 1) + 0.25,
+    })
+  }
+  const wsum = draws.reduce((s, d) => s + d.weight, 0)
+  const budget = spend - placed
+  for (const d of draws) {
+    add(d.day, d.cat, d.name, -Math.max(40, Math.round((budget * d.weight) / wsum / 10) * 10))
+  }
+  return out.sort((a, b) => a.date.localeCompare(b.date))
+}
+
+const HISTORY = [
+  ...genMonth('2026-03', { spend: 9100 }, 30326),
+  ...genMonth('2026-04', { spend: 8600, freelance: 2000 }, 40426),
+  ...genMonth('2026-05', { spend: 8300 }, 50526),
+  ...genMonth('2026-06', { spend: 7900, freelance: 3500 }, 60626),
+  ...genMonth('2026-07', { spend: 8500, freelance: 1500 }, 70726),
+]
+
+const ALL_BILL_IDS = BILLS.map((b) => b.id)
+
 /** Build a fresh copy of the seed state (used on first run and on reset). */
 export function makeSeed() {
+  const transactions = [...HISTORY, ...AUGUST].map((t, i) => ({ id: `t${pad(i + 1)}`, ...t }))
+
   return {
     schemaVersion: SCHEMA_VERSION,
     clock: { todayISO: '2026-08-18' },
     ui: { selectedMonth: '2026-08' },
 
     categories: DEFAULT_CATEGORIES.map((c) => ({ ...c })),
-    transactions: TRANSACTIONS.map((t) => ({ ...t })),
+    transactions,
 
     bills: BILLS.map((b) => ({ ...b })),
-    billPayments: { '2026-08': ['b1', 'b2', 'b3'] },
+    billPayments: {
+      '2026-03': [...ALL_BILL_IDS],
+      '2026-04': [...ALL_BILL_IDS],
+      '2026-05': [...ALL_BILL_IDS],
+      '2026-06': [...ALL_BILL_IDS],
+      '2026-07': [...ALL_BILL_IDS],
+      '2026-08': ['b1', 'b2', 'b3'],
+    },
 
     budgets: {
       default: { food: 5000, transport: 2500, home: 2000, fun: 1500, other: 1500, buffer: 3500 },

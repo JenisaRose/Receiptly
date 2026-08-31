@@ -3,16 +3,13 @@
  * `state.ui.selectedMonth`, so switching months needs no other change.
  */
 
-const MONTH_NAMES = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
-]
+import { MONTH_NAMES, daysInMonth as daysIn, monthRange, shiftMonth } from '../lib/dates'
 
 /** "2026-08" -> { year, monthNum, daysInMonth, isCurrent, dayOfMonth, daysLeft, ... } */
 export function monthContext(state) {
   const key = state.ui.selectedMonth
   const [year, monthNum] = key.split('-').map(Number)
-  const daysInMonth = new Date(year, monthNum, 0).getDate()
+  const daysInMonth = daysIn(key)
 
   const todayISO = state.clock.todayISO
   const currentKey = todayISO.slice(0, 7)
@@ -38,6 +35,16 @@ export function monthContext(state) {
     // kept for components that still read the old name
     goalSetAside: state.monthSettings[key]?.setAside ?? state.defaultSetAside,
   }
+}
+
+/** Months the switcher can reach: earliest data → three months ahead of "now". */
+export function availableMonths(state) {
+  const currentKey = state.clock.todayISO.slice(0, 7)
+  const earliest = state.transactions.reduce(
+    (min, t) => (t.date.slice(0, 7) < min ? t.date.slice(0, 7) : min),
+    currentKey,
+  )
+  return monthRange(earliest, shiftMonth(currentKey, 3))
 }
 
 export function categoryMap(state) {

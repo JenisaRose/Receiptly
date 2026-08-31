@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useCallback, useEffect, useState } from 'react'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import LogExpenseModal from '../LogExpenseModal'
+import MonthSwitcher from '../MonthSwitcher'
 import ResetDemo from '../ResetDemo'
 import Today from '../../screens/Today'
 import Receipts from '../../screens/Receipts'
@@ -53,6 +54,8 @@ export default function AppShell() {
               RP
             </div>
           </header>
+
+          <MonthSwitcher />
 
           <AnimatePresence mode="wait">
             <motion.div
