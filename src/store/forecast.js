@@ -3,9 +3,12 @@
 import { spendsInMonth, sumAbs } from './analyticsCore'
 import { budgetForMonth, monthContext, safeToSpend } from './selectors'
 
+// projecting a whole month from one or two days is noise, not a forecast
+const MIN_DAYS_FOR_FORECAST = 3
+
 export function monthForecast(state) {
   const m = monthContext(state)
-  if (!m.isCurrent) return null
+  if (!m.isCurrent || m.dayOfMonth < MIN_DAYS_FOR_FORECAST) return null
 
   const spends = spendsInMonth(state, m.key)
   const spentSoFar = sumAbs(spends)
@@ -55,7 +58,7 @@ export function monthForecast(state) {
 /** Per-envelope projection — which jars are heading over. */
 export function envelopeForecast(state) {
   const m = monthContext(state)
-  if (!m.isCurrent) return {}
+  if (!m.isCurrent || m.dayOfMonth < MIN_DAYS_FOR_FORECAST) return {}
   const elapsed = Math.max(1, m.dayOfMonth)
   const factor = m.daysInMonth / elapsed
   const out = {}

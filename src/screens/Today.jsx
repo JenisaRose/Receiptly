@@ -100,6 +100,15 @@ export default function Today({ onLogExpense }) {
       {isPast && <PastBreakdown b={b} />}
 
       {isCurrent && b.forecast && <Forecast f={b.forecast} />}
+      {isCurrent && !b.forecast && (
+        <div className="-rotate-[0.6deg] border-[3px] border-ink bg-mint p-4 shadow-hard-sm">
+          <p className="font-hand text-[19px] font-bold">{label}’s just getting started 🌱</p>
+          <p className="mt-0.5 text-[12px] font-semibold">
+            your pace and month-end forecast kick in once there are a few days of spending to
+            read.
+          </p>
+        </div>
+      )}
 
       {isCurrent && (
         <WhatIf
