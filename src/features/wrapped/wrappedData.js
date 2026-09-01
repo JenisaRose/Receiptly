@@ -71,6 +71,7 @@ export function buildWrapped(b) {
     available: true,
     monthLabel: r.monthLabel,
     monthLong: b.month.longLabel,
+    monthKey: r.monthKey,
     year: r.year,
     total: r.total,
     txCount: r.txCount,
