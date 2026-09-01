@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import { useReducedMotion } from 'framer-motion'
 import { EXPORTERS, canShareFiles, shareReceipt } from '../../export/exporters'
 import Bleed from '../Bleed'
-import ReceiptArtboard from './ReceiptArtboard'
+import ReceiptArtboard, { RECEIPT_PAPER } from './ReceiptArtboard'
 
 /**
  * CARD 7 — the finale. The receipt feeds down out of a printer lip, then the
@@ -76,7 +76,13 @@ export default function FinalReceiptCard({ w, monthKey, monthLabel, onReplay, on
               disabled={busy}
               onClick={() =>
                 run(
-                  () => shareReceipt({ node: captureRef.current, monthKey, monthLabel }),
+                  () =>
+                    shareReceipt({
+                      node: captureRef.current,
+                      monthKey,
+                      monthLabel,
+                      backgroundColor: RECEIPT_PAPER,
+                    }),
                   'share',
                 )
               }
@@ -90,7 +96,17 @@ export default function FinalReceiptCard({ w, monthKey, monthLabel, onReplay, on
             <button
               key={exp.id}
               disabled={busy}
-              onClick={() => run(() => exp.run({ node: captureRef.current, monthKey }), exp.id)}
+              onClick={() =>
+                run(
+                  () =>
+                    exp.run({
+                      node: captureRef.current,
+                      monthKey,
+                      backgroundColor: RECEIPT_PAPER,
+                    }),
+                  exp.id,
+                )
+              }
               className="press min-w-[96px] flex-1 border-[3px] border-ink bg-white py-2.5 font-display text-[13px] shadow-hard-sm disabled:opacity-50"
               style={{ '--press-x': '4px', '--press-y': '4px' }}
             >

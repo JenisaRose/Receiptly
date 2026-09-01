@@ -2,8 +2,11 @@ import { forwardRef } from 'react'
 import { ordinal, rupee } from '../../../lib/format'
 import { BG, HEAT_LEVELS, heatLevel } from '../../../lib/theme'
 
-// warm thermal-paper stock — bright enough that near-black text stays crisp
-const PAPER = '#f6f0e1'
+// warm thermal-paper stock — bright enough that near-black text stays crisp.
+// Exported so the PNG exporter can fill with the same colour (modern-screenshot
+// ignores the capture root's own background).
+export const RECEIPT_PAPER = '#f6f0e1'
+const PAPER = RECEIPT_PAPER
 const MONO =
   'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace'
 
