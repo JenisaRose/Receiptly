@@ -13,9 +13,9 @@ import { monthContext } from '../selectors'
 
 const abs = (t) => Math.abs(t.amount)
 
-export function buildContext(state) {
+export function buildContext(state, monthKeyOverride) {
   const m = monthContext(state)
-  const monthKey = m.isCurrent ? shiftMonth(m.key, -1) : m.key
+  const monthKey = monthKeyOverride ?? (m.isCurrent ? shiftMonth(m.key, -1) : m.key)
   const monthName = MONTH_NAMES[Number(monthKey.slice(5, 7)) - 1]
   const dim = daysInMonth(monthKey)
 

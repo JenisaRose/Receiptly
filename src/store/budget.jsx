@@ -72,6 +72,7 @@ function derive(state) {
     trends: { months: trendsByMonth(state), weeks: trendsByWeek(state) },
     dayOfWeekSpend: dayOfWeekSpend(state),
     insights: runInsights(state),
+    insightsForMonth: (monthKey) => runInsights(state, { monthKey, limit: 3 }),
     reflection: monthReflection(state),
     forecast: monthForecast(state),
     envelopeForecast: envelopeForecast(state),

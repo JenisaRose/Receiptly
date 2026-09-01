@@ -11,9 +11,10 @@ export const INSIGHT_TONE = {
 /**
  * Run every detector over the analysed month, rank by score, keep the top
  * `limit` — one per `family` so we don't show two findings about one category.
+ * `monthKey` forces a specific month (default: the last complete one).
  */
-export function runInsights(state, limit = 4) {
-  const ctx = buildContext(state)
+export function runInsights(state, { limit = 4, monthKey } = {}) {
+  const ctx = buildContext(state, monthKey)
   if (ctx.monthTotal === 0) return []
 
   const found = []

@@ -101,11 +101,23 @@ export function monthReflection(state) {
   return {
     monthLabel: m.label,
     monthKey: key,
+    year: Number(key.slice(0, 4)),
     firstWeekday: weekdayMon0(`${key}-01`), // 0 = Mon … 6 = Sun
     total,
+    txCount: spends.length,
     vsPrev,
     note,
     heat,
+    // raw values for consumers that want to format their own (e.g. Wrapped)
+    raw: {
+      topCategory: top ? { label: top.label, amount: top.amount, pct: topPct } : null,
+      priciestDay: maxSpend > 0 ? { day: priciestDay, amount: maxSpend } : null,
+      noSpendDays,
+      bestRun,
+      weeksUnder,
+      weeksInMonth,
+      diffVsPrev: prevTotal > 0 ? diff : null,
+    },
     cards: [
       {
         k: 'Biggest category',

@@ -3,6 +3,11 @@ export const MONTH_NAMES = [
   'July', 'August', 'September', 'October', 'November', 'December',
 ]
 
+/** Monday-first, matching weekdayMon0(). */
+export const WEEKDAYS = [
+  'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday',
+]
+
 const p2 = (n) => String(n).padStart(2, '0')
 
 /** Real "now" as a local ISO date, e.g. "2026-08-31". */

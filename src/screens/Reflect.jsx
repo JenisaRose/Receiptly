@@ -1,8 +1,8 @@
-import { AnimatePresence, motion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { useState } from 'react'
 import EmptyState from '../components/EmptyState'
 import Money from '../components/ui/Money'
-import ShareReceiptModal from '../features/export/ShareReceiptModal'
+import WrappedStory from '../features/wrapped/WrappedStory'
 import { rupee } from '../lib/format'
 import { HEAT_LEVELS, heatLevel } from '../lib/theme'
 import { useBudget } from '../store/budgetContext'
@@ -12,7 +12,7 @@ const TONE = { mint: 'bg-mint', sky: 'bg-sky', lilac: 'bg-lilac', pink: 'bg-pink
 export default function Reflect() {
   const b = useBudget()
   const r = b.reflection
-  const [sharing, setSharing] = useState(false)
+  const [playing, setPlaying] = useState(false)
 
   if (r.total === 0) {
     return (
@@ -95,16 +95,14 @@ export default function Reflect() {
       </div>
 
       <button
-        onClick={() => setSharing(true)}
-        className="press w-full border-[3px] border-ink bg-ink py-3 font-display text-sm text-yellow shadow-[5px_5px_0_var(--color-sky)]"
-        style={{ '--press-x': '5px', '--press-y': '5px' }}
+        onClick={() => setPlaying(true)}
+        className="press w-full -rotate-[0.5deg] border-[3px] border-ink bg-ink py-4 font-display text-[15px] text-yellow shadow-[6px_6px_0_var(--color-pink)]"
+        style={{ '--press-x': '6px', '--press-y': '6px' }}
       >
-        make a shareable receipt 🧾
+        ▶ play your month
       </button>
 
-      <AnimatePresence>
-        {sharing && <ShareReceiptModal onClose={() => setSharing(false)} />}
-      </AnimatePresence>
+      {playing && <WrappedStory onClose={() => setPlaying(false)} />}
     </div>
   )
 }
