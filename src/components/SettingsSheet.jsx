@@ -1,10 +1,13 @@
 import { motion } from 'framer-motion'
 import { useEffect } from 'react'
+import { useBudget } from '../store/budgetContext'
 import CategoryManager from './CategoryManager'
 import ResetDemo from './ResetDemo'
 
 /** Slide-over opened from the avatar. Rendered inside <AnimatePresence>. */
 export default function SettingsSheet({ onClose }) {
+  const { restartOnboarding } = useBudget()
+
   useEffect(() => {
     function onKey(e) {
       if (e.key === 'Escape') onClose()
@@ -48,6 +51,25 @@ export default function SettingsSheet({ onClose }) {
               starts a fresh demo month. anything you logged is cleared.
             </p>
             <ResetDemo className="text-[12px]" />
+          </section>
+
+          <section>
+            <h3 className="mb-2 font-hand text-[19px] font-bold">redo setup</h3>
+            <p className="mb-2.5 text-[11.5px] opacity-60">
+              run the intro again — re-enter your income, bills and goal, or switch to the demo.
+              your current data stays until you finish.
+            </p>
+            <button
+              onClick={() => {
+                if (confirm('Run setup again? Your data stays until you finish the flow.')) {
+                  onClose()
+                  restartOnboarding()
+                }
+              }}
+              className="border-[3px] border-ink bg-white px-3.5 py-2 font-display text-[12px] shadow-hard-xs"
+            >
+              ↻ run setup again
+            </button>
           </section>
 
           <p className="pt-2 text-center text-[10.5px] opacity-45">

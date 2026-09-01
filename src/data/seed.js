@@ -156,6 +156,8 @@ export function makeSeed(iso = todayISO()) {
 
   return {
     schemaVersion: SCHEMA_VERSION,
+    demo: true, // seeded example data — reseeds when it goes stale (see migrate)
+    onboarded: true,
     clock: { todayISO: today },
     ui: { selectedMonth: curMonth },
 
@@ -173,8 +175,43 @@ export function makeSeed(iso = todayISO()) {
     },
 
     goal: { name: 'Goa trip fund', emoji: '🎯', saved: 9000, target: 15000 },
+    profile: { monthlyIncome: 18000, incomeKind: 'monthly' },
 
     monthSettings: {},
     defaultSetAside: 1500,
+  }
+}
+
+/**
+ * A blank slate — the state before someone has been through onboarding.
+ * Enough shape that every selector works; `onboarded: false` routes the app to
+ * the setup flow, which then fills this in (or swaps in the demo).
+ */
+export function makeEmpty(iso = todayISO()) {
+  const curMonth = iso.slice(0, 7)
+  return {
+    schemaVersion: SCHEMA_VERSION,
+    demo: false,
+    onboarded: false,
+    clock: { todayISO: iso },
+    ui: { selectedMonth: curMonth },
+
+    categories: DEFAULT_CATEGORIES.map((c) => ({ ...c })),
+    transactions: [],
+
+    bills: [],
+    billPayments: {},
+
+    budgets: {
+      default: { food: 0, transport: 0, home: 0, fun: 0, other: 0, buffer: 0 },
+      byMonth: {},
+      bufferRollover: 0,
+    },
+
+    goal: { name: '', emoji: '🎯', saved: 0, target: 0 },
+    profile: null,
+
+    monthSettings: {},
+    defaultSetAside: 0,
   }
 }

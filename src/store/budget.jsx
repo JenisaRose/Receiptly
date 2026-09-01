@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { makeSeed } from '../data/seed'
+import { makeEmpty, makeSeed } from '../data/seed'
+import { buildOnboardedState } from '../features/onboarding/buildState'
 import { todayISO } from '../lib/dates'
 import { slugId } from '../lib/slug'
 import { dayOfWeekSpend, monthReflection, trendsByMonth, trendsByWeek } from './analytics'
@@ -94,7 +95,8 @@ function resolveToday() {
 function initState() {
   const today = resolveToday()
   const loaded = persistence.loadSync()
-  const base = loaded ?? makeSeed(today)
+  // nothing stored yet → a blank slate that routes straight into setup
+  const base = loaded ?? makeEmpty(today)
   const currentMonth = today.slice(0, 7)
   const months = availableMonths({ ...base, clock: { todayISO: today } })
   return {
@@ -249,7 +251,17 @@ export function BudgetProvider({ children }) {
     })
   }, [])
 
-  const resetDemo = useCallback(() => setState(makeSeed()), [])
+  const resetDemo = useCallback(() => setState(makeSeed(resolveToday())), [])
+
+  const completeOnboarding = useCallback(
+    (answers) => setState(buildOnboardedState(answers, resolveToday())),
+    [],
+  )
+
+  const restartOnboarding = useCallback(
+    () => setState((s) => ({ ...s, onboarded: false })),
+    [],
+  )
 
   const value = useMemo(
     () => ({
@@ -265,6 +277,8 @@ export function BudgetProvider({ children }) {
       stepMonth,
       goToCurrentMonth,
       resetDemo,
+      completeOnboarding,
+      restartOnboarding,
     }),
     [
       state,
@@ -278,6 +292,8 @@ export function BudgetProvider({ children }) {
       stepMonth,
       goToCurrentMonth,
       resetDemo,
+      completeOnboarding,
+      restartOnboarding,
     ],
   )
 

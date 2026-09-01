@@ -19,8 +19,14 @@ export function migrate(raw) {
   if (!raw || typeof raw !== 'object') return null
   if ((raw.schemaVersion ?? 1) < SCHEMA_VERSION) return null
 
-  const newest = (raw.transactions ?? []).reduce((max, t) => (t.date > max ? t.date : max), '')
-  if (newest && newest < addDays(todayISO(), -STALE_AFTER_DAYS)) return null
+  // Seeded demo data reseeds once it goes stale so it always feels current.
+  // A user's own data (they've been through onboarding) is never auto-wiped;
+  // legacy blobs with no `onboarded` flag were auto-seeded, so treat as demo.
+  const isDemo = raw.demo ?? raw.onboarded === undefined
+  if (isDemo) {
+    const newest = (raw.transactions ?? []).reduce((max, t) => (t.date > max ? t.date : max), '')
+    if (newest && newest < addDays(todayISO(), -STALE_AFTER_DAYS)) return null
+  }
 
   return raw
 }

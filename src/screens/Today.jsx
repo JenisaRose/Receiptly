@@ -121,17 +121,26 @@ export default function Today({ onLogExpense }) {
       )}
 
       {/* goal */}
-      <div className="border-[3px] border-ink bg-lilac p-4 shadow-hard-sm">
-        <div className="mb-2 flex justify-between text-[12px] font-bold">
-          <span>
-            {b.goal.emoji} {b.goal.name}
-          </span>
-          <span>
-            {rupee(b.goal.saved)} / {rupee(b.goal.target)}
-          </span>
+      {b.goal.target > 0 ? (
+        <div className="border-[3px] border-ink bg-lilac p-4 shadow-hard-sm">
+          <div className="mb-2 flex justify-between text-[12px] font-bold">
+            <span>
+              {b.goal.emoji} {b.goal.name}
+            </span>
+            <span>
+              {rupee(b.goal.saved)} / {rupee(b.goal.target)}
+            </span>
+          </div>
+          <ProgressBar value={b.goal.saved / b.goal.target} fill="stripes-lilac" height={18} />
         </div>
-        <ProgressBar value={b.goal.saved / b.goal.target} fill="stripes-lilac" height={18} />
-      </div>
+      ) : (
+        <div className="-rotate-[0.5deg] border-[3px] border-dashed border-ink/45 bg-lilac/60 p-4">
+          <p className="font-hand text-[18px] font-bold">🎯 no savings goal yet</p>
+          <p className="mt-0.5 text-[12px] font-semibold opacity-70">
+            pick something to save for in settings → redo setup, and track it here.
+          </p>
+        </div>
+      )}
 
       {/* recent */}
       <div>
