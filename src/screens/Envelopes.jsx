@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { useState } from 'react'
 import ProgressBar from '../components/ui/ProgressBar'
-import { rupee } from '../lib/format'
+import { ordinal, rupee } from '../lib/format'
 import { ENVELOPE_STATUS } from '../lib/theme'
 import { useBudget } from '../store/budgetContext'
 
@@ -19,7 +19,7 @@ export default function Envelopes() {
         </p>
         <p className="mt-0.5 text-[12px] font-semibold">
           {rupee(b.spentSoFar)} used so far
-          {rolled ? ` · ${rupee(rolled)} rolled over from July` : ''}
+          {rolled ? ` · ${rupee(rolled)} rolled over from last month` : ''}
         </p>
       </div>
 
@@ -31,6 +31,7 @@ export default function Envelopes() {
         {b.envelopesResolved.map((env) => {
           const s = ENVELOPE_STATUS[env.status]
           const isOpen = openId === env.id
+          const fc = b.envelopeForecast[env.id]
           return (
             <div
               key={env.id}
@@ -58,6 +59,12 @@ export default function Envelopes() {
                     : `${rupee(-env.remaining)} over`}
                 </p>
                 <ProgressBar value={env.ratio} fill={s.fill} />
+                {env.status !== 'over' && fc?.willOverspend && (
+                  <p className="mt-1.5 text-[11px] font-semibold text-pink">
+                    → on pace for {rupee(fc.projected)}
+                    {fc.crossDay ? ` · over by the ${ordinal(fc.crossDay)}` : ''}
+                  </p>
+                )}
               </button>
 
               <AnimatePresence initial={false}>

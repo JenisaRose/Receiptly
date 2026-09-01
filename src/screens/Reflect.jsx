@@ -1,8 +1,8 @@
-import { AnimatePresence, motion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { useState } from 'react'
 import EmptyState from '../components/EmptyState'
 import Money from '../components/ui/Money'
-import ShareReceiptModal from '../features/export/ShareReceiptModal'
+import WrappedStory from '../features/wrapped/WrappedStory'
 import { rupee } from '../lib/format'
 import { HEAT_LEVELS, heatLevel } from '../lib/theme'
 import { useBudget } from '../store/budgetContext'
@@ -12,7 +12,7 @@ const TONE = { mint: 'bg-mint', sky: 'bg-sky', lilac: 'bg-lilac', pink: 'bg-pink
 export default function Reflect() {
   const b = useBudget()
   const r = b.reflection
-  const [sharing, setSharing] = useState(false)
+  const [playing, setPlaying] = useState(false)
 
   if (r.total === 0) {
     return (
@@ -54,12 +54,22 @@ export default function Reflect() {
 
       <div className="border-[3px] border-ink bg-white p-4 shadow-hard-sm">
         <p className="mb-3 text-[13px] font-bold">every day in {r.monthLabel}, by spend</p>
+        <div className="mb-1.5 grid grid-cols-7 gap-1.5 text-[9px] font-bold opacity-45">
+          {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
+            <span key={i} className="text-center">
+              {d}
+            </span>
+          ))}
+        </div>
         <motion.div
           className="grid grid-cols-7 gap-1.5"
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, delay: 0.15 }}
         >
+          {Array.from({ length: r.firstWeekday }).map((_, i) => (
+            <div key={`pad-${i}`} aria-hidden />
+          ))}
           {r.heat.map((v, i) => {
             const lvl = heatLevel(v)
             return (
@@ -85,16 +95,14 @@ export default function Reflect() {
       </div>
 
       <button
-        onClick={() => setSharing(true)}
-        className="press w-full border-[3px] border-ink bg-ink py-3 font-display text-sm text-yellow shadow-[5px_5px_0_var(--color-sky)]"
-        style={{ '--press-x': '5px', '--press-y': '5px' }}
+        onClick={() => setPlaying(true)}
+        className="press w-full -rotate-[0.5deg] border-[3px] border-ink bg-ink py-4 font-display text-[15px] text-yellow shadow-[6px_6px_0_var(--color-pink)]"
+        style={{ '--press-x': '6px', '--press-y': '6px' }}
       >
-        make a shareable receipt 🧾
+        ▶ play your month
       </button>
 
-      <AnimatePresence>
-        {sharing && <ShareReceiptModal onClose={() => setSharing(false)} />}
-      </AnimatePresence>
+      {playing && <WrappedStory onClose={() => setPlaying(false)} />}
     </div>
   )
 }

@@ -1,6 +1,8 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { useCallback, useEffect, useState } from 'react'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
+import Onboarding from '../../features/onboarding/Onboarding'
+import { useBudget } from '../../store/budgetContext'
 import LogExpenseModal from '../LogExpenseModal'
 import MonthSwitcher from '../MonthSwitcher'
 import SettingsSheet from '../SettingsSheet'
@@ -17,6 +19,7 @@ import { NAV } from './navItems'
 export default function AppShell() {
   const location = useLocation()
   const navigate = useNavigate()
+  const { onboarded } = useBudget()
   const [logOpen, setLogOpen] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
 
@@ -39,6 +42,8 @@ export default function AppShell() {
   }, [navigate, logOpen])
 
   const current = NAV.find((n) => n.to === location.pathname) ?? NAV[0]
+
+  if (onboarded === false) return <Onboarding />
 
   return (
     <div className="min-h-screen">

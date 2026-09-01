@@ -1,13 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { makeSeed } from '../data/seed'
+import { makeEmpty, makeSeed } from '../data/seed'
+import { buildOnboardedState } from '../features/onboarding/buildState'
+import { todayISO } from '../lib/dates'
 import { slugId } from '../lib/slug'
-import {
-  dayOfWeekSpend,
-  monthReflection,
-  spendingPatterns,
-  trendsByMonth,
-  trendsByWeek,
-} from './analytics'
+import { dayOfWeekSpend, monthReflection, trendsByMonth, trendsByWeek } from './analytics'
+import { envelopeForecast, monthForecast } from './forecast'
+import { runInsights } from './insights/engine'
 import { persistence } from './persistence'
 import { BudgetContext } from './budgetContext'
 import {
@@ -74,13 +72,47 @@ function derive(state) {
 
     trends: { months: trendsByMonth(state), weeks: trendsByWeek(state) },
     dayOfWeekSpend: dayOfWeekSpend(state),
-    patterns: spendingPatterns(state),
+    insights: runInsights(state),
+    insightsForMonth: (monthKey) => runInsights(state, { monthKey, limit: 3 }),
     reflection: monthReflection(state),
+    forecast: monthForecast(state),
+    envelopeForecast: envelopeForecast(state),
+  }
+}
+
+/** Real "now", or an `?today=YYYY-MM-DD` override for demos and screenshots. */
+function resolveToday() {
+  try {
+    const q = new URLSearchParams(window.location.search).get('today')
+    if (/^\d{4}-\d{2}-\d{2}$/.test(q)) return q
+  } catch {
+    /* no window / bad URL */
+  }
+  return todayISO()
+}
+
+/** "today" is always real-now, never whatever was frozen into storage. */
+function initState() {
+  const today = resolveToday()
+  const loaded = persistence.loadSync()
+  // nothing stored yet → a blank slate that routes straight into setup
+  const base = loaded ?? makeEmpty(today)
+  const currentMonth = today.slice(0, 7)
+  const months = availableMonths({ ...base, clock: { todayISO: today } })
+  return {
+    ...base,
+    clock: { ...base.clock, todayISO: today },
+    ui: {
+      ...base.ui,
+      selectedMonth: months.includes(base.ui.selectedMonth)
+        ? base.ui.selectedMonth
+        : currentMonth,
+    },
   }
 }
 
 export function BudgetProvider({ children }) {
-  const [state, setState] = useState(() => persistence.loadSync() ?? makeSeed())
+  const [state, setState] = useState(initState)
 
   useEffect(() => {
     // drop the transient `fresh` flag so reloads don't re-animate old rows
@@ -219,7 +251,17 @@ export function BudgetProvider({ children }) {
     })
   }, [])
 
-  const resetDemo = useCallback(() => setState(makeSeed()), [])
+  const resetDemo = useCallback(() => setState(makeSeed(resolveToday())), [])
+
+  const completeOnboarding = useCallback(
+    (answers) => setState(buildOnboardedState(answers, resolveToday())),
+    [],
+  )
+
+  const restartOnboarding = useCallback(
+    () => setState((s) => ({ ...s, onboarded: false })),
+    [],
+  )
 
   const value = useMemo(
     () => ({
@@ -235,6 +277,8 @@ export function BudgetProvider({ children }) {
       stepMonth,
       goToCurrentMonth,
       resetDemo,
+      completeOnboarding,
+      restartOnboarding,
     }),
     [
       state,
@@ -248,6 +292,8 @@ export function BudgetProvider({ children }) {
       stepMonth,
       goToCurrentMonth,
       resetDemo,
+      completeOnboarding,
+      restartOnboarding,
     ],
   )
 

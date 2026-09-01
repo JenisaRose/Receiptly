@@ -8,11 +8,14 @@
  * - Per-month config (`billPayments`, `budgets.byMonth`, `monthSettings`) is
  *   keyed by "YYYY-MM" and falls back to a default, so adding a month needs no
  *   migration.
- * - `clock.todayISO` is the app's notion of "now" (fixed for the demo).
+ * - `clock.todayISO` is the app's notion of "now".
  *
- * Demo context: it is the 18th of August 2026. March–July are generated so
- * Trends and Reflect have real history to compute from; August is hand-written.
+ * The demo is anchored to the real date: twelve full months of generated
+ * history plus the current month up to yesterday, so it always feels live.
+ * The generation is deterministic per month key.
  */
+
+import { shiftMonth, todayISO } from '../lib/dates'
 
 export const SCHEMA_VERSION = 2
 
@@ -35,37 +38,9 @@ const BILLS = [
   { id: 'b6', name: 'Phone recharge', emoji: '📱', amount: 260, dueDay: 24, freq: 'monthly' },
   { id: 'b7', name: 'PG room rent', emoji: '🏠', amount: 4000, dueDay: 28, freq: 'monthly' },
 ]
+const ALL_BILL_IDS = BILLS.map((b) => b.id)
 
-/** amount < 0 = money out, amount > 0 = money in. dates are ISO (YYYY-MM-DD). */
-const AUGUST = [
-  { date: '2026-08-01', categoryId: 'income', name: 'Stipend', amount: 18000 },
-  { date: '2026-08-01', categoryId: 'transport', name: 'Metro card top-up', amount: -500 },
-  { date: '2026-08-02', categoryId: 'food', name: 'Groceries', amount: -520 },
-  { date: '2026-08-03', categoryId: 'transport', name: 'Auto fare', amount: -90 },
-  { date: '2026-08-04', categoryId: 'food', name: 'Campus canteen', amount: -180 },
-  { date: '2026-08-04', categoryId: 'other', name: 'Printouts', amount: -60 },
-  { date: '2026-08-05', categoryId: 'home', name: 'Wifi split', amount: -300 },
-  { date: '2026-08-05', categoryId: 'home', name: 'Electricity split', amount: -1200 },
-  { date: '2026-08-06', categoryId: 'transport', name: 'Cab home', amount: -210 },
-  { date: '2026-08-07', categoryId: 'food', name: 'Zomato', amount: -260 },
-  { date: '2026-08-08', categoryId: 'transport', name: 'Fuel share', amount: -600 },
-  { date: '2026-08-08', categoryId: 'other', name: 'Stationery', amount: -160 },
-  { date: '2026-08-09', categoryId: 'food', name: 'Chai + snacks', amount: -140 },
-  { date: '2026-08-09', categoryId: 'fun', name: 'Movie ticket', amount: -350 },
-  { date: '2026-08-10', categoryId: 'transport', name: 'Auto fare', amount: -80 },
-  { date: '2026-08-11', categoryId: 'food', name: 'Dinner out', amount: -840 },
-  { date: '2026-08-12', categoryId: 'income', name: 'Freelance gig', amount: 6000 },
-  { date: '2026-08-12', categoryId: 'transport', name: 'Metro card top-up', amount: -500 },
-  { date: '2026-08-13', categoryId: 'food', name: 'Groceries', amount: -430 },
-  { date: '2026-08-14', categoryId: 'transport', name: 'Cab (rain)', amount: -300 },
-  { date: '2026-08-14', categoryId: 'other', name: 'Medicines', amount: -240 },
-  { date: '2026-08-15', categoryId: 'food', name: 'Bakery', amount: -180 },
-  { date: '2026-08-16', categoryId: 'transport', name: 'Auto fares', amount: -400 },
-  { date: '2026-08-16', categoryId: 'home', name: 'Cleaning supplies', amount: -250 },
-  { date: '2026-08-17', categoryId: 'food', name: 'Zomato', amount: -450 },
-]
-
-// --- generated history -------------------------------------------------------
+// --- deterministic generation ----------------------------------------------
 
 function mulberry32(seed) {
   return function () {
@@ -90,24 +65,28 @@ const MIX = [
   ['other', 0.14],
 ]
 const pad = (n) => String(n).padStart(2, '0')
+const seedFor = (ym) => Number(ym.replace('-', '')) * 7 + 13
 
-/** One month of realistic-looking spend totalling roughly `spend`. */
-function genMonth(ym, { spend, freelance = 0 }, seed) {
+/** One month of realistic-looking spend totalling roughly `spend`.
+ *  `throughDay` limits it to the first N days (for the in-progress month). */
+function genMonth(ym, { spend, freelance = 0, throughDay } = {}, seed = seedFor(ym)) {
   const rand = mulberry32(seed)
   const [y, m] = ym.split('-').map(Number)
-  const daysInMonth = new Date(y, m, 0).getDate()
+  const dim = new Date(y, m, 0).getDate()
+  const lastDay = throughDay ? Math.min(throughDay, dim) : dim
   const out = []
-  const add = (day, categoryId, name, amount) =>
-    out.push({ date: `${ym}-${pad(day)}`, categoryId, name, amount: Math.round(amount) })
+  const add = (day, categoryId, name, amount) => {
+    if (day <= lastDay) out.push({ date: `${ym}-${pad(day)}`, categoryId, name, amount: Math.round(amount) })
+  }
 
   add(1, 'income', 'Stipend', 18000)
   if (freelance) add(12, 'income', 'Freelance gig', freelance)
 
-  add(5, 'home', 'Wifi split', -300)
-  add(5, 'home', 'Electricity split', -(1000 + Math.round(rand() * 500)))
+  add(4, 'home', 'Wifi split', -300)
+  add(6 + Math.floor(rand() * 16), 'home', 'Electricity split', -(1000 + Math.round(rand() * 500)))
 
-  let placed = out.filter((t) => t.amount < 0).reduce((s, t) => s - t.amount, 0)
-  const count = 16 + Math.floor(rand() * 5)
+  const placed = out.filter((t) => t.amount < 0).reduce((s, t) => s - t.amount, 0)
+  const count = Math.round((16 + Math.floor(rand() * 5)) * (lastDay / dim))
   const draws = []
   for (let i = 0; i < count; i++) {
     const r = rand()
@@ -120,7 +99,7 @@ function genMonth(ym, { spend, freelance = 0 }, seed) {
         break
       }
     }
-    const day = 1 + Math.floor(rand() * daysInMonth)
+    const day = 1 + Math.floor(rand() * lastDay)
     const dow = new Date(y, m - 1, day).getDay()
     const weekend = dow === 0 || dow === 6
     draws.push({
@@ -130,55 +109,109 @@ function genMonth(ym, { spend, freelance = 0 }, seed) {
       weight: rand() * (weekend ? 2 : 1) + 0.25,
     })
   }
-  const wsum = draws.reduce((s, d) => s + d.weight, 0)
-  const budget = spend - placed
+  const wsum = draws.reduce((s, d) => s + d.weight, 0) || 1
+  const budget = spend * (lastDay / dim) - placed
   for (const d of draws) {
     add(d.day, d.cat, d.name, -Math.max(40, Math.round((budget * d.weight) / wsum / 10) * 10))
   }
   return out.sort((a, b) => a.date.localeCompare(b.date))
 }
 
-const HISTORY = [
-  ...genMonth('2026-03', { spend: 9100 }, 30326),
-  ...genMonth('2026-04', { spend: 8600, freelance: 2000 }, 40426),
-  ...genMonth('2026-05', { spend: 8300 }, 50526),
-  ...genMonth('2026-06', { spend: 7900, freelance: 3500 }, 60626),
-  ...genMonth('2026-07', { spend: 8500, freelance: 1500 }, 70726),
-]
-
-const ALL_BILL_IDS = BILLS.map((b) => b.id)
+// Twelve monthly targets, oldest → newest, drifting gently upward so trends
+// have something to say. The last entry is scaled for the in-progress month.
+const TARGETS = [6600, 7000, 6800, 8200, 7100, 7400, 9100, 8600, 8300, 7900, 8500, 8400]
+const FREELANCE = [0, 2500, 0, 4000, 0, 1500, 0, 2000, 0, 3500, 1500, 6000]
 
 /** Build a fresh copy of the seed state (used on first run and on reset). */
-export function makeSeed() {
-  const transactions = [...HISTORY, ...AUGUST].map((t, i) => ({ id: `t${pad(i + 1)}`, ...t }))
+export function makeSeed(iso = todayISO()) {
+  const today = iso
+  const day = Number(today.slice(8, 10))
+  const curMonth = today.slice(0, 7)
+
+  const months = []
+  let key = shiftMonth(curMonth, -12)
+  for (let i = 0; i < 12; i++) {
+    months.push(key)
+    key = shiftMonth(key, 1)
+  }
+
+  const rows = []
+  months.forEach((mk, i) => {
+    rows.push(...genMonth(mk, { spend: TARGETS[i], freelance: FREELANCE[i] }))
+  })
+  // current month, day 1 → yesterday
+  rows.push(
+    ...genMonth(curMonth, {
+      spend: 8400,
+      freelance: day > 12 ? 6000 : 0,
+      throughDay: Math.max(1, day - 1),
+    }),
+  )
+
+  const transactions = rows.map((t, i) => ({ id: `t${pad(i + 1)}`, ...t }))
+
+  const billPayments = {}
+  for (const mk of months) billPayments[mk] = [...ALL_BILL_IDS]
+  billPayments[curMonth] = BILLS.filter((b) => b.dueDay < day).map((b) => b.id)
 
   return {
     schemaVersion: SCHEMA_VERSION,
-    clock: { todayISO: '2026-08-18' },
-    ui: { selectedMonth: '2026-08' },
+    demo: true, // seeded example data — reseeds when it goes stale (see migrate)
+    onboarded: true,
+    clock: { todayISO: today },
+    ui: { selectedMonth: curMonth },
 
     categories: DEFAULT_CATEGORIES.map((c) => ({ ...c })),
     transactions,
 
     bills: BILLS.map((b) => ({ ...b })),
-    billPayments: {
-      '2026-03': [...ALL_BILL_IDS],
-      '2026-04': [...ALL_BILL_IDS],
-      '2026-05': [...ALL_BILL_IDS],
-      '2026-06': [...ALL_BILL_IDS],
-      '2026-07': [...ALL_BILL_IDS],
-      '2026-08': ['b1', 'b2', 'b3'],
-    },
+    billPayments,
 
     budgets: {
-      default: { food: 5000, transport: 2500, home: 2000, fun: 1500, other: 1500, buffer: 3500 },
+      // a real, slightly tight plan so the forecast has something to say
+      default: { food: 3800, transport: 2500, home: 2200, fun: 900, other: 700, buffer: 2800 },
       byMonth: {},
       bufferRollover: 500,
     },
 
     goal: { name: 'Goa trip fund', emoji: '🎯', saved: 9000, target: 15000 },
+    profile: { monthlyIncome: 18000, incomeKind: 'monthly' },
 
     monthSettings: {},
     defaultSetAside: 1500,
+  }
+}
+
+/**
+ * A blank slate — the state before someone has been through onboarding.
+ * Enough shape that every selector works; `onboarded: false` routes the app to
+ * the setup flow, which then fills this in (or swaps in the demo).
+ */
+export function makeEmpty(iso = todayISO()) {
+  const curMonth = iso.slice(0, 7)
+  return {
+    schemaVersion: SCHEMA_VERSION,
+    demo: false,
+    onboarded: false,
+    clock: { todayISO: iso },
+    ui: { selectedMonth: curMonth },
+
+    categories: DEFAULT_CATEGORIES.map((c) => ({ ...c })),
+    transactions: [],
+
+    bills: [],
+    billPayments: {},
+
+    budgets: {
+      default: { food: 0, transport: 0, home: 0, fun: 0, other: 0, buffer: 0 },
+      byMonth: {},
+      bufferRollover: 0,
+    },
+
+    goal: { name: '', emoji: '🎯', saved: 0, target: 0 },
+    profile: null,
+
+    monthSettings: {},
+    defaultSetAside: 0,
   }
 }

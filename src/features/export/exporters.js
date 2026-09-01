@@ -4,14 +4,19 @@ const withTimeout = (promise, ms) =>
     new Promise((_, reject) => setTimeout(() => reject(new Error('export timed out')), ms)),
   ])
 
-/** Render a DOM node to a PNG blob at 2× for crisp sharing. */
-export async function nodeToPngBlob(node) {
+/**
+ * Render a DOM node to a PNG blob at 2× for crisp sharing.
+ * modern-screenshot ignores the *root* node's own background-color and fills
+ * with `backgroundColor` instead, so callers pass the colour the node paints
+ * itself (child backgrounds are captured fine).
+ */
+export async function nodeToPngBlob(node, backgroundColor = '#ece6ff') {
   const { domToBlob } = await import('modern-screenshot') // code-split: only on export
   if (document.fonts?.ready) await document.fonts.ready
   return withTimeout(
     domToBlob(node, {
       scale: 2,
-      backgroundColor: '#ece6ff',
+      backgroundColor,
       // faces are already loaded in the page; skip re-fetching the
       // cross-origin Google Fonts stylesheet
       font: false,
@@ -39,8 +44,8 @@ export const EXPORTERS = [
   {
     id: 'png',
     label: 'Download PNG',
-    async run({ node, monthKey }) {
-      saveBlob(await nodeToPngBlob(node), `receiptly-${monthKey}.png`)
+    async run({ node, monthKey, backgroundColor }) {
+      saveBlob(await nodeToPngBlob(node, backgroundColor), `receiptly-${monthKey}.png`)
     },
   },
   // { id: 'csv', label: 'Download CSV', run: ... },
@@ -60,8 +65,8 @@ export function canShareFiles() {
   }
 }
 
-export async function shareReceipt({ node, monthKey, monthLabel }) {
-  const blob = await nodeToPngBlob(node)
+export async function shareReceipt({ node, monthKey, monthLabel, backgroundColor }) {
+  const blob = await nodeToPngBlob(node, backgroundColor)
   const file = new File([blob], `receiptly-${monthKey}.png`, { type: 'image/png' })
   await navigator.share({
     files: [file],
