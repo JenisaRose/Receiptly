@@ -18,7 +18,7 @@ export default function RupeeInput({
   return (
     <div className={`flex items-baseline ${hero ? 'gap-2' : 'gap-1'}`}>
       <span
-        className={`font-display ${hero ? 'text-[clamp(1.5rem,6vw,2rem)]' : 'text-[13px]'} opacity-60`}
+        className={`font-display ${hero ? 'text-[clamp(1.7rem,6vw,2.3rem)]' : 'text-[13px]'} opacity-60`}
       >
         ₹
       </span>
@@ -33,7 +33,7 @@ export default function RupeeInput({
           onChange(d ? Number(d) : 0)
         }}
         className={`min-w-0 flex-1 bg-transparent font-display tabular-nums outline-none placeholder:opacity-25 ${
-          hero ? 'w-full text-[clamp(2.6rem,13vw,3.6rem)] leading-none' : 'w-full text-[15px]'
+          hero ? 'w-full text-[clamp(2.9rem,13vw,4rem)] leading-none' : 'w-full text-[15px]'
         }`}
       />
     </div>

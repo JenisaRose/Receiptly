@@ -11,8 +11,41 @@ import ReadyStep from './steps/ReadyStep'
 import WelcomeStep from './steps/WelcomeStep'
 
 const STEPS = ['welcome', 'income', 'bills', 'goal', 'choice', 'ready']
-
 const BLANK = { income: 0, incomeKind: 'monthly', bills: [], goal: null, monthlySave: 0 }
+
+const GROUND =
+  'fixed inset-0 z-[60] flex justify-center overflow-y-auto overflow-x-hidden bg-bg px-4 py-10'
+const GROUND_STYLE = {
+  backgroundImage: 'radial-gradient(var(--color-ink) 1px, transparent 1px)',
+  backgroundSize: '22px 22px',
+}
+
+const DECOR = [
+  { cls: 'left-[6%] top-[12%] text-[64px]', dur: 26 },
+  { cls: 'right-[8%] top-[18%] text-[44px]', dur: 32 },
+  { cls: 'left-[10%] bottom-[14%] text-[52px]', dur: 30 },
+  { cls: 'right-[7%] bottom-[10%] text-[72px]', dur: 22 },
+  { cls: 'left-[46%] top-[4%] text-[32px]', dur: 28 },
+]
+
+/** Slow, faint sparkles on the ground so the flow feels like an occasion
+ *  without the panels having to fill a whole widescreen monitor. */
+function GroundDecor({ reduced }) {
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden text-ink/15">
+      {DECOR.map((d, i) => (
+        <motion.span
+          key={i}
+          className={`absolute ${d.cls}`}
+          animate={reduced ? undefined : { rotate: 360 }}
+          transition={reduced ? undefined : { duration: d.dur, repeat: Infinity, ease: 'linear' }}
+        >
+          ✦
+        </motion.span>
+      ))}
+    </div>
+  )
+}
 
 /**
  * The first-run setup flow. Rendered by AppShell in place of the app while
@@ -35,7 +68,6 @@ export default function Onboarding() {
   }, [])
   const set = useCallback((patch) => setData((prev) => ({ ...prev, ...patch })), [])
 
-  // hold the page behind the flow
   useEffect(() => {
     const prev = document.body.style.overflow
     document.body.style.overflow = 'hidden'
@@ -98,19 +130,16 @@ export default function Onboarding() {
   }
 
   return (
-    <div
-      className="fixed inset-0 z-[60] flex justify-center overflow-y-auto overflow-x-hidden bg-bg px-4 py-10"
-      style={{
-        backgroundImage: 'radial-gradient(var(--color-ink) 1px, transparent 1px)',
-        backgroundSize: '22px 22px',
-      }}
-    >
+    <div className={GROUND} style={GROUND_STYLE}>
+      <GroundDecor reduced={reduced} />
+      {/* keyed remount — each step plays its own entrance; no exit animation so
+          a backgrounded tab can never strand two layers on top of each other */}
       <motion.div
         key={step}
         className="flex w-full items-center justify-center"
-        initial={reduced ? false : { x: dir * 52 }}
-        animate={{ x: 0 }}
-        transition={{ type: 'spring', stiffness: 260, damping: 26 }}
+        initial={reduced ? false : { x: dir * 44, scale: 0.985 }}
+        animate={{ x: 0, scale: 1 }}
+        transition={{ type: 'spring', stiffness: 320, damping: 30 }}
       >
         {content}
       </motion.div>
