@@ -29,6 +29,14 @@ export const DEFAULT_CATEGORIES = [
   { id: 'income', label: 'Income', emoji: '💰', color: 'yellow', isDefault: true, kind: 'income' },
 ]
 
+/** One-tap expense shortcuts. Seeded for new users; fully editable in settings. */
+export const DEFAULT_PRESETS = [
+  { id: 'p-canteen', emoji: '🍽️', label: 'Canteen', categoryId: 'food', amount: 60 },
+  { id: 'p-auto', emoji: '🛺', label: 'Auto fare', categoryId: 'transport', amount: 40 },
+  { id: 'p-chai', emoji: '☕', label: 'Chai + snacks', categoryId: 'food', amount: 25 },
+  { id: 'p-metro', emoji: '🚇', label: 'Metro top-up', categoryId: 'transport', amount: 100 },
+]
+
 const BILLS = [
   { id: 'b1', name: 'Electricity split', emoji: '💡', amount: 1200, dueDay: 5, freq: 'monthly' },
   { id: 'b2', name: 'Wifi split', emoji: '📶', amount: 300, dueDay: 5, freq: 'monthly' },
@@ -163,6 +171,7 @@ export function makeSeed(iso = todayISO()) {
 
     categories: DEFAULT_CATEGORIES.map((c) => ({ ...c })),
     transactions,
+    presets: DEFAULT_PRESETS.map((p) => ({ ...p })),
 
     bills: BILLS.map((b) => ({ ...b })),
     billPayments,
@@ -198,6 +207,7 @@ export function makeEmpty(iso = todayISO()) {
 
     categories: DEFAULT_CATEGORIES.map((c) => ({ ...c })),
     transactions: [],
+    presets: DEFAULT_PRESETS.map((p) => ({ ...p })),
 
     bills: [],
     billPayments: {},
