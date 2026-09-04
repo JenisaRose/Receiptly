@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { useEffect } from 'react'
 import { useBudget } from '../store/budgetContext'
+import BillManager from './BillManager'
 import CategoryManager from './CategoryManager'
 import PresetManager from './PresetManager'
 import ResetDemo from './ResetDemo'
@@ -47,6 +48,8 @@ export default function SettingsSheet({ onClose }) {
           <CategoryManager />
 
           <PresetManager />
+
+          <BillManager />
 
           <section>
             <h3 className="mb-2 font-hand text-[19px] font-bold">demo data</h3>
