@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useState } from 'react'
 import DeleteTxButton from '../components/DeleteTxButton'
 import EmptyState from '../components/EmptyState'
+import TransactionSearch from '../components/TransactionSearch'
 import Money from '../components/ui/Money'
 import SegmentedToggle from '../components/ui/SegmentedToggle'
 import { inr } from '../lib/format'
@@ -9,6 +10,15 @@ import { BG } from '../lib/theme'
 import { useBudget } from '../store/budgetContext'
 
 export default function Receipts() {
+  return (
+    <TransactionSearch>
+      <CategoryBreakdown />
+    </TransactionSearch>
+  )
+}
+
+/** The default view: this week / this month, broken down by category. */
+function CategoryBreakdown() {
   const b = useBudget()
   const [scope, setScope] = useState('month')
   const [openId, setOpenId] = useState(null)
