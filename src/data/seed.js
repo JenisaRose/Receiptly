@@ -199,11 +199,13 @@ export function makeSeed(iso = todayISO()) {
       bufferRollover: 500,
     },
 
-    goal: { name: 'Goa trip fund', emoji: '🎯', saved: 9000, target: 15000 },
+    goals: [
+      { id: 'goal1', name: 'Goa trip fund', emoji: '🎯', saved: 9000, target: 15000, monthly: 1000 },
+      { id: 'goal2', name: 'Emergency fund', emoji: '🛟', saved: 4000, target: 20000, monthly: 500 },
+    ],
     profile: { monthlyIncome: 18000, incomeKind: 'monthly' },
 
     monthSettings: {},
-    defaultSetAside: 1500,
   }
 }
 
@@ -234,10 +236,9 @@ export function makeEmpty(iso = todayISO()) {
       bufferRollover: 0,
     },
 
-    goal: { name: '', emoji: '🎯', saved: 0, target: 0 },
+    goals: [],
     profile: null,
 
     monthSettings: {},
-    defaultSetAside: 0,
   }
 }

@@ -123,24 +123,18 @@ export default function Today({ onLogExpense }) {
         />
       )}
 
-      {/* goal */}
-      {b.goal.target > 0 ? (
-        <div className="border-[3px] border-ink bg-lilac p-4 shadow-hard-sm">
-          <div className="mb-2 flex justify-between text-[12px] font-bold">
-            <span>
-              {b.goal.emoji} {b.goal.name}
-            </span>
-            <span>
-              {rupee(b.goal.saved)} / {rupee(b.goal.target)}
-            </span>
-          </div>
-          <ProgressBar value={b.goal.saved / b.goal.target} fill="stripes-lilac" height={18} />
+      {/* goals */}
+      {b.goals.length > 0 ? (
+        <div className="space-y-3">
+          {b.goals.map((g) => (
+            <GoalCard key={g.id} goal={g} onContribute={b.contributeToGoal} />
+          ))}
         </div>
       ) : (
         <div className="-rotate-[0.5deg] border-[3px] border-dashed border-ink/45 bg-lilac/60 p-4">
-          <p className="font-hand text-[18px] font-bold">🎯 no savings goal yet</p>
+          <p className="font-hand text-[18px] font-bold">🎯 no savings goals yet</p>
           <p className="mt-0.5 text-[12px] font-semibold opacity-70">
-            pick something to save for in settings → redo setup, and track it here.
+            add one in settings and track your progress here.
           </p>
         </div>
       )}
@@ -235,6 +229,66 @@ function PastBreakdown({ b }) {
         </div>
       </dl>
     </Card>
+  )
+}
+
+/** A savings goal card — tap to expand a +/- stepper for adding to (or
+ *  withdrawing from) how much you've saved. `target: 0` is a valid
+ *  open-ended goal: just money set aside with nothing specific to hit. */
+function GoalCard({ goal, onContribute }) {
+  const [open, setOpen] = useState(false)
+  const hasTarget = goal.target > 0
+
+  return (
+    <div className="border-[3px] border-ink bg-lilac p-4 shadow-hard-sm">
+      <button onClick={() => setOpen((v) => !v)} className="w-full text-left">
+        <div className="mb-2 flex items-center justify-between text-[12px] font-bold">
+          <span>
+            {goal.emoji} {goal.name}
+          </span>
+          <span>{hasTarget ? `${rupee(goal.saved)} / ${rupee(goal.target)}` : rupee(goal.saved)}</span>
+        </div>
+        {hasTarget ? (
+          <ProgressBar value={goal.saved / goal.target} fill="stripes-lilac" height={18} />
+        ) : (
+          <p className="text-[11px] font-semibold opacity-60">
+            open-ended · setting aside {rupee(goal.monthly)}/mo
+          </p>
+        )}
+      </button>
+
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden"
+          >
+            <div className="mt-3 flex items-center gap-2 border-t-[2.5px] border-dashed border-ink/30 pt-3 text-[12px] font-semibold">
+              add to savings
+              <span className="ml-auto flex items-center gap-1.5">
+                <Step onClick={() => onContribute(goal.id, -250)}>–</Step>
+                <span>{rupee(goal.saved)}</span>
+                <Step onClick={() => onContribute(goal.id, 250)}>+</Step>
+              </span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
+function Step({ onClick, children }) {
+  return (
+    <button
+      onClick={onClick}
+      className="h-[26px] w-[26px] border-[2.5px] border-ink bg-white font-display text-[13px] leading-none active:bg-yellow"
+    >
+      {children}
+    </button>
   )
 }
 

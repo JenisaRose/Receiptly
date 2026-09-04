@@ -59,15 +59,22 @@ export function buildOnboardedState(answers, today) {
         ]
       : []
 
-  const goal =
+  // one goal from setup, if they named one; more can be added later in settings
+  const goals =
     answers.goal && num(answers.goal.target) > 0
-      ? {
-          name: answers.goal.name?.trim() || 'My goal',
-          emoji: answers.goal.emoji || '🎯',
-          saved: 0,
-          target: num(answers.goal.target),
-        }
-      : { name: '', emoji: '🎯', saved: 0, target: 0 }
+      ? [
+          {
+            id: `goal${stamp}`,
+            name: answers.goal.name?.trim() || 'My goal',
+            emoji: answers.goal.emoji || '🎯',
+            saved: 0,
+            target: num(answers.goal.target),
+            monthly: monthlySave,
+          },
+        ]
+      : monthlySave > 0
+        ? [{ id: `goal${stamp}`, name: 'Savings', emoji: '🐷', saved: 0, target: 0, monthly: monthlySave }]
+        : []
 
   return {
     schemaVersion: SCHEMA_VERSION,
@@ -85,11 +92,10 @@ export function buildOnboardedState(answers, today) {
 
     budgets: { default: budgetDefault, byMonth: {}, bufferRollover: 0 },
 
-    goal,
+    goals,
     profile: { monthlyIncome: income, incomeKind: answers.incomeKind || 'monthly' },
 
     monthSettings: {},
-    defaultSetAside: monthlySave,
   }
 }
 

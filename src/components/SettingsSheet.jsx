@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import { useBudget } from '../store/budgetContext'
 import BillManager from './BillManager'
 import CategoryManager from './CategoryManager'
+import GoalManager from './GoalManager'
 import PresetManager from './PresetManager'
 import ResetDemo from './ResetDemo'
 
@@ -51,6 +52,8 @@ export default function SettingsSheet({ onClose }) {
 
           <BillManager />
 
+          <GoalManager />
+
           <section>
             <h3 className="mb-2 font-hand text-[19px] font-bold">demo data</h3>
             <p className="mb-2.5 text-[11.5px] opacity-60">
@@ -62,7 +65,7 @@ export default function SettingsSheet({ onClose }) {
           <section>
             <h3 className="mb-2 font-hand text-[19px] font-bold">redo setup</h3>
             <p className="mb-2.5 text-[11.5px] opacity-60">
-              run the intro again — re-enter your income, bills and goal, or switch to the demo.
+              run the intro again — re-enter your income, bills and a goal, or switch to the demo.
               your current data stays until you finish.
             </p>
             <button

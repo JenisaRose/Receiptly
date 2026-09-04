@@ -53,6 +53,16 @@ const cleanBill = (b) => ({
   autopay: !!b.autopay,
 })
 
+/** Normalise a savings-goal payload (used by add + update). `target: 0` is a
+ *  valid, open-ended goal — just money set aside with nothing specific to hit. */
+const cleanGoal = (g) => ({
+  emoji: (g.emoji || '🎯').trim() || '🎯',
+  name: (g.name || '').trim() || 'Savings',
+  saved: Math.max(0, Math.round(Number(g.saved) || 0)),
+  target: Math.max(0, Math.round(Number(g.target) || 0)),
+  monthly: Math.max(0, Math.round(Number(g.monthly) || 0)),
+})
+
 /** Build a spend transaction, dated into the selected month. */
 function buildTx(s, { date, categoryId, name, amount }) {
   const m = monthContext(s)
@@ -82,7 +92,7 @@ function derive(state) {
   return {
     month,
     availableMonths: availableMonths(state),
-    goal: state.goal,
+    goals: state.goals ?? [],
     categories: state.categories,
     categoryMap: categoryMap(state),
     spendableCategories: spendableCategories(state),
@@ -149,6 +159,25 @@ function applyAutopay(s) {
   return changed ? { ...s, billPayments: { ...s.billPayments, [curKey]: [...paid] } } : s
 }
 
+/**
+ * Blobs saved before multiple goals existed had a single `goal` object plus a
+ * flat `defaultSetAside`. Fold that into the new `goals` array once; nothing
+ * is lost, and it's the only place this old shape gets read.
+ */
+function legacyGoals(base) {
+  if (!base.goal || !(base.goal.target > 0 || base.defaultSetAside > 0)) return []
+  return [
+    {
+      id: 'goal1',
+      name: base.goal.name || 'Savings',
+      emoji: base.goal.emoji || '🎯',
+      saved: base.goal.saved || 0,
+      target: base.goal.target || 0,
+      monthly: base.defaultSetAside || 0,
+    },
+  ]
+}
+
 /** "today" is always real-now, never whatever was frozen into storage. */
 function initState() {
   const today = resolveToday()
@@ -161,6 +190,8 @@ function initState() {
     ...base,
     // backfill for blobs saved before quick-add presets existed
     presets: base.presets ?? DEFAULT_PRESETS.map((p) => ({ ...p })),
+    // backfill for blobs saved before multiple goals existed
+    goals: base.goals ?? legacyGoals(base),
     clock: { ...base.clock, todayISO: today },
     ui: {
       ...base.ui,
@@ -365,6 +396,35 @@ export function BudgetProvider({ children }) {
     })
   }, [])
 
+  // --- savings goals ----------------------------------------------------------
+  const addGoal = useCallback((goal) => {
+    setState((s) => ({
+      ...s,
+      goals: [...(s.goals ?? []), { id: `goal${Date.now()}`, ...cleanGoal(goal) }],
+    }))
+  }, [])
+
+  const updateGoal = useCallback(({ id, ...patch }) => {
+    setState((s) => ({
+      ...s,
+      goals: (s.goals ?? []).map((g) => (g.id === id ? { ...g, ...cleanGoal({ ...g, ...patch }) } : g)),
+    }))
+  }, [])
+
+  const deleteGoal = useCallback((id) => {
+    setState((s) => ({ ...s, goals: (s.goals ?? []).filter((g) => g.id !== id) }))
+  }, [])
+
+  /** Add (or, with a negative delta, withdraw) money from a goal's saved total. */
+  const contributeToGoal = useCallback((id, delta) => {
+    setState((s) => ({
+      ...s,
+      goals: (s.goals ?? []).map((g) =>
+        g.id === id ? { ...g, saved: Math.max(0, g.saved + delta) } : g,
+      ),
+    }))
+  }, [])
+
   const resetDemo = useCallback(() => setState(makeSeed(resolveToday())), [])
 
   const completeOnboarding = useCallback(
@@ -395,6 +455,10 @@ export function BudgetProvider({ children }) {
       updateBill,
       deleteBill,
       toggleBillPaid,
+      addGoal,
+      updateGoal,
+      deleteGoal,
+      contributeToGoal,
       setSelectedMonth,
       stepMonth,
       goToCurrentMonth,
@@ -418,6 +482,10 @@ export function BudgetProvider({ children }) {
       updateBill,
       deleteBill,
       toggleBillPaid,
+      addGoal,
+      updateGoal,
+      deleteGoal,
+      contributeToGoal,
       setSelectedMonth,
       stepMonth,
       goToCurrentMonth,
