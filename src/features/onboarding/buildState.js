@@ -1,4 +1,4 @@
-import { DEFAULT_CATEGORIES, SCHEMA_VERSION } from '../../data/seed'
+import { DEFAULT_CATEGORIES, DEFAULT_PRESETS, SCHEMA_VERSION } from '../../data/seed'
 
 /** How leftover discretionary money is split into starter envelopes. */
 const ENVELOPE_SPLIT = {
@@ -78,6 +78,7 @@ export function buildOnboardedState(answers, today) {
 
     categories: DEFAULT_CATEGORIES.map((c) => ({ ...c })),
     transactions,
+    presets: DEFAULT_PRESETS.map((p) => ({ ...p })),
 
     bills: billRows,
     billPayments: { [curMonth]: [] },

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { makeEmpty, makeSeed } from '../data/seed'
+import { DEFAULT_PRESETS, makeEmpty, makeSeed } from '../data/seed'
 import { buildOnboardedState } from '../features/onboarding/buildState'
 import { todayISO } from '../lib/dates'
 import { slugId } from '../lib/slug'
@@ -32,6 +32,32 @@ const without = (obj, key) => {
   const copy = { ...obj }
   delete copy[key]
   return copy
+}
+
+/** Normalise a preset payload (used by add + update). */
+const cleanPreset = (p) => ({
+  emoji: (p.emoji || '⚡').trim() || '⚡',
+  label: (p.label || '').trim() || 'Quick add',
+  categoryId: p.categoryId,
+  amount: Math.max(1, Math.round(Number(p.amount) || 0)),
+})
+
+/** Build a spend transaction, dated into the selected month. */
+function buildTx(s, { date, categoryId, name, amount }) {
+  const m = monthContext(s)
+  const iso =
+    date ??
+    (m.isCurrent
+      ? s.clock.todayISO
+      : `${m.year}-${pad(m.monthNum)}-${pad(Math.min(m.dayOfMonth || 1, m.daysInMonth))}`)
+  return {
+    id: `t${Date.now()}`,
+    date: iso,
+    categoryId,
+    name: name || s.categories.find((c) => c.id === categoryId)?.label || 'Expense',
+    amount: -Math.abs(amount),
+    fresh: true,
+  }
 }
 
 /** Compose the pure selectors into the object screens read via useBudget(). */
@@ -101,6 +127,8 @@ function initState() {
   const months = availableMonths({ ...base, clock: { todayISO: today } })
   return {
     ...base,
+    // backfill for blobs saved before quick-add presets existed
+    presets: base.presets ?? DEFAULT_PRESETS.map((p) => ({ ...p })),
     clock: { ...base.clock, todayISO: today },
     ui: {
       ...base.ui,
@@ -127,24 +155,8 @@ export function BudgetProvider({ children }) {
     persistence.save(clean)
   }, [state])
 
-  const addTransaction = useCallback(({ date, categoryId, name, amount }) => {
-    setState((s) => {
-      const m = monthContext(s)
-      const iso =
-        date ??
-        (m.isCurrent
-          ? s.clock.todayISO
-          : `${m.year}-${pad(m.monthNum)}-${pad(Math.min(m.dayOfMonth || 1, m.daysInMonth))}`)
-      const tx = {
-        id: `t${Date.now()}`,
-        date: iso,
-        categoryId,
-        name: name || s.categories.find((c) => c.id === categoryId)?.label || 'Expense',
-        amount: -Math.abs(amount),
-        fresh: true,
-      }
-      return { ...s, transactions: [tx, ...s.transactions] }
-    })
+  const addTransaction = useCallback((entry) => {
+    setState((s) => ({ ...s, transactions: [buildTx(s, entry), ...s.transactions] }))
   }, [])
 
   const deleteTransaction = useCallback((id) => {
@@ -251,6 +263,36 @@ export function BudgetProvider({ children }) {
     })
   }, [])
 
+  // --- quick-add presets ---------------------------------------------------
+  const addPreset = useCallback((p) => {
+    setState((s) => ({
+      ...s,
+      presets: [...(s.presets ?? []), { id: `p${Date.now()}`, ...cleanPreset(p) }],
+    }))
+  }, [])
+
+  const updatePreset = useCallback(({ id, ...patch }) => {
+    setState((s) => ({
+      ...s,
+      presets: (s.presets ?? []).map((p) =>
+        p.id === id ? { ...p, ...cleanPreset({ ...p, ...patch }) } : p,
+      ),
+    }))
+  }, [])
+
+  const deletePreset = useCallback((id) => {
+    setState((s) => ({ ...s, presets: (s.presets ?? []).filter((p) => p.id !== id) }))
+  }, [])
+
+  const logPreset = useCallback((id) => {
+    setState((s) => {
+      const p = (s.presets ?? []).find((x) => x.id === id)
+      if (!p) return s
+      const tx = buildTx(s, { categoryId: p.categoryId, name: p.label, amount: p.amount })
+      return { ...s, transactions: [tx, ...s.transactions] }
+    })
+  }, [])
+
   const resetDemo = useCallback(() => setState(makeSeed(resolveToday())), [])
 
   const completeOnboarding = useCallback(
@@ -273,6 +315,10 @@ export function BudgetProvider({ children }) {
       addCategory,
       renameCategory,
       deleteCategory,
+      addPreset,
+      updatePreset,
+      deletePreset,
+      logPreset,
       setSelectedMonth,
       stepMonth,
       goToCurrentMonth,
@@ -288,6 +334,10 @@ export function BudgetProvider({ children }) {
       addCategory,
       renameCategory,
       deleteCategory,
+      addPreset,
+      updatePreset,
+      deletePreset,
+      logPreset,
       setSelectedMonth,
       stepMonth,
       goToCurrentMonth,

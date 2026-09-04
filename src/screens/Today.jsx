@@ -6,6 +6,7 @@ import ProgressBar from '../components/ui/ProgressBar'
 import DeleteTxButton from '../components/DeleteTxButton'
 import EmptyState from '../components/EmptyState'
 import Forecast from '../components/Forecast'
+import QuickAdd from '../components/QuickAdd'
 import WhatIf from '../components/WhatIf'
 import { useCountUp } from '../hooks/useCountUp'
 import { inr, rupee } from '../lib/format'
@@ -94,6 +95,8 @@ export default function Today({ onLogExpense }) {
           <Stat label="Logged" value={`${b.thisMonthEntries.length} taps`} bg="bg-sky" />
         </div>
       )}
+
+      {isCurrent && <QuickAdd />}
 
       {/* transparent breakdown — current & past only */}
       {isCurrent && <CurrentBreakdown b={b} />}

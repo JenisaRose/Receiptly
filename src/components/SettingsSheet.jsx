@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { useEffect } from 'react'
 import { useBudget } from '../store/budgetContext'
 import CategoryManager from './CategoryManager'
+import PresetManager from './PresetManager'
 import ResetDemo from './ResetDemo'
 
 /** Slide-over opened from the avatar. Rendered inside <AnimatePresence>. */
@@ -44,6 +45,8 @@ export default function SettingsSheet({ onClose }) {
 
         <div className="flex-1 space-y-7 overflow-y-auto p-5">
           <CategoryManager />
+
+          <PresetManager />
 
           <section>
             <h3 className="mb-2 font-hand text-[19px] font-bold">demo data</h3>

@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
+import { rupee } from '../lib/format'
 import { slugId } from '../lib/slug'
 import { PALETTE } from '../lib/theme'
 import { useBudget } from '../store/budgetContext'
@@ -9,13 +10,24 @@ import { useBudget } from '../store/budgetContext'
  * mounts with fresh form state.
  */
 export default function LogExpenseModal({ onClose }) {
-  const { addTransaction, addCategory, categories, spendableCategories } = useBudget()
+  const b = useBudget()
+  const { addTransaction, addCategory, addPreset, categories, categoryMap, spendableCategories } = b
+  const presets = (b.presets ?? []).filter((p) => categoryMap[p.categoryId])
+
   const [amount, setAmount] = useState('')
   const [category, setCategory] = useState(spendableCategories[0]?.id ?? 'food')
   const [note, setNote] = useState('')
   const [error, setError] = useState(false)
   const [newCat, setNewCat] = useState('')
   const [addingCat, setAddingCat] = useState(false)
+  const [saveAsPreset, setSaveAsPreset] = useState(false)
+
+  function applyPreset(p) {
+    setAmount(String(p.amount))
+    setCategory(p.categoryId)
+    setNote(p.label)
+    setError(false)
+  }
 
   function createCategory() {
     const label = newCat.trim()
@@ -43,6 +55,14 @@ export default function LogExpenseModal({ onClose }) {
       return
     }
     addTransaction({ amount: value, categoryId: category, name: note.trim() })
+    if (saveAsPreset) {
+      addPreset({
+        emoji: categoryMap[category]?.emoji ?? '⚡',
+        label: note.trim() || categoryMap[category]?.label || 'Quick add',
+        categoryId: category,
+        amount: value,
+      })
+    }
     onClose()
   }
 
@@ -56,13 +76,33 @@ export default function LogExpenseModal({ onClose }) {
     >
       <motion.form
         onSubmit={submit}
-        className="w-full max-w-[380px] border-4 border-ink bg-bg p-5 shadow-hard-lg"
+        className="max-h-[92vh] w-full max-w-[380px] overflow-y-auto border-4 border-ink bg-bg p-5 shadow-hard-lg"
         initial={{ scale: 0.8, y: 12 }}
         animate={{ scale: 1, y: 0 }}
         exit={{ scale: 0.9, opacity: 0 }}
         transition={{ type: 'spring', stiffness: 320, damping: 22 }}
       >
         <h2 className="mb-3.5 font-display text-xl">log an expense ✏️</h2>
+
+        {presets.length > 0 && (
+          <>
+            <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-wide">
+              quick picks
+            </label>
+            <div className="mb-4 flex flex-wrap gap-1.5">
+              {presets.map((p) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => applyPreset(p)}
+                  className="border-[2.5px] border-ink bg-white px-2 py-1 text-[11.5px] font-bold active:bg-yellow"
+                >
+                  {p.emoji} {p.label} · {rupee(p.amount)}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
 
         <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-wide">amount</label>
         <input
@@ -136,8 +176,18 @@ export default function LogExpenseModal({ onClose }) {
           value={note}
           onChange={(e) => setNote(e.target.value)}
           placeholder="what was it?"
-          className="mb-4 w-full border-[3px] border-ink bg-white px-3 py-2.5 text-[15px] font-semibold"
+          className="mb-3 w-full border-[3px] border-ink bg-white px-3 py-2.5 text-[15px] font-semibold"
         />
+
+        <label className="mb-4 flex cursor-pointer items-center gap-2 text-[12px] font-semibold">
+          <input
+            type="checkbox"
+            checked={saveAsPreset}
+            onChange={(e) => setSaveAsPreset(e.target.checked)}
+            className="h-4 w-4 accent-ink"
+          />
+          save this as a quick-add ⚡
+        </label>
 
         <div className="flex gap-2.5">
           <button
