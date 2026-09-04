@@ -9,7 +9,7 @@ import Forecast from '../components/Forecast'
 import QuickAdd from '../components/QuickAdd'
 import WhatIf from '../components/WhatIf'
 import { useCountUp } from '../hooks/useCountUp'
-import { inr, rupee } from '../lib/format'
+import { inr, rupee, splitNote } from '../lib/format'
 import { BG } from '../lib/theme'
 import { useBudget } from '../store/budgetContext'
 
@@ -278,9 +278,17 @@ function EntryRow({ entry, cat, monthAbbr }) {
           {meta.emoji}
         </span>
         <div>
-          <p className="text-[13px] font-semibold">{entry.name}</p>
+          <p className="text-[13px] font-semibold">
+            {entry.name}
+            {entry.split && (
+              <span className="ml-1.5 rounded-full border-2 border-ink bg-lilac px-1.5 align-middle text-[9px] font-bold">
+                🔀 ×{entry.split.parts}
+              </span>
+            )}
+          </p>
           <p className="text-[10.5px] opacity-60">
             {day} {monthAbbr}
+            {entry.split ? ` · ${splitNote(entry)}` : ''}
           </p>
         </div>
       </div>

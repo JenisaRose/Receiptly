@@ -21,6 +21,28 @@ export default function LogExpenseModal({ onClose }) {
   const [newCat, setNewCat] = useState('')
   const [addingCat, setAddingCat] = useState(false)
   const [saveAsPreset, setSaveAsPreset] = useState(false)
+  const [splitOn, setSplitOn] = useState(false)
+  const [splitTotal, setSplitTotal] = useState('')
+  const [splitParts, setSplitParts] = useState(2)
+
+  function onSplitTotalChange(v) {
+    setSplitTotal(v)
+    const t = Number(v)
+    if (t > 0) setAmount(String(Math.round(t / splitParts)))
+  }
+  function onSplitPartsChange(v) {
+    const n = Math.max(2, Number(v) || 2)
+    setSplitParts(n)
+    const t = Number(splitTotal)
+    if (t > 0) setAmount(String(Math.round(t / n)))
+  }
+  function toggleSplit(on) {
+    setSplitOn(on)
+    if (!on) {
+      setSplitTotal('')
+      setSplitParts(2)
+    }
+  }
 
   function applyPreset(p) {
     setAmount(String(p.amount))
@@ -54,7 +76,9 @@ export default function LogExpenseModal({ onClose }) {
       setError(true)
       return
     }
-    addTransaction({ amount: value, categoryId: category, name: note.trim() })
+    const split =
+      splitOn && Number(splitTotal) > 0 ? { total: Number(splitTotal), parts: splitParts } : undefined
+    addTransaction({ amount: value, categoryId: category, name: note.trim(), split })
     if (saveAsPreset) {
       addPreset({
         emoji: categoryMap[category]?.emoji ?? '⚡',
@@ -115,10 +139,51 @@ export default function LogExpenseModal({ onClose }) {
             setError(false)
           }}
           placeholder="₹0"
-          className={`mb-3.5 w-full border-[3px] bg-white px-3 py-2.5 font-display text-[22px] ${
+          className={`mb-1.5 w-full border-[3px] bg-white px-3 py-2.5 font-display text-[22px] ${
             error ? 'border-pink' : 'border-ink'
           }`}
         />
+
+        <label className="mb-3.5 flex cursor-pointer items-center gap-2 text-[12px] font-semibold">
+          <input
+            type="checkbox"
+            checked={splitOn}
+            onChange={(e) => toggleSplit(e.target.checked)}
+            className="h-4 w-4 accent-ink"
+          />
+          🔀 split this with others
+        </label>
+
+        {splitOn && (
+          <div className="mb-3.5 space-y-1.5 border-[2.5px] border-dashed border-ink/40 p-2.5">
+            <div className="flex flex-wrap items-center gap-2 text-[12.5px] font-semibold">
+              <span className="opacity-60">total bill</span>
+              <span className="opacity-50">₹</span>
+              <input
+                type="number"
+                inputMode="numeric"
+                value={splitTotal}
+                onChange={(e) => onSplitTotalChange(e.target.value)}
+                placeholder="1,200"
+                className="w-20 border-2 border-ink bg-white px-2 py-1"
+              />
+              <span className="opacity-60">split</span>
+              <input
+                type="number"
+                inputMode="numeric"
+                min={2}
+                value={splitParts}
+                onChange={(e) => onSplitPartsChange(e.target.value)}
+                className="w-12 border-2 border-ink bg-white px-2 py-1"
+              />
+              <span className="opacity-60">ways</span>
+            </div>
+            <p className="text-[11px] font-semibold opacity-65">
+              your share: {amount ? rupee(Number(amount)) : '—'} — tweak the amount above if it
+              isn't an even split
+            </p>
+          </div>
+        )}
 
         <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-wide">category</label>
         <div className="mb-2 flex flex-wrap gap-1.5">

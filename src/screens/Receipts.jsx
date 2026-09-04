@@ -111,8 +111,15 @@ function CategoryBreakdown() {
                         key={t.id}
                         className="flex items-center justify-between gap-2 border-b border-dashed border-[#d8d2f5] px-3.5 py-2.5 text-[12.5px] last:border-b-0"
                       >
-                        <span className="opacity-85">{t.name}</span>
-                        <div className="flex items-center gap-2">
+                        <span className="min-w-0 truncate opacity-85">
+                          {t.name}
+                          {t.split && (
+                            <span className="ml-1 shrink-0 whitespace-nowrap opacity-60">
+                              · split ×{t.split.parts}
+                            </span>
+                          )}
+                        </span>
+                        <div className="flex shrink-0 items-center gap-2">
                           <span className="font-semibold">₹{inr(Math.abs(t.amount))}</span>
                           <DeleteTxButton tx={t} />
                         </div>
