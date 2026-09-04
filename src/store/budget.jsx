@@ -7,6 +7,7 @@ import { dayOfWeekSpend, monthReflection, trendsByMonth, trendsByWeek } from './
 import { envelopeForecast, monthForecast } from './forecast'
 import { runInsights } from './insights/engine'
 import { persistence } from './persistence'
+import { filterTransactions } from './search'
 import { BudgetContext } from './budgetContext'
 import {
   availableMonths,
@@ -90,6 +91,7 @@ function derive(state) {
 
     categoryBreakdown: (scope) => categoryBreakdown(state, scope),
     totalOut: (scope) => totalOut(state, scope),
+    searchTransactions: (filters) => filterTransactions(state, filters),
 
     envelopesResolved: envelopes(state),
     allocatedTotal: Object.values(budget).reduce((s, n) => s + n, 0),
