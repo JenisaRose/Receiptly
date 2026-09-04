@@ -40,9 +40,25 @@ export const DEFAULT_PRESETS = [
 const BILLS = [
   { id: 'b1', name: 'Electricity split', emoji: '💡', amount: 1200, dueDay: 5, freq: 'monthly' },
   { id: 'b2', name: 'Wifi split', emoji: '📶', amount: 300, dueDay: 5, freq: 'monthly' },
-  { id: 'b3', name: 'Duolingo Super', emoji: '🦉', amount: 160, dueDay: 12, freq: 'monthly' },
+  {
+    id: 'b3',
+    name: 'Duolingo Super',
+    emoji: '🦉',
+    amount: 160,
+    dueDay: 12,
+    freq: 'monthly',
+    autopay: true, // small subscription — the kind people actually set on autopay
+  },
   { id: 'b4', name: 'Gym membership', emoji: '🏋️', amount: 461, dueDay: 20, freq: 'monthly' },
-  { id: 'b5', name: 'Spotify', emoji: '🎧', amount: 119, dueDay: 22, freq: 'monthly' },
+  {
+    id: 'b5',
+    name: 'Spotify',
+    emoji: '🎧',
+    amount: 119,
+    dueDay: 22,
+    freq: 'monthly',
+    autopay: true,
+  },
   { id: 'b6', name: 'Phone recharge', emoji: '📱', amount: 260, dueDay: 24, freq: 'monthly' },
   { id: 'b7', name: 'PG room rent', emoji: '🏠', amount: 4000, dueDay: 28, freq: 'monthly' },
 ]

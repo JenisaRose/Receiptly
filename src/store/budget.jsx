@@ -43,6 +43,16 @@ const cleanPreset = (p) => ({
   amount: Math.max(1, Math.round(Number(p.amount) || 0)),
 })
 
+/** Normalise a bill payload (used by add + update). */
+const cleanBill = (b) => ({
+  emoji: (b.emoji || '🧾').trim() || '🧾',
+  name: (b.name || '').trim() || 'Bill',
+  amount: Math.max(1, Math.round(Number(b.amount) || 0)),
+  dueDay: Math.min(28, Math.max(1, Math.round(Number(b.dueDay)) || 1)),
+  freq: 'monthly',
+  autopay: !!b.autopay,
+})
+
 /** Build a spend transaction, dated into the selected month. */
 function buildTx(s, { date, categoryId, name, amount }) {
   const m = monthContext(s)
@@ -119,6 +129,26 @@ function resolveToday() {
   return todayISO()
 }
 
+/**
+ * Autopay bills mark themselves paid once their due day arrives in the real
+ * current month — no tap required. Pure; returns `s` unchanged if nothing is
+ * newly due. Applied at load (so time passing while the app was closed is
+ * caught up) and again whenever a bill is added or edited.
+ */
+function applyAutopay(s) {
+  const curKey = s.clock.todayISO.slice(0, 7)
+  const dayOfMonth = Number(s.clock.todayISO.slice(8, 10))
+  const paid = new Set(s.billPayments[curKey] ?? [])
+  let changed = false
+  for (const bill of s.bills) {
+    if (bill.autopay && bill.dueDay <= dayOfMonth && !paid.has(bill.id)) {
+      paid.add(bill.id)
+      changed = true
+    }
+  }
+  return changed ? { ...s, billPayments: { ...s.billPayments, [curKey]: [...paid] } } : s
+}
+
 /** "today" is always real-now, never whatever was frozen into storage. */
 function initState() {
   const today = resolveToday()
@@ -127,7 +157,7 @@ function initState() {
   const base = loaded ?? makeEmpty(today)
   const currentMonth = today.slice(0, 7)
   const months = availableMonths({ ...base, clock: { todayISO: today } })
-  return {
+  return applyAutopay({
     ...base,
     // backfill for blobs saved before quick-add presets existed
     presets: base.presets ?? DEFAULT_PRESETS.map((p) => ({ ...p })),
@@ -138,7 +168,7 @@ function initState() {
         ? base.ui.selectedMonth
         : currentMonth,
     },
-  }
+  })
 }
 
 export function BudgetProvider({ children }) {
@@ -295,6 +325,46 @@ export function BudgetProvider({ children }) {
     })
   }, [])
 
+  // --- recurring bills -------------------------------------------------------
+  const addBill = useCallback((bill) => {
+    setState((s) =>
+      applyAutopay({
+        ...s,
+        bills: [...s.bills, { id: `bill${Date.now()}`, ...cleanBill(bill) }],
+      }),
+    )
+  }, [])
+
+  const updateBill = useCallback(({ id, ...patch }) => {
+    setState((s) =>
+      applyAutopay({
+        ...s,
+        bills: s.bills.map((b) => (b.id === id ? { ...b, ...cleanBill({ ...b, ...patch }) } : b)),
+      }),
+    )
+  }, [])
+
+  const deleteBill = useCallback((id) => {
+    setState((s) => ({
+      ...s,
+      bills: s.bills.filter((b) => b.id !== id),
+      billPayments: Object.fromEntries(
+        Object.entries(s.billPayments).map(([k, ids]) => [k, ids.filter((x) => x !== id)]),
+      ),
+    }))
+  }, [])
+
+  /** Toggle a bill's paid status for the month currently being viewed. */
+  const toggleBillPaid = useCallback((id) => {
+    setState((s) => {
+      const key = s.ui.selectedMonth
+      const paid = new Set(s.billPayments[key] ?? [])
+      if (paid.has(id)) paid.delete(id)
+      else paid.add(id)
+      return { ...s, billPayments: { ...s.billPayments, [key]: [...paid] } }
+    })
+  }, [])
+
   const resetDemo = useCallback(() => setState(makeSeed(resolveToday())), [])
 
   const completeOnboarding = useCallback(
@@ -321,6 +391,10 @@ export function BudgetProvider({ children }) {
       updatePreset,
       deletePreset,
       logPreset,
+      addBill,
+      updateBill,
+      deleteBill,
+      toggleBillPaid,
       setSelectedMonth,
       stepMonth,
       goToCurrentMonth,
@@ -340,6 +414,10 @@ export function BudgetProvider({ children }) {
       updatePreset,
       deletePreset,
       logPreset,
+      addBill,
+      updateBill,
+      deleteBill,
+      toggleBillPaid,
       setSelectedMonth,
       stepMonth,
       goToCurrentMonth,
