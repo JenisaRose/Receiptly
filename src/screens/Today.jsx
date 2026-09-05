@@ -3,6 +3,7 @@ import { useState } from 'react'
 import Card from '../components/ui/Card'
 import Money from '../components/ui/Money'
 import ProgressBar from '../components/ui/ProgressBar'
+import AiSummaryCard from '../components/AiSummaryCard'
 import DeleteTxButton from '../components/DeleteTxButton'
 import EmptyState from '../components/EmptyState'
 import Forecast from '../components/Forecast'
@@ -112,6 +113,8 @@ export default function Today({ onLogExpense }) {
           </p>
         </div>
       )}
+
+      {isCurrent && b.spentSoFar > 0 && <AiSummaryCard b={b} />}
 
       {isCurrent && (
         <WhatIf
