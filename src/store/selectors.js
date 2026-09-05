@@ -32,8 +32,11 @@ export function monthContext(state) {
     isFuture,
     dayOfMonth,
     daysLeft,
-    // kept for components that still read the old name
-    goalSetAside: state.monthSettings[key]?.setAside ?? state.defaultSetAside,
+    // total set aside across every savings goal this month; monthSettings can
+    // still override the total for a given month if that's ever wired up
+    goalSetAside:
+      state.monthSettings[key]?.setAside ??
+      (state.goals ?? []).reduce((sum, g) => sum + (g.monthly || 0), 0),
   }
 }
 
