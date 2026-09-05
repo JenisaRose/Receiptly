@@ -77,11 +77,11 @@ export default function Onboarding() {
   }, [])
 
   const openFresh = () => {
-    navigate('/')
+    navigate('/app')
     completeOnboarding(data)
   }
   const openDemo = () => {
-    navigate('/')
+    navigate('/app')
     resetDemo()
   }
 
