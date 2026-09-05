@@ -53,8 +53,10 @@ const cleanBill = (b) => ({
   autopay: !!b.autopay,
 })
 
-/** Build a spend transaction, dated into the selected month. */
-function buildTx(s, { date, categoryId, name, amount }) {
+/** Build a spend transaction, dated into the selected month. `split`, when
+ *  given, is just remembered for display — `amount` is always your own share
+ *  and is what every selector (envelopes, forecast, search…) already reads. */
+function buildTx(s, { date, categoryId, name, amount, split }) {
   const m = monthContext(s)
   const iso =
     date ??
@@ -68,6 +70,7 @@ function buildTx(s, { date, categoryId, name, amount }) {
     name: name || s.categories.find((c) => c.id === categoryId)?.label || 'Expense',
     amount: -Math.abs(amount),
     fresh: true,
+    ...(split && split.total > 0 && split.parts >= 2 ? { split } : {}),
   }
 }
 
