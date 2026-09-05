@@ -19,3 +19,8 @@ export function ordinal(n) {
   const v = n % 100
   return n + (s[(v - 20) % 10] ?? s[v] ?? s[0])
 }
+
+/** A transaction's split note, e.g. "split ×3 · ₹1,200 total" — or null. */
+export function splitNote(tx) {
+  return tx.split ? `split ×${tx.split.parts} · ${rupee(tx.split.total)} total` : null
+}

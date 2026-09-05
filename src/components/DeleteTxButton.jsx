@@ -23,7 +23,7 @@ export default function DeleteTxButton({ tx, monthAbbr, className = '' }) {
         {confirming && (
           <ConfirmDialog
             title="Delete this entry?"
-            body={`${tx.name} · ₹${inr(Math.abs(tx.amount))}${
+            body={`${tx.name}${tx.split ? ` (your share of ₹${inr(tx.split.total)})` : ''} · ₹${inr(Math.abs(tx.amount))}${
               monthAbbr ? ` on ${Number(tx.date.slice(-2))} ${monthAbbr}` : ''
             }`}
             confirmLabel="delete"

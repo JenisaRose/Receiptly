@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { useState } from 'react'
-import { inr } from '../lib/format'
+import { inr, splitNote } from '../lib/format'
 import { BG } from '../lib/theme'
 import { EMPTY_FILTERS, filtersActive, shortDate } from '../store/search'
 import { useBudget } from '../store/budgetContext'
@@ -167,8 +167,9 @@ function SearchRow({ t, thisYear }) {
         </span>
         <div className="min-w-0">
           <p className="truncate text-[13px] font-semibold">{t.name}</p>
-          <p className="text-[10.5px] opacity-60">
+          <p className="truncate text-[10.5px] opacity-60">
             {t.cat.label} · {shortDate(t.date, thisYear)}
+            {t.split ? ` · ${splitNote(t)}` : ''}
           </p>
         </div>
       </div>
