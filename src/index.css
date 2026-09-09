@@ -70,6 +70,11 @@
 
   :root[data-theme='dark'],
   [data-theme='dark'] {
+    /* re-establish the inherited text colour so a data-theme subtree isn't
+       stuck with whatever <body> computed — inherited `color` doesn't
+       follow a token swap the way `bg-*` / `border-*` utilities do */
+    color: var(--color-ink);
+
     --color-bg: #151320;
     --color-surface: #1f1b2e;
     --color-surface-2: #2a2540;
@@ -99,6 +104,8 @@
      the shareable receipt PNG, the Wrapped story, the onboarding
      receipt. A receipt is printed on paper in every theme. */
   [data-theme='light'] {
+    color: var(--color-ink);
+
     --color-bg: #ece6ff;
     --color-surface: #ffffff;
     --color-surface-2: #f2ecfe;
