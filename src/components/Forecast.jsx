@@ -29,11 +29,11 @@ export default function Forecast({ f }) {
       : `${rupee(Math.abs(f.delta))} ${f.status === 'over' ? 'over' : 'under'} plan`
 
   return (
-    <div className="border-[3px] border-ink bg-white p-4 shadow-hard-sm">
+    <div className="border-[3px] border-ink bg-surface p-4 shadow-hard-sm">
       <div className="flex items-baseline justify-between">
         <span className="font-hand text-[20px] font-bold">headed for</span>
         <span
-          className={`rounded-full border-2 border-ink px-2 py-[1px] text-[11px] font-bold ${t.chip}`}
+          className={`rounded-full border-2 border-ink px-2 py-[1px] text-[11px] font-bold text-on-accent ${t.chip}`}
         >
           {deltaLabel}
         </span>

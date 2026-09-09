@@ -13,7 +13,7 @@ export default function Envelopes() {
 
   return (
     <div className="space-y-4">
-      <div className="border-[3px] border-ink bg-orange p-4 shadow-hard">
+      <div className="border-[3px] border-ink bg-orange p-4 text-on-accent shadow-hard">
         <p className="font-display text-[20px]">
           {rupee(b.allocatedTotal)} across {b.envelopesResolved.length} envelopes
         </p>
@@ -35,7 +35,7 @@ export default function Envelopes() {
           return (
             <div
               key={env.id}
-              className="border-[3px] border-ink bg-white p-3.5 shadow-hard-sm"
+              className="border-[3px] border-ink bg-surface p-3.5 shadow-hard-sm"
             >
               <button
                 onClick={() => setOpenId(isOpen ? null : env.id)}
@@ -46,7 +46,7 @@ export default function Envelopes() {
                     {env.emoji} {env.label}
                   </span>
                   <span
-                    className={`rounded-full border-2 border-ink px-1.5 py-[2px] text-[10px] font-bold ${s.tag}`}
+                    className={`rounded-full border-2 border-ink px-1.5 py-[2px] text-[10px] font-bold text-on-accent ${s.tag}`}
                   >
                     {env.status === 'over' ? `over ${rupee(-env.remaining)}` : s.label}
                   </span>
@@ -76,7 +76,7 @@ export default function Envelopes() {
                     transition={{ duration: 0.2 }}
                     className="overflow-hidden"
                   >
-                    <div className="mt-3 flex items-center gap-2 border-t-[2.5px] border-dashed border-[#d3ccf2] pt-3 text-[12px] font-semibold">
+                    <div className="mt-3 flex items-center gap-2 border-t-[2.5px] border-dashed border-line pt-3 text-[12px] font-semibold">
                       move budget
                       <span className="ml-auto flex items-center gap-1.5">
                         <Step onClick={() => b.adjustEnvelope(env.id, -250)}>–</Step>
@@ -99,7 +99,7 @@ function Step({ onClick, children }) {
   return (
     <button
       onClick={onClick}
-      className="h-[26px] w-[26px] border-[2.5px] border-ink bg-white font-display text-[13px] leading-none active:bg-yellow"
+      className="h-[26px] w-[26px] border-[2.5px] border-ink bg-surface font-display text-[13px] leading-none active:bg-yellow active:text-on-accent"
     >
       {children}
     </button>

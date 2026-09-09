@@ -12,7 +12,7 @@ export default function MonthSwitcher() {
         ‹
       </Arrow>
 
-      <span className="min-w-[150px] border-[3px] border-ink bg-white px-4 py-1.5 text-center font-display text-[14px] shadow-hard-sm">
+      <span className="min-w-[150px] border-[3px] border-ink bg-surface px-4 py-1.5 text-center font-display text-[14px] shadow-hard-sm">
         {b.month.longLabel}
       </span>
 
@@ -27,7 +27,7 @@ export default function MonthSwitcher() {
       {!b.month.isCurrent && (
         <button
           onClick={b.goToCurrentMonth}
-          className="press ml-1 border-[2.5px] border-ink bg-yellow px-2 py-1 text-[11px] font-bold shadow-hard-xs"
+          className="press ml-1 border-[2.5px] border-ink bg-yellow px-2 py-1 text-[11px] font-bold text-on-accent shadow-hard-xs"
           style={{ '--press-x': '2px', '--press-y': '2px' }}
         >
           → today
@@ -43,7 +43,7 @@ function Arrow({ children, label, disabled, onClick }) {
       onClick={onClick}
       disabled={disabled}
       aria-label={label}
-      className="press flex h-9 w-9 items-center justify-center border-[3px] border-ink bg-white font-display text-lg leading-none shadow-hard-xs disabled:opacity-30 disabled:shadow-none"
+      className="press flex h-9 w-9 items-center justify-center border-[3px] border-ink bg-surface font-display text-lg leading-none shadow-hard-xs disabled:opacity-30 disabled:shadow-none"
       style={{ '--press-x': '3px', '--press-y': '3px' }}
     >
       {children}

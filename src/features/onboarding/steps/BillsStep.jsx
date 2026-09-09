@@ -47,7 +47,7 @@ export default function BillsStep({ data, set, onBack, onContinue, onSkip }) {
           <button
             key={p.name}
             onClick={() => add(p)}
-            className="press border-[3px] border-ink bg-white px-2.5 py-1.5 text-[12px] font-semibold shadow-hard-xs"
+            className="press border-[3px] border-ink bg-surface px-2.5 py-1.5 text-[12px] font-semibold shadow-hard-xs"
             style={{ '--press-x': '2px', '--press-y': '2px' }}
           >
             {p.emoji} {p.name} +
@@ -59,7 +59,7 @@ export default function BillsStep({ data, set, onBack, onContinue, onSkip }) {
       {bills.length > 0 && (
         <div className="mt-4 space-y-2">
           {bills.map((b) => (
-            <div key={b.id} className="flex items-center gap-2 border-[3px] border-ink bg-white p-2">
+            <div key={b.id} className="flex items-center gap-2 border-[3px] border-ink bg-surface p-2">
               <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border-2 border-ink bg-sky text-[15px]">
                 {b.emoji}
               </span>
@@ -81,7 +81,7 @@ export default function BillsStep({ data, set, onBack, onContinue, onSkip }) {
               <button
                 onClick={() => remove(b.id)}
                 aria-label={`Remove ${b.name || 'bill'}`}
-                className="grid h-7 w-7 shrink-0 place-items-center border-2 border-ink bg-white text-[11px] font-bold active:bg-pink"
+                className="grid h-7 w-7 shrink-0 place-items-center border-2 border-ink bg-surface text-[11px] font-bold active:bg-pink"
               >
                 ✕
               </button>

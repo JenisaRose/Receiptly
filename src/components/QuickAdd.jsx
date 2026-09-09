@@ -24,7 +24,7 @@ export default function QuickAdd() {
               type="button"
               onClick={() => b.logPreset(p.id)}
               whileTap={{ scale: 0.92, y: 2 }}
-              className="press flex shrink-0 items-center gap-2 border-[3px] border-ink bg-white py-2 pl-2 pr-3 shadow-hard-xs"
+              className="press flex shrink-0 items-center gap-2 border-[3px] border-ink bg-surface py-2 pl-2 pr-3 shadow-hard-xs"
               style={{ '--press-x': '2px', '--press-y': '2px' }}
             >
               <span

@@ -92,7 +92,7 @@ export default function LogExpenseModal({ onClose }) {
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/45 p-5"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-scrim p-5"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -119,7 +119,7 @@ export default function LogExpenseModal({ onClose }) {
                   key={p.id}
                   type="button"
                   onClick={() => applyPreset(p)}
-                  className="border-[2.5px] border-ink bg-white px-2 py-1 text-[11.5px] font-bold active:bg-yellow"
+                  className="border-[2.5px] border-ink bg-surface px-2 py-1 text-[11.5px] font-bold active:bg-yellow"
                 >
                   {p.emoji} {p.label} · {rupee(p.amount)}
                 </button>
@@ -139,7 +139,7 @@ export default function LogExpenseModal({ onClose }) {
             setError(false)
           }}
           placeholder="₹0"
-          className={`mb-1.5 w-full border-[3px] bg-white px-3 py-2.5 font-display text-[22px] ${
+          className={`mb-1.5 w-full border-[3px] bg-surface px-3 py-2.5 font-display text-[22px] ${
             error ? 'border-pink' : 'border-ink'
           }`}
         />
@@ -165,7 +165,7 @@ export default function LogExpenseModal({ onClose }) {
                 value={splitTotal}
                 onChange={(e) => onSplitTotalChange(e.target.value)}
                 placeholder="1,200"
-                className="w-20 border-2 border-ink bg-white px-2 py-1"
+                className="w-20 border-2 border-ink bg-surface px-2 py-1"
               />
               <span className="opacity-60">split</span>
               <input
@@ -174,7 +174,7 @@ export default function LogExpenseModal({ onClose }) {
                 min={2}
                 value={splitParts}
                 onChange={(e) => onSplitPartsChange(e.target.value)}
-                className="w-12 border-2 border-ink bg-white px-2 py-1"
+                className="w-12 border-2 border-ink bg-surface px-2 py-1"
               />
               <span className="opacity-60">ways</span>
             </div>
@@ -193,7 +193,7 @@ export default function LogExpenseModal({ onClose }) {
               type="button"
               onClick={() => setCategory(c.id)}
               className={`flex items-center gap-1.5 border-[2.5px] border-ink px-2.5 py-1.5 text-[12px] font-bold ${
-                category === c.id ? 'bg-yellow shadow-hard-xs' : 'bg-white'
+                category === c.id ? 'bg-yellow text-on-accent shadow-hard-xs' : 'bg-surface'
               }`}
             >
               {c.emoji} {c.label}
@@ -222,12 +222,12 @@ export default function LogExpenseModal({ onClose }) {
                 }
               }}
               placeholder="category name"
-              className="min-w-0 flex-1 border-[2.5px] border-ink bg-white px-2.5 py-1.5 text-[12px] font-semibold"
+              className="min-w-0 flex-1 border-[2.5px] border-ink bg-surface px-2.5 py-1.5 text-[12px] font-semibold"
             />
             <button
               type="button"
               onClick={createCategory}
-              className="border-[2.5px] border-ink bg-ink px-3 font-display text-[11px] text-yellow"
+              className="border-[2.5px] border-ink bg-invert px-3 font-display text-[11px] text-yellow"
             >
               add
             </button>
@@ -241,7 +241,7 @@ export default function LogExpenseModal({ onClose }) {
           value={note}
           onChange={(e) => setNote(e.target.value)}
           placeholder="what was it?"
-          className="mb-3 w-full border-[3px] border-ink bg-white px-3 py-2.5 text-[15px] font-semibold"
+          className="mb-3 w-full border-[3px] border-ink bg-surface px-3 py-2.5 text-[15px] font-semibold"
         />
 
         <label className="mb-4 flex cursor-pointer items-center gap-2 text-[12px] font-semibold">
@@ -258,13 +258,13 @@ export default function LogExpenseModal({ onClose }) {
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 border-[3px] border-ink bg-white py-3 font-display text-[13px]"
+            className="flex-1 border-[3px] border-ink bg-surface py-3 font-display text-[13px]"
           >
             cancel
           </button>
           <button
             type="submit"
-            className="press flex-1 border-[3px] border-ink bg-ink py-3 font-display text-[13px] text-yellow shadow-[5px_5px_0_var(--color-pink)]"
+            className="press flex-1 border-[3px] border-ink bg-invert py-3 font-display text-[13px] text-yellow shadow-[5px_5px_0_var(--color-pink)]"
             style={{ '--press-x': '5px', '--press-y': '5px' }}
           >
             add it

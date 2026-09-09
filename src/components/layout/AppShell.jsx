@@ -59,7 +59,7 @@ export default function AppShell() {
             <button
               onClick={() => setSettingsOpen(true)}
               aria-label="Settings"
-              className="press flex h-10 w-10 items-center justify-center rounded-full border-[3px] border-ink bg-pink text-sm font-bold shadow-hard-xs"
+              className="press flex h-10 w-10 items-center justify-center rounded-full border-[3px] border-ink bg-pink text-sm font-bold text-on-accent shadow-hard-xs"
               style={{ '--press-x': '3px', '--press-y': '3px' }}
             >
               RP
@@ -95,7 +95,7 @@ export default function AppShell() {
       <button
         onClick={openLog}
         aria-label="Log an expense"
-        className="press fixed bottom-[84px] right-4 z-40 flex h-14 w-14 items-center justify-center rounded-full border-[3px] border-ink bg-ink font-display text-2xl text-yellow shadow-[4px_4px_0_var(--color-pink)] lg:hidden"
+        className="press fixed bottom-[84px] right-4 z-40 flex h-14 w-14 items-center justify-center rounded-full border-[3px] border-ink bg-invert font-display text-2xl text-yellow shadow-[4px_4px_0_var(--color-pink)] lg:hidden"
         style={{ '--press-x': '4px', '--press-y': '4px' }}
       >
         +

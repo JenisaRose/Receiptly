@@ -12,7 +12,7 @@ export default function Bills() {
 
   return (
     <div className="space-y-4">
-      <div className="border-[3px] border-ink bg-pink p-4 shadow-hard">
+      <div className="border-[3px] border-ink bg-pink p-4 text-on-accent shadow-hard">
         <p className="font-display text-[20px]">{rupee(b.billsTotal)} in bills this month</p>
         <p className="mt-0.5 text-[12px] font-semibold">
           {rupee(b.next7Total)} lands in the next 7 days · all subtracted before your safe-to-spend
@@ -45,14 +45,14 @@ export default function Bills() {
                 aria-pressed={bill.paid}
                 className={`press flex w-full items-center gap-3 border-[3px] border-ink p-3 text-left ${
                   bill.paid
-                    ? 'bg-white opacity-55'
+                    ? 'bg-surface opacity-55'
                     : soon
-                      ? 'bg-yellow shadow-hard-sm'
-                      : 'bg-white shadow-hard-sm'
+                      ? 'bg-yellow text-on-accent shadow-hard-sm'
+                      : 'bg-surface shadow-hard-sm'
                 }`}
                 style={{ '--press-x': '3px', '--press-y': '3px' }}
               >
-                <div className="flex h-[46px] w-[46px] shrink-0 flex-col items-center justify-center border-[2.5px] border-ink bg-bg leading-none">
+                <div className="flex h-[46px] w-[46px] shrink-0 flex-col items-center justify-center border-[2.5px] border-ink bg-bg leading-none text-ink">
                   <b className="font-display text-base">{big}</b>
                   <span className="text-[8.5px] font-bold uppercase">{small}</span>
                 </div>
@@ -60,7 +60,7 @@ export default function Bills() {
                   <p className="text-[13.5px] font-bold">
                     {bill.emoji} {bill.name}
                     {bill.autopay && (
-                      <span className="ml-1.5 rounded-full border-2 border-ink bg-mint px-1.5 align-middle text-[9px] font-bold">
+                      <span className="ml-1.5 rounded-full border-2 border-ink bg-mint px-1.5 align-middle text-[9px] font-bold text-on-accent">
                         🔁 auto
                       </span>
                     )}

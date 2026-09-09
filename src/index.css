@@ -2,10 +2,29 @@
 
 /* ============================================================
    Design tokens — neubrutalist palette + type
+
+   Colours are semantic: components reference `bg-surface`,
+   `border-ink`, `text-neg` … never a raw hex. The light values
+   live here; the dark theme (below) only re-points the same
+   tokens, so every screen follows along with no per-component
+   dark styling.
    ============================================================ */
 @theme {
-  --color-bg: #ece6ff;
-  --color-ink: #14121f;
+  /* surfaces & ink — light */
+  --color-bg: #ece6ff; /* page ground */
+  --color-surface: #ffffff; /* cards, sheets, inputs */
+  --color-surface-2: #f2ecfe; /* nested / inset surfaces */
+  --color-ink: #14121f; /* text, borders, dividers, icons */
+  --color-line: #d3ccf2; /* dashed dividers */
+  --color-invert: #14121f; /* deliberate high-contrast panels */
+  --color-invert-ink: #faf7ff; /* text on an invert panel */
+  --color-on-accent: #14121f; /* text/icons on a bright accent fill */
+  --color-pos: #178a4e; /* money in / under budget */
+  --color-neg: #d6335a; /* money out / over budget */
+  --color-scrim: rgb(18 16 28 / 0.5); /* modal backdrops */
+  --color-dot: #14121f; /* the dotted-grid background (matches --color-ink) */
+
+  /* accents */
   --color-yellow: #f4ff5a;
   --color-pink: #ff6fb0;
   --color-mint: #79f2c0;
@@ -13,16 +32,93 @@
   --color-orange: #ffa84d;
   --color-sky: #6fd8ff;
 
+  /* type */
   --font-display: 'Archivo Black', ui-sans-serif, system-ui, sans-serif;
   --font-body: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
   --font-hand: 'Caveat', ui-serif, cursive;
   /* editorial serif — landing page accents only */
   --font-serif: 'Fraunces', ui-serif, Georgia, serif;
 
-  --shadow-hard-xs: 3px 3px 0 var(--color-ink);
-  --shadow-hard-sm: 4px 4px 0 var(--color-ink);
-  --shadow-hard: 6px 6px 0 var(--color-ink);
-  --shadow-hard-lg: 9px 9px 0 var(--color-ink);
+  /* hard offset shadows — colour is a token so dark mode can lift it
+     off pure black into a visible "catching the light" edge */
+  --shadow-hard-color: #14121f;
+  --shadow-hard-xs: 3px 3px 0 var(--shadow-hard-color);
+  --shadow-hard-sm: 4px 4px 0 var(--shadow-hard-color);
+  --shadow-hard: 6px 6px 0 var(--shadow-hard-color);
+  --shadow-hard-lg: 9px 9px 0 var(--shadow-hard-color);
+}
+
+/* ============================================================
+   Dark theme — deliberately designed, NOT an inversion.
+
+   Deep charcoal-purple ground, warm off-white ink, cards a step
+   up in lightness. Accents keep their identity but lose a little
+   saturation so they sit calmly on the dark ground. Shadows lift
+   off black into a soft lilac-grey so the neubrutalist edges stay
+   crisp and physical without glowing.
+
+   Applied by an inline script in index.html (before first paint,
+   so there's no flash) and kept in sync by ThemeProvider.
+   ============================================================ */
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+  :root[data-theme='dark'] {
+    color-scheme: dark;
+  }
+
+  :root[data-theme='dark'],
+  [data-theme='dark'] {
+    --color-bg: #151320;
+    --color-surface: #1f1b2e;
+    --color-surface-2: #2a2540;
+    --color-ink: #f1ede4;
+    --color-line: #39334f;
+    --color-invert: #100d18;
+    --color-invert-ink: #f1ede4;
+    --color-on-accent: #14121f;
+    --color-pos: #57dd9d;
+    --color-neg: #ff8aa6;
+    --color-scrim: rgb(4 3 9 / 0.62);
+    --color-dot: rgb(241 237 228 / 0.24);
+
+    --color-yellow: #ebe958;
+    --color-pink: #f571a8;
+    --color-mint: #6fdcae;
+    --color-lilac: #c1b0f2;
+    --color-orange: #f2a24c;
+    --color-sky: #66ccef;
+
+    /* lifted off pure black so the offset edge stays crisp and visible
+       against the dark ground — a lit edge, not a glow (zero blur) */
+    --shadow-hard-color: #5c5688;
+  }
+
+  /* Subtrees pinned back to light regardless of the app theme:
+     the shareable receipt PNG, the Wrapped story, the onboarding
+     receipt. A receipt is printed on paper in every theme. */
+  [data-theme='light'] {
+    --color-bg: #ece6ff;
+    --color-surface: #ffffff;
+    --color-surface-2: #f2ecfe;
+    --color-ink: #14121f;
+    --color-line: #d3ccf2;
+    --color-invert: #14121f;
+    --color-invert-ink: #faf7ff;
+    --color-on-accent: #14121f;
+    --color-pos: #178a4e;
+    --color-neg: #d6335a;
+    --color-scrim: rgb(18 16 28 / 0.5);
+    --color-dot: #14121f;
+    --color-yellow: #f4ff5a;
+    --color-pink: #ff6fb0;
+    --color-mint: #79f2c0;
+    --color-lilac: #c9b8ff;
+    --color-orange: #ffa84d;
+    --color-sky: #6fd8ff;
+    --shadow-hard-color: #14121f;
+  }
 }
 
 /* ============================================================
@@ -37,7 +133,7 @@
 
   body {
     background-color: var(--color-bg);
-    background-image: radial-gradient(var(--color-ink) 1px, transparent 1px);
+    background-image: radial-gradient(var(--color-dot) 1px, transparent 1px);
     background-size: 22px 22px;
     background-position: -8px -8px;
     font-family: var(--font-body);
@@ -46,9 +142,43 @@
     text-rendering: optimizeLegibility;
   }
 
+  /* Dark mode gets a barely-there atmospheric wash behind the dots —
+     two faint blooms for depth, no gradients across the content. */
+  :root[data-theme='dark'] body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(60rem 60rem at 8% -10%, rgb(201 184 255 / 0.06), transparent 60%),
+      radial-gradient(52rem 52rem at 108% 105%, rgb(111 216 255 / 0.05), transparent 60%);
+  }
+
   ::selection {
     background: var(--color-pink);
+    color: var(--color-on-accent);
+  }
+
+  /* One consistent, always-visible keyboard focus ring. Low
+     specificity (:where) so components can still opt out. */
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 3px solid var(--color-ink);
+    outline-offset: 2px;
+    border-radius: 1px;
+  }
+
+  /* First-paint placeholder (index.html) — replaced on mount */
+  #root:empty {
+    display: grid;
+    place-items: center;
+  }
+  #root:empty::after {
+    content: 'receiptly';
+    font-family: var(--font-display);
+    font-size: 20px;
     color: var(--color-ink);
+    opacity: 0.25;
   }
 }
 
@@ -62,14 +192,19 @@
       transform 0.08s ease,
       box-shadow 0.08s ease;
   }
+  @media (hover: hover) {
+    .press:hover {
+      transform: translate(1px, 1px);
+    }
+  }
   .press:active {
     transform: translate(var(--press-x, 4px), var(--press-y, 4px));
-    box-shadow: 0 0 0 var(--color-ink) !important;
+    box-shadow: 0 0 0 var(--shadow-hard-color) !important;
   }
 
   /* Dark card with a faint dotted texture (Receipts "total flowing out") */
   .card-dots {
-    background-color: var(--color-ink);
+    background-color: var(--color-invert);
     background-image: radial-gradient(rgba(244, 255, 90, 0.14) 2px, transparent 2px);
     background-size: 14px 14px;
   }
@@ -120,6 +255,23 @@
       var(--color-ink) 7px,
       var(--color-ink) 10px
     );
+  }
+}
+
+/* Theme cross-fade — only while `.theme-anim` is on <html> (added for
+   ~200ms by ThemeProvider on an explicit Light/Dark switch, never on
+   load). Colours only; nothing moves. */
+@layer base {
+  :root.theme-anim,
+  :root.theme-anim *,
+  :root.theme-anim *::before,
+  :root.theme-anim *::after {
+    transition:
+      background-color 0.12s ease,
+      border-color 0.12s ease,
+      color 0.12s ease,
+      box-shadow 0.12s ease,
+      fill 0.12s ease !important;
   }
 }
 

@@ -40,9 +40,11 @@ export default function FinalReceiptCard({ w, monthKey, monthLabel, onReplay, on
 
   return (
     <Bleed accent="bg-bg" className="flex flex-col">
-      {/* off-screen, transform-free copy the PNG is captured from */}
+      {/* off-screen, transform-free copy the PNG is captured from. It renders
+          outside the story tree, so it's pinned to light (`data-theme`) —
+          a dark-mode page must never tint the exported paper receipt. */}
       {createPortal(
-        <div aria-hidden className="pointer-events-none fixed left-[-9999px] top-0">
+        <div aria-hidden data-theme="light" className="pointer-events-none fixed left-[-9999px] top-0">
           <ReceiptArtboard w={w} ref={captureRef} />
         </div>,
         document.body,

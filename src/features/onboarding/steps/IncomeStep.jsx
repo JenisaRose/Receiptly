@@ -36,7 +36,7 @@ export default function IncomeStep({ data, set, onBack, onContinue }) {
             onClick={() => set({ incomeKind: k.value })}
             aria-pressed={data.incomeKind === k.value}
             className={`press flex-1 border-[3px] border-ink px-3 py-3 text-[14px] font-semibold shadow-hard-xs ${
-              data.incomeKind === k.value ? 'bg-mint' : 'bg-white'
+              data.incomeKind === k.value ? 'bg-mint text-on-accent' : 'bg-surface'
             }`}
             style={{ '--press-x': '3px', '--press-y': '3px' }}
           >

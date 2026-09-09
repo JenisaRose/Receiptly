@@ -29,7 +29,7 @@ export default function ChoiceStep({ onFresh, onDemo, onBack }) {
 
   return (
     <div
-      className="fixed inset-0 z-[60] flex flex-col items-center justify-center overflow-y-auto bg-ink px-5 py-12"
+      className="fixed inset-0 z-[60] flex flex-col items-center justify-center overflow-y-auto bg-invert px-5 py-12"
       style={{
         backgroundImage: 'radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px)',
         backgroundSize: '22px 22px',

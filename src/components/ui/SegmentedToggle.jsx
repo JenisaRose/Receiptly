@@ -10,7 +10,7 @@ export default function SegmentedToggle({ options, value, onChange, className = 
             onClick={() => onChange(opt.value)}
             aria-pressed={active}
             className={`press flex-1 border-[3px] border-ink px-3 py-2.5 text-[13px] font-semibold shadow-hard-sm ${
-              active ? 'bg-yellow' : 'bg-white'
+              active ? 'bg-yellow text-on-accent' : 'bg-surface'
             }`}
           >
             {opt.label}

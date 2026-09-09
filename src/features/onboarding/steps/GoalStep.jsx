@@ -51,7 +51,7 @@ export default function GoalStep({ data, set, onBack, onContinue, onSkip }) {
             key={e}
             onClick={() => patch({ emoji: e })}
             className={`grid h-8 w-8 place-items-center border-2 border-ink text-[15px] ${
-              goal.emoji === e ? 'bg-yellow' : 'bg-white'
+              goal.emoji === e ? 'bg-yellow' : 'bg-surface'
             }`}
           >
             {e}
@@ -85,7 +85,7 @@ export default function GoalStep({ data, set, onBack, onContinue, onSkip }) {
       </div>
 
       <div className="mt-4">
-        <div className="h-3 w-full overflow-hidden border-2 border-ink bg-white">
+        <div className="h-3 w-full overflow-hidden border-2 border-ink bg-surface">
           <div className="h-full bg-yellow" style={{ width: `${pct}%` }} />
         </div>
         <p className="mt-1.5 font-hand text-[16px] font-bold opacity-65">

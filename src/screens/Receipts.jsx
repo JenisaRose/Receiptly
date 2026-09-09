@@ -61,7 +61,7 @@ function CategoryBreakdown() {
           return (
             <div
               key={cat.id}
-              className="overflow-hidden border-[3px] border-ink bg-white shadow-hard-sm"
+              className="overflow-hidden border-[3px] border-ink bg-surface shadow-hard-sm"
             >
               <button
                 onClick={() => setOpenId(isOpen ? null : cat.id)}
@@ -109,7 +109,7 @@ function CategoryBreakdown() {
                     {cat.txs.map((t) => (
                       <div
                         key={t.id}
-                        className="flex items-center justify-between gap-2 border-b border-dashed border-[#d8d2f5] px-3.5 py-2.5 text-[12.5px] last:border-b-0"
+                        className="flex items-center justify-between gap-2 border-b border-dashed border-line px-3.5 py-2.5 text-[12.5px] last:border-b-0"
                       >
                         <span className="min-w-0 truncate opacity-85">
                           {t.name}
@@ -135,7 +135,7 @@ function CategoryBreakdown() {
           <EmptyState
             emoji="🧾"
             title={`nothing logged ${scope === 'week' ? 'this week' : 'this month'} yet`}
-            hint="tap ＋ to add one"
+            hint="your first ₹1 gives Receiptly something to chew on"
           />
         )}
       </div>

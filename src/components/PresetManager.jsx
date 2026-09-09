@@ -25,11 +25,11 @@ export default function PresetManager() {
           const cat = b.categoryMap[p.categoryId]
           const isEditing = editingId === p.id
           return (
-            <div key={p.id} className="border-[2.5px] border-ink bg-white">
+            <div key={p.id} className="border-[2.5px] border-ink bg-surface">
               <div className="flex items-center gap-2.5 px-3 py-2.5">
                 <span
                   className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-ink text-sm ${
-                    BG[cat?.color] ?? 'bg-white'
+                    BG[cat?.color] ?? 'bg-surface'
                   }`}
                 >
                   {p.emoji}
@@ -42,7 +42,7 @@ export default function PresetManager() {
                 </div>
                 <button
                   onClick={() => setEditingId(isEditing ? null : p.id)}
-                  className="border-2 border-ink bg-white px-2 py-1 text-[11px] font-bold active:bg-yellow"
+                  className="border-2 border-ink bg-surface px-2 py-1 text-[11px] font-bold active:bg-yellow active:text-on-accent"
                 >
                   {isEditing ? 'close' : 'edit'}
                 </button>
@@ -52,7 +52,7 @@ export default function PresetManager() {
                     setEditingId(null)
                     b.deletePreset(p.id)
                   }}
-                  className="flex h-6 w-6 shrink-0 items-center justify-center border-2 border-ink bg-white text-[11px] font-bold leading-none active:bg-pink"
+                  className="flex h-6 w-6 shrink-0 items-center justify-center border-2 border-ink bg-surface text-[11px] font-bold leading-none active:bg-pink active:text-on-accent"
                 >
                   ✕
                 </button>
@@ -81,7 +81,7 @@ export default function PresetManager() {
       <AnimatePresence initial={false}>
         {adding ? (
           <Expand>
-            <div className="mt-2 border-[2.5px] border-ink bg-white">
+            <div className="mt-2 border-[2.5px] border-ink bg-surface">
               <PresetForm
                 initial={{ emoji: cats[0]?.emoji ?? '⚡', label: '', categoryId: cats[0]?.id, amount: '' }}
                 cats={cats}
@@ -97,7 +97,7 @@ export default function PresetManager() {
         ) : (
           <button
             onClick={() => setAdding(true)}
-            className="press mt-2 w-full border-[2.5px] border-dashed border-ink bg-white py-2.5 font-display text-[12px]"
+            className="press mt-2 w-full border-[2.5px] border-dashed border-ink bg-surface py-2.5 font-display text-[12px]"
             style={{ '--press-x': '3px', '--press-y': '3px' }}
           >
             ＋ new preset
@@ -137,7 +137,7 @@ function PresetForm({ initial, cats, onSave, onCancel, saveLabel = 'save' }) {
           value={emoji}
           onChange={(e) => setEmoji([...e.target.value].slice(-2).join(''))}
           aria-label="emoji"
-          className="w-12 border-[2.5px] border-ink bg-white text-center text-lg"
+          className="w-12 border-[2.5px] border-ink bg-surface text-center text-lg"
         />
         <input
           autoFocus
@@ -145,7 +145,7 @@ function PresetForm({ initial, cats, onSave, onCancel, saveLabel = 'save' }) {
           onChange={(e) => setLabel(e.target.value)}
           placeholder="what is it?"
           aria-label="preset label"
-          className="min-w-0 flex-1 border-[2.5px] border-ink bg-white px-2.5 py-1.5 text-[13px] font-semibold"
+          className="min-w-0 flex-1 border-[2.5px] border-ink bg-surface px-2.5 py-1.5 text-[13px] font-semibold"
         />
         <input
           type="number"
@@ -154,7 +154,7 @@ function PresetForm({ initial, cats, onSave, onCancel, saveLabel = 'save' }) {
           onChange={(e) => setAmount(e.target.value)}
           placeholder="₹"
           aria-label="preset amount"
-          className="w-16 border-[2.5px] border-ink bg-white px-2 py-1.5 text-[13px] font-semibold"
+          className="w-16 border-[2.5px] border-ink bg-surface px-2 py-1.5 text-[13px] font-semibold"
         />
       </div>
       <div className="flex flex-wrap gap-1.5">
@@ -169,7 +169,7 @@ function PresetForm({ initial, cats, onSave, onCancel, saveLabel = 'save' }) {
               }
             }}
             className={`border-[2px] border-ink px-2 py-1 text-[11px] font-bold ${
-              categoryId === c.id ? 'bg-yellow shadow-hard-xs' : 'bg-white'
+              categoryId === c.id ? 'bg-yellow text-on-accent shadow-hard-xs' : 'bg-surface'
             }`}
           >
             {c.emoji} {c.label}
@@ -179,14 +179,14 @@ function PresetForm({ initial, cats, onSave, onCancel, saveLabel = 'save' }) {
       <div className="flex gap-2 pt-0.5">
         <button
           onClick={onCancel}
-          className="flex-1 border-[2.5px] border-ink bg-white py-1.5 font-display text-[11px]"
+          className="flex-1 border-[2.5px] border-ink bg-surface py-1.5 font-display text-[11px]"
         >
           cancel
         </button>
         <button
           onClick={() => valid && onSave({ emoji, label, categoryId, amount: Number(amount) })}
           disabled={!valid}
-          className="flex-1 border-[2.5px] border-ink bg-ink py-1.5 font-display text-[11px] text-yellow disabled:opacity-40"
+          className="flex-1 border-[2.5px] border-ink bg-invert py-1.5 font-display text-[11px] text-yellow disabled:opacity-40"
         >
           {saveLabel}
         </button>

@@ -27,9 +27,9 @@ export default function WelcomeStep({ onStart, onDemo }) {
         </motion.span>
       ))}
 
-      <div className="border-[3px] border-ink bg-lilac p-9 text-center shadow-hard-lg sm:p-12">
+      <div className="border-[3px] border-ink bg-lilac p-9 text-center text-on-accent shadow-hard-lg sm:p-12">
         <motion.span
-          className="inline-block -rotate-2 border-[3px] border-ink bg-ink px-4 py-1.5 font-display text-[12px] uppercase tracking-[0.24em] text-yellow shadow-hard-xs"
+          className="inline-block -rotate-2 border-[3px] border-ink bg-invert px-4 py-1.5 font-display text-[12px] uppercase tracking-[0.24em] text-yellow shadow-hard-xs"
           initial={reduced ? false : { y: -20, rotate: 8 }}
           animate={{ y: 0, rotate: -2 }}
           transition={{ type: 'spring', stiffness: 300, damping: 14 }}
@@ -74,7 +74,7 @@ export default function WelcomeStep({ onStart, onDemo }) {
           <motion.button
             onClick={onStart}
             whileHover={reduced ? undefined : { x: 3 }}
-            className="press w-full border-[3px] border-ink bg-ink py-4 font-display text-[16px] text-yellow shadow-[7px_7px_0_var(--color-pink)]"
+            className="press w-full border-[3px] border-ink bg-invert py-4 font-display text-[16px] text-yellow shadow-[7px_7px_0_var(--color-pink)]"
             style={{ '--press-x': '7px', '--press-y': '7px' }}
           >
             set up Receiptly →
@@ -82,7 +82,7 @@ export default function WelcomeStep({ onStart, onDemo }) {
           <motion.button
             onClick={onDemo}
             whileHover={reduced ? undefined : { x: 3 }}
-            className="press w-full border-[3px] border-ink bg-white py-3.5 font-display text-[15px] shadow-hard-sm"
+            className="press w-full border-[3px] border-ink bg-surface py-3.5 font-display text-[15px] text-ink shadow-hard-sm"
             style={{ '--press-x': '4px', '--press-y': '4px' }}
           >
             explore the demo →

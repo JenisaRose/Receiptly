@@ -57,10 +57,10 @@ export default function Trends() {
       <div className="relative -rotate-[0.6deg]">
         <div className="absolute inset-0 translate-x-[3px] translate-y-[3px] rotate-2 border-[3px] border-ink bg-lilac" />
         <div className="absolute inset-0 translate-x-[6px] translate-y-[6px] rotate-[4deg] border-[3px] border-ink bg-sky" />
-        <div className="relative border-[3px] border-ink bg-white p-4 shadow-hard">
+        <div className="relative border-[3px] border-ink bg-surface p-4 shadow-hard">
           <div className="mb-3.5 flex items-baseline justify-between">
             <span className="text-sm font-bold">{title}</span>
-            <span className="rounded-full bg-ink px-2 py-[2px] text-[11px] font-bold text-yellow">
+            <span className="rounded-full bg-invert px-2 py-[2px] text-[11px] font-bold text-yellow">
               avg {rupee(avg)}
             </span>
           </div>
@@ -135,7 +135,7 @@ export default function Trends() {
             {b.insights.map((ins, i) => (
               <div
                 key={ins.id + i}
-                className={`flex items-center gap-2.5 border-[3px] border-ink bg-white p-3 shadow-hard-sm ${
+                className={`flex items-center gap-2.5 border-[3px] border-ink bg-surface p-3 shadow-hard-sm ${
                   i % 2 ? 'rotate-[0.8deg]' : '-rotate-[0.8deg]'
                 }`}
               >
@@ -157,7 +157,7 @@ export default function Trends() {
       )}
 
       {/* day of week */}
-      <div className="border-[3px] border-ink bg-white p-4 shadow-hard-sm">
+      <div className="border-[3px] border-ink bg-surface p-4 shadow-hard-sm">
         <p className="mb-3 inline-block -rotate-1 font-hand text-[18px] font-bold">
           when the money actually leaves
         </p>

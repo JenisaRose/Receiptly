@@ -260,11 +260,14 @@ export default function WrappedStory({ onClose }) {
  * would leave the page usable behind it; the "entrance" is the first card.
  */
 function Ground({ children }) {
+  // `data-theme="light"`: Wrapped is a full-screen cinematic experience with
+  // its own bright palette — it does not follow the app's Light/Dark setting.
   return createPortal(
     <div
       role="dialog"
       aria-modal="true"
       aria-label="Your month, wrapped"
+      data-theme="light"
       className="fixed inset-0 z-[70] flex items-stretch justify-center bg-ink md:items-center md:p-6"
       style={{
         backgroundImage: 'radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px)',

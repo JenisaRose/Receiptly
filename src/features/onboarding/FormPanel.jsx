@@ -29,16 +29,16 @@ export default function FormPanel({
     <div className="relative w-full max-w-[560px]">
       {/* clipboard clip — clamps down on arrival */}
       <motion.div
-        className="absolute left-1/2 top-[-17px] z-10 h-7 w-28 -translate-x-1/2 rounded-sm border-[3px] border-ink bg-ink"
+        className="absolute left-1/2 top-[-17px] z-10 h-7 w-28 -translate-x-1/2 rounded-sm border-[3px] border-ink bg-invert"
         initial={reduced ? false : { y: -12, rotate: -9 }}
         animate={{ y: 0, rotate: -2 }}
         transition={{ ...spring, delay: 0.04 }}
       />
 
-      <div className="relative border-[3px] border-ink bg-white shadow-hard-lg">
+      <div className="relative border-[3px] border-ink bg-surface shadow-hard-lg">
         {/* accent header */}
         <div
-          className={`flex items-center justify-between border-b-[3px] border-ink px-6 py-3 ${BG[accent]}`}
+          className={`flex items-center justify-between border-b-[3px] border-ink px-6 py-3 text-on-accent ${BG[accent]}`}
         >
           <span className="font-display text-[12px] uppercase tracking-[0.22em]">setup</span>
           <div className="flex gap-1.5">
@@ -46,7 +46,7 @@ export default function FormPanel({
               <motion.span
                 key={idx}
                 className={`h-2.5 w-2.5 rounded-full border-2 border-ink ${
-                  idx < n ? 'bg-ink' : 'bg-white'
+                  idx < n ? 'bg-ink' : 'bg-transparent'
                 }`}
                 initial={reduced || idx !== n - 1 ? false : { scale: 0 }}
                 animate={{ scale: 1 }}
@@ -58,7 +58,7 @@ export default function FormPanel({
 
         {/* section number tab — stamps in with an overshoot */}
         <motion.span
-          className={`absolute left-[-12px] top-[58px] grid h-12 w-12 place-items-center border-[3px] border-ink font-display text-[24px] shadow-hard-xs ${BG[accent]}`}
+          className={`absolute left-[-12px] top-[58px] grid h-12 w-12 place-items-center border-[3px] border-ink font-display text-[24px] text-on-accent shadow-hard-xs ${BG[accent]}`}
           initial={reduced ? false : { scale: 0, rotate: 28 }}
           animate={{ scale: 1, rotate: -6 }}
           transition={{ type: 'spring', stiffness: 330, damping: 13, delay: 0.12 }}
@@ -93,7 +93,7 @@ export default function FormPanel({
           <motion.button
             onClick={onBack}
             whileHover={reduced ? undefined : { x: -2 }}
-            className="press border-[3px] border-ink bg-white px-4 py-2.5 font-display text-[13px] shadow-hard-xs"
+            className="press border-[3px] border-ink bg-surface px-4 py-2.5 font-display text-[13px] shadow-hard-xs"
             style={{ '--press-x': '3px', '--press-y': '3px' }}
           >
             ‹ back
@@ -110,7 +110,7 @@ export default function FormPanel({
             onClick={onContinue}
             disabled={!canContinue}
             whileHover={reduced || !canContinue ? undefined : { x: 3 }}
-            className="press ml-auto border-[3px] border-ink bg-ink px-6 py-2.5 font-display text-[14px] text-yellow shadow-[5px_5px_0_var(--color-pink)] disabled:opacity-40 disabled:shadow-none"
+            className="press ml-auto border-[3px] border-ink bg-invert px-6 py-2.5 font-display text-[14px] text-yellow shadow-[5px_5px_0_var(--color-pink)] disabled:opacity-40 disabled:shadow-none"
             style={{ '--press-x': '5px', '--press-y': '5px' }}
           >
             {continueLabel}

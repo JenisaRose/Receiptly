@@ -22,7 +22,7 @@ export default function BillManager() {
         {bills.map((bill) => {
           const isEditing = editingId === bill.id
           return (
-            <div key={bill.id} className="border-[2.5px] border-ink bg-white">
+            <div key={bill.id} className="border-[2.5px] border-ink bg-surface">
               <div className="flex items-center gap-2.5 px-3 py-2.5">
                 <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-ink bg-sky text-sm">
                   {bill.emoji}
@@ -36,14 +36,14 @@ export default function BillManager() {
                 </div>
                 <button
                   onClick={() => setEditingId(isEditing ? null : bill.id)}
-                  className="border-2 border-ink bg-white px-2 py-1 text-[11px] font-bold active:bg-yellow"
+                  className="border-2 border-ink bg-surface px-2 py-1 text-[11px] font-bold active:bg-yellow active:text-on-accent"
                 >
                   {isEditing ? 'close' : 'edit'}
                 </button>
                 <button
                   aria-label={`Delete ${bill.name}`}
                   onClick={() => b.deleteBill(bill.id)}
-                  className="flex h-6 w-6 shrink-0 items-center justify-center border-2 border-ink bg-white text-[11px] font-bold leading-none active:bg-pink"
+                  className="flex h-6 w-6 shrink-0 items-center justify-center border-2 border-ink bg-surface text-[11px] font-bold leading-none active:bg-pink active:text-on-accent"
                 >
                   ✕
                 </button>
@@ -71,7 +71,7 @@ export default function BillManager() {
       <AnimatePresence initial={false}>
         {adding ? (
           <Expand>
-            <div className="mt-2 border-[2.5px] border-ink bg-white">
+            <div className="mt-2 border-[2.5px] border-ink bg-surface">
               <BillForm
                 initial={{ emoji: '🧾', name: '', amount: '', dueDay: 1, autopay: false }}
                 saveLabel="add it"
@@ -86,7 +86,7 @@ export default function BillManager() {
         ) : (
           <button
             onClick={() => setAdding(true)}
-            className="press mt-2 w-full border-[2.5px] border-dashed border-ink bg-white py-2.5 font-display text-[12px]"
+            className="press mt-2 w-full border-[2.5px] border-dashed border-ink bg-surface py-2.5 font-display text-[12px]"
             style={{ '--press-x': '3px', '--press-y': '3px' }}
           >
             ＋ new bill
@@ -127,7 +127,7 @@ function BillForm({ initial, onSave, onCancel, saveLabel = 'save' }) {
           value={emoji}
           onChange={(e) => setEmoji([...e.target.value].slice(-2).join(''))}
           aria-label="emoji"
-          className="w-12 border-[2.5px] border-ink bg-white text-center text-lg"
+          className="w-12 border-[2.5px] border-ink bg-surface text-center text-lg"
         />
         <input
           autoFocus
@@ -135,7 +135,7 @@ function BillForm({ initial, onSave, onCancel, saveLabel = 'save' }) {
           onChange={(e) => setName(e.target.value)}
           placeholder="what's it for?"
           aria-label="bill name"
-          className="min-w-0 flex-1 border-[2.5px] border-ink bg-white px-2.5 py-1.5 text-[13px] font-semibold"
+          className="min-w-0 flex-1 border-[2.5px] border-ink bg-surface px-2.5 py-1.5 text-[13px] font-semibold"
         />
       </div>
       <div className="flex items-center gap-2 text-[13px] font-semibold">
@@ -147,7 +147,7 @@ function BillForm({ initial, onSave, onCancel, saveLabel = 'save' }) {
           onChange={(e) => setAmount(e.target.value)}
           placeholder="amount"
           aria-label="bill amount"
-          className="w-24 border-2 border-ink bg-white px-2 py-1"
+          className="w-24 border-2 border-ink bg-surface px-2 py-1"
         />
         <span className="opacity-50">due on the</span>
         <input
@@ -158,7 +158,7 @@ function BillForm({ initial, onSave, onCancel, saveLabel = 'save' }) {
           value={dueDay}
           onChange={(e) => setDueDay(e.target.value)}
           aria-label="due day"
-          className="w-14 border-2 border-ink bg-white px-2 py-1"
+          className="w-14 border-2 border-ink bg-surface px-2 py-1"
         />
         <span className="opacity-50">th</span>
       </div>
@@ -174,14 +174,14 @@ function BillForm({ initial, onSave, onCancel, saveLabel = 'save' }) {
       <div className="flex gap-2 pt-0.5">
         <button
           onClick={onCancel}
-          className="flex-1 border-[2.5px] border-ink bg-white py-1.5 font-display text-[11px]"
+          className="flex-1 border-[2.5px] border-ink bg-surface py-1.5 font-display text-[11px]"
         >
           cancel
         </button>
         <button
           onClick={() => valid && onSave({ emoji, name, amount: Number(amount), dueDay: Number(dueDay), autopay })}
           disabled={!valid}
-          className="flex-1 border-[2.5px] border-ink bg-ink py-1.5 font-display text-[11px] text-yellow disabled:opacity-40"
+          className="flex-1 border-[2.5px] border-ink bg-invert py-1.5 font-display text-[11px] text-yellow disabled:opacity-40"
         >
           {saveLabel}
         </button>

@@ -30,7 +30,7 @@ export default function Reflect() {
         initial={{ scale: 0.85, rotate: -1.5, opacity: 0 }}
         animate={{ scale: 1, rotate: -1.5, opacity: 1 }}
         transition={{ type: 'spring', stiffness: 240, damping: 16 }}
-        className="relative border-4 border-ink bg-yellow p-5 text-center shadow-hard-lg"
+        className="relative border-4 border-ink bg-yellow p-5 text-center text-on-accent shadow-hard-lg"
       >
         <span className="absolute right-1.5 top-1.5 text-[22px]">✦</span>
         <p className="font-hand text-[19px] font-bold">your month, wrapped</p>
@@ -42,7 +42,10 @@ export default function Reflect() {
 
       <div className="grid grid-cols-2 gap-3">
         {r.cards.map((c) => (
-          <div key={c.k} className={`border-[3px] border-ink p-3.5 shadow-hard-sm ${TONE[c.tone]}`}>
+          <div
+            key={c.k}
+            className={`border-[3px] border-ink p-3.5 text-on-accent shadow-hard-sm ${TONE[c.tone]}`}
+          >
             <p className="text-[10.5px] font-bold uppercase tracking-wide opacity-70">{c.k}</p>
             <p className="mt-0.5 font-display text-[18px]">{c.v}</p>
             <p className="mt-0.5 text-[11px] font-semibold">{c.sub}</p>
@@ -52,7 +55,7 @@ export default function Reflect() {
 
       <p className="block -rotate-1 font-hand text-[20px] font-bold opacity-85">{r.note}</p>
 
-      <div className="border-[3px] border-ink bg-white p-4 shadow-hard-sm">
+      <div className="border-[3px] border-ink bg-surface p-4 shadow-hard-sm">
         <p className="mb-3 text-[13px] font-bold">every day in {r.monthLabel}, by spend</p>
         <div className="mb-1.5 grid grid-cols-7 gap-1.5 text-[9px] font-bold opacity-45">
           {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
@@ -76,7 +79,7 @@ export default function Reflect() {
               <div
                 key={i}
                 title={`${r.monthLabel} ${i + 1} · ${v === 0 ? 'no spend' : rupee(v)}`}
-                className={`flex aspect-square items-start justify-end border-2 border-ink p-0.5 text-[8px] font-bold ${
+                className={`flex aspect-square items-start justify-end border-2 border-ink p-0.5 text-[8px] font-bold text-on-accent ${
                   lvl === 0 ? 'opacity-35' : ''
                 } ${HEAT_LEVELS[lvl]}`}
               >
@@ -96,7 +99,7 @@ export default function Reflect() {
 
       <button
         onClick={() => setPlaying(true)}
-        className="press w-full -rotate-[0.5deg] border-[3px] border-ink bg-ink py-4 font-display text-[15px] text-yellow shadow-[6px_6px_0_var(--color-pink)]"
+        className="press w-full -rotate-[0.5deg] border-[3px] border-ink bg-invert py-4 font-display text-[15px] text-yellow shadow-[6px_6px_0_var(--color-pink)]"
         style={{ '--press-x': '6px', '--press-y': '6px' }}
       >
         ▶ play your month

@@ -9,7 +9,7 @@ import EmptyState from './EmptyState'
 
 const pill = (on) =>
   `press border-[2.5px] border-ink px-2.5 py-1.5 text-[12px] font-bold ${
-    on ? 'bg-yellow shadow-hard-xs' : 'bg-white'
+    on ? 'bg-yellow text-on-accent shadow-hard-xs' : 'bg-surface'
   }`
 
 /**
@@ -44,7 +44,7 @@ export default function TransactionSearch({ children }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2 border-[3px] border-ink bg-white px-3 py-2.5 shadow-hard-sm">
+      <div className="flex items-center gap-2 border-[3px] border-ink bg-surface px-3 py-2.5 shadow-hard-sm">
         <span className="text-[15px] opacity-50">🔍</span>
         <input
           value={f.query}
@@ -55,7 +55,7 @@ export default function TransactionSearch({ children }) {
         {active && (
           <button
             onClick={clearAll}
-            className="shrink-0 border-2 border-ink bg-white px-1.5 py-0.5 text-[11px] font-bold active:bg-pink"
+            className="shrink-0 border-2 border-ink bg-surface px-1.5 py-0.5 text-[11px] font-bold active:bg-pink"
           >
             clear ✕
           </button>
@@ -80,7 +80,7 @@ export default function TransactionSearch({ children }) {
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="space-y-3 border-[3px] border-ink bg-white p-3">
+            <div className="space-y-3 border-[3px] border-ink bg-surface p-3">
               <div>
                 <p className="mb-1.5 text-[10.5px] font-bold uppercase tracking-wide opacity-55">
                   category
@@ -91,7 +91,7 @@ export default function TransactionSearch({ children }) {
                       key={c.id}
                       onClick={() => toggleCat(c.id)}
                       className={`border-2 border-ink px-2 py-1 text-[11px] font-bold ${
-                        f.categoryIds.includes(c.id) ? 'bg-yellow shadow-hard-xs' : 'bg-white'
+                        f.categoryIds.includes(c.id) ? 'bg-yellow text-on-accent shadow-hard-xs' : 'bg-surface'
                       }`}
                     >
                       {c.emoji} {c.label}
@@ -111,7 +111,7 @@ export default function TransactionSearch({ children }) {
                     value={f.min}
                     onChange={(e) => patch({ min: e.target.value })}
                     placeholder="min"
-                    className="w-20 border-2 border-ink bg-white px-2 py-1"
+                    className="w-20 border-2 border-ink bg-surface px-2 py-1"
                   />
                   <span className="opacity-50">–</span>
                   <input
@@ -120,7 +120,7 @@ export default function TransactionSearch({ children }) {
                     value={f.max}
                     onChange={(e) => patch({ max: e.target.value })}
                     placeholder="max"
-                    className="w-20 border-2 border-ink bg-white px-2 py-1"
+                    className="w-20 border-2 border-ink bg-surface px-2 py-1"
                   />
                 </div>
               </div>
@@ -158,7 +158,7 @@ export default function TransactionSearch({ children }) {
 
 function SearchRow({ t, thisYear }) {
   return (
-    <div className="flex items-center justify-between gap-2 border-[2.5px] border-ink bg-white px-3 py-2.5">
+    <div className="flex items-center justify-between gap-2 border-[2.5px] border-ink bg-surface px-3 py-2.5">
       <div className="flex min-w-0 items-center gap-2.5">
         <span
           className={`flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full border-2 border-ink text-sm ${BG[t.cat.color]}`}

@@ -7,6 +7,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="description" content="Receiptly — a personal budget tracker that answers 'is my spending okay right now?' at a glance." />
     <meta name="theme-color" content="#ECE6FF" />
+    <script>
+      /* Set the theme before first paint so there's no flash. The app
+         (React Router route + ThemeProvider) keeps it in sync after. The
+         marketing landing page at "/" always renders light — the toggle
+         belongs to the app, not the marketing site. */
+      ;(function () {
+        try {
+          var p = location.pathname
+          var inApp = p === '/app' || p.indexOf('/app/') === 0
+          var pref = localStorage.getItem('receiptly.theme') || 'system'
+          var systemDark =
+            window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+          var dark = inApp && (pref === 'dark' || (pref === 'system' && systemDark))
+          document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light')
+          var m = document.querySelector('meta[name="theme-color"]')
+          if (m) m.setAttribute('content', dark ? '#151320' : '#ECE6FF')
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light')
+        }
+      })()
+    </script>
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
