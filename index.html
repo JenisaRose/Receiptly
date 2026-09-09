@@ -25,7 +25,6 @@
         var pwa = (window.__pwa = { deferredPrompt: null, installed: false, log: [] })
         function note(m) {
           pwa.log.push(Math.round(performance.now()) + 'ms  ' + m)
-          console.info('[PWA] ' + m)
         }
         note('boot')
         window.addEventListener('beforeinstallprompt', function (e) {
