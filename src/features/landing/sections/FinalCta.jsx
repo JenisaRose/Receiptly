@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import Grain from '../Grain'
+import Glow from '../Glow'
 import { useReveal } from '../motion'
 import { DARK_BG } from '../texture'
 
@@ -15,6 +16,9 @@ export default function FinalCta() {
       style={{ background: DARK_BG }}
       className="relative overflow-hidden px-5 py-24 text-center text-bg sm:py-28 lg:px-8"
     >
+      <Glow color="#c9b8ff" size={820} x="50%" y="16%" opacity={0.24} />
+      <Glow color="#79f2c0" size={620} x="8%" y="100%" opacity={0.18} />
+      <Glow color="#ff6fb0" size={620} x="94%" y="94%" opacity={0.18} />
       <Grain dark />
       <span
         aria-hidden

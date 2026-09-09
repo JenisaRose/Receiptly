@@ -1,8 +1,10 @@
 import { motion } from 'framer-motion'
 import CountUpOnView from '../CountUpOnView'
+import Glow from '../Glow'
 import { useReveal } from '../motion'
 import { Eyebrow, Section } from '../Shell'
 import WrappedScreen from '../screens/WrappedScreen'
+import { WRAPPED_BG } from '../texture'
 
 const STATS = [
   { label: 'no-spend days', value: '16', accent: 'text-mint' },
@@ -15,7 +17,19 @@ export default function MonthInGlance() {
   const reveal = useReveal()
 
   return (
-    <Section id="wrapped" dark watermark="wrapped">
+    <Section
+      id="wrapped"
+      dark
+      bg={WRAPPED_BG}
+      watermark="wrapped"
+      glow={
+        <>
+          <Glow color="#ffa84d" size={820} x="50%" y="120%" opacity={0.26} />
+          <Glow color="#ff6fb0" size={580} x="90%" y="104%" opacity={0.22} />
+          <Glow color="#c9b8ff" size={560} x="8%" y="0%" opacity={0.16} />
+        </>
+      }
+    >
       <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-10">
         <div>
           <Eyebrow dark>05 · every month, wrapped</Eyebrow>

@@ -1,29 +1,19 @@
 /**
- * Landing-only background treatment — deliberately nothing like the app's
- * fine dot grid. A fractal-noise grain for tactile richness, plus soft
- * off-axis colour glows that give each section depth and a hint of the
- * brand palette without any hard pattern.
+ * Landing-only background system — deliberately nothing like the app's fine
+ * dot grid. Each section is a tonal gradient (not a flat fill) with one or
+ * two big soft light-blooms (<Glow>) on top, then a fractal-noise grain.
  */
 
 // fractal-noise film grain, desaturated, as a tileable data-URI
 export const GRAIN_URL =
-  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.55'/%3E%3C/svg%3E\")"
+  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.6'/%3E%3C/svg%3E\")"
 
-// soft off-axis glows — a white key light plus brand-colour fills in the
-// far corners, over the section's base colour
+// base tonal gradients — a clear shift, not a whisper
 export const LIGHT_BG =
-  'radial-gradient(80% 60% at 85% -12%, rgba(255,255,255,0.75), transparent 62%),' +
-  'radial-gradient(70% 60% at -8% 110%, rgba(255,111,176,0.24), transparent 60%),' +
-  'radial-gradient(65% 60% at 108% 115%, rgba(121,242,192,0.26), transparent 60%),' +
-  '#e9e2fb'
-
+  'radial-gradient(120% 85% at 50% -30%, #f5f1ff 0%, #e8e1fa 46%, #e0d7f6 100%)'
 export const DARK_BG =
-  'radial-gradient(80% 60% at 14% -14%, rgba(201,184,255,0.22), transparent 60%),' +
-  'radial-gradient(75% 60% at 112% 112%, rgba(255,111,176,0.18), transparent 60%),' +
-  'radial-gradient(65% 55% at -10% 108%, rgba(111,216,255,0.16), transparent 58%),' +
-  '#131120'
-
+  'radial-gradient(120% 90% at 30% -20%, #26213c 0%, #16131f 52%, #100d17 100%)'
 export const YELLOW_BG =
-  'radial-gradient(75% 65% at 10% -8%, rgba(255,255,255,0.6), transparent 60%),' +
-  'radial-gradient(75% 65% at 108% 112%, rgba(255,168,77,0.4), transparent 62%),' +
-  '#f4ff5a'
+  'linear-gradient(160deg, #fbff9c 0%, #f4ff5a 46%, #e7f43d 100%)'
+export const WRAPPED_BG =
+  'linear-gradient(180deg, #16131f 0%, #191426 55%, #2a1b2e 82%, #3a2233 100%)'

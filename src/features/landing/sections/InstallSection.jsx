@@ -4,6 +4,7 @@ import InstallButton from '../InstallButton'
 import { useReveal } from '../motion'
 import { Eyebrow } from '../Shell'
 import Grain from '../Grain'
+import Glow from '../Glow'
 import { YELLOW_BG } from '../texture'
 
 const INSTALL_CTA =
@@ -19,6 +20,8 @@ export default function InstallSection() {
       style={{ background: YELLOW_BG }}
       className="relative overflow-hidden px-5 py-16 sm:py-20 lg:px-8"
     >
+      <Glow color="#ffffff" size={640} x="10%" y="-6%" opacity={0.4} />
+      <Glow color="var(--color-orange)" size={640} x="100%" y="110%" opacity={0.3} />
       <Grain />
       <span
         aria-hidden

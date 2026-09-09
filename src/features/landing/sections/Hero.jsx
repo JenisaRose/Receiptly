@@ -5,6 +5,7 @@ import { useFloat } from '../motion'
 import TodayScreen from '../screens/TodayScreen'
 import Win from '../screens/Win'
 import Grain from '../Grain'
+import Glow from '../Glow'
 import { LIGHT_BG } from '../texture'
 
 const PRIMARY_CTA =
@@ -26,10 +27,13 @@ export default function Hero() {
       style={{ background: LIGHT_BG }}
       className="relative overflow-hidden px-5 pb-16 pt-24 lg:px-8 lg:pt-28"
     >
+      <Glow color="var(--color-yellow)" size={760} x="80%" y="44%" opacity={0.32} />
+      <Glow color="var(--color-sky)" size={560} x="92%" y="4%" opacity={0.26} />
+      <Glow color="var(--color-pink)" size={540} x="2%" y="98%" opacity={0.2} />
       <Grain />
       <span
         aria-hidden
-        className="pointer-events-none absolute -left-6 top-40 select-none font-display text-[26vw] leading-none text-ink/[0.035] sm:text-[18vw]"
+        className="pointer-events-none absolute -left-6 top-40 select-none font-display text-[26vw] leading-none text-ink/[0.05] sm:text-[18vw]"
       >
         ₹
       </span>
