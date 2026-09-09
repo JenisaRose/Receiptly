@@ -8,7 +8,10 @@ import { BudgetProvider } from './store/budget.jsx'
 import './index.css'
 
 // no-op outside of a production build (dev has the service worker disabled)
-registerSW({ immediate: true })
+registerSW({
+  immediate: true,
+  onRegisterError: (err) => console.error('[PWA] service worker registration failed', err),
+})
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

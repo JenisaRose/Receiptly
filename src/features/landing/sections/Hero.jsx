@@ -80,9 +80,13 @@ export default function Hero() {
             <InstallButton className={SECONDARY_CTA} label="Install Receiptly" />
           </motion.div>
 
+          <motion.p {...rise(0.32)} className="mt-4 text-[12.5px] font-semibold opacity-45">
+            Explore to start now — install any time for the standalone app.
+          </motion.p>
+
           <motion.div
-            {...rise(0.34)}
-            className="mt-7 flex flex-wrap items-center gap-x-4 gap-y-1 text-[10.5px] font-bold uppercase tracking-[0.2em] opacity-40"
+            {...rise(0.38)}
+            className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-1 text-[10.5px] font-bold uppercase tracking-[0.2em] opacity-40"
           >
             <span>built local-first</span>
             <span className="h-3 w-px bg-ink/30" />

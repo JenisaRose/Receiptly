@@ -38,27 +38,31 @@ export default function InstallSection() {
             a real app.
           </p>
           <p className="mt-6 max-w-[30rem] text-[15.5px] font-semibold opacity-70">
-            Add Receiptly to your phone or computer and open it straight from the home screen — no
-            browser bar, works offline, still 100% on your device. Or don't. It's the same app
-            either way.
+            Runs in your browser. Install it when you want the app — its own window, an icon on
+            your home screen or dock, and it opens offline. Same Receiptly, same data, still 100%
+            on your device.
+          </p>
+          <p className="mt-4 max-w-[30rem] text-[12.5px] font-semibold opacity-45">
+            On a laptop, right-click Receiptly on the taskbar afterwards → “Pin to taskbar” to keep
+            it one click away. On a phone it lands on your home screen automatically.
           </p>
         </div>
 
         <motion.div {...reveal(0.1)} className="flex flex-col items-start gap-3">
           <InstallButton
             className={INSTALL_CTA}
-            noteClassName="mt-1 text-[12px] font-semibold opacity-65"
+            noteClassName="mt-2 max-w-[24rem] text-[12px] font-semibold leading-snug opacity-65"
           />
           {!dismissed ? (
             <button
               onClick={() => setDismissed(true)}
               className="text-[12.5px] font-bold underline decoration-2 underline-offset-4 opacity-65 hover:opacity-100"
             >
-              keep using it in the browser
+              or just keep using it in the browser
             </button>
           ) : (
             <p className="text-[12.5px] font-semibold opacity-60">
-              nothing to do — it already works right here.
+              nothing to do — Receiptly already works right here.
             </p>
           )}
         </motion.div>

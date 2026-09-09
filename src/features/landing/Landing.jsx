@@ -1,3 +1,4 @@
+import PwaDebug from './PwaDebug'
 import Seam from './Seam'
 import Nav from './sections/Nav'
 import Hero from './sections/Hero'
@@ -58,6 +59,7 @@ export default function Landing() {
       </main>
 
       <Footer />
+      <PwaDebug />
     </div>
   )
 }
