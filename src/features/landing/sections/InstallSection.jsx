@@ -1,11 +1,11 @@
 import { motion } from 'framer-motion'
 import { useState } from 'react'
-import InstallButton from '../InstallButton'
-import { useReveal } from '../motion'
-import { Eyebrow } from '../Shell'
-import Grain from '../Grain'
+import { DriftWord, Grain } from '../Atmosphere'
 import Glow from '../Glow'
-import { YELLOW_BG } from '../texture'
+import InstallButton from '../InstallButton'
+import { BG } from '../palette'
+import { useReveal } from '../motion'
+import { Label } from '../Shell'
 
 const INSTALL_CTA =
   'press inline-flex items-center justify-center border-[3px] border-ink bg-ink px-8 py-4 font-display text-[15px] text-yellow shadow-hard-lg focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-ink'
@@ -17,25 +17,27 @@ export default function InstallSection() {
   return (
     <section
       id="install"
-      style={{ background: YELLOW_BG }}
-      className="relative overflow-hidden px-5 py-16 sm:py-20 lg:px-8"
+      style={{ background: BG.install }}
+      className="relative isolate overflow-hidden px-5 py-24 sm:py-28 lg:px-8"
     >
-      <Glow color="#ffffff" size={900} x="8%" y="-10%" opacity={0.45} />
-      <Glow color="var(--color-orange)" size={820} x="102%" y="112%" opacity={0.35} />
+      <Glow color="#ffffff" size={900} x="8%" y="-12%" opacity={0.5} />
+      <Glow color="var(--color-mint)" size={820} x="104%" y="110%" opacity={0.4} />
+      <Glow color="var(--color-orange)" size={620} x="50%" y="130%" opacity={0.22} />
+      <DriftWord className="right-[-6%] bottom-[-10%] text-[30vw] leading-none sm:text-[18vw]">
+        LOCAL
+      </DriftWord>
       <Grain />
-      <span
-        aria-hidden
-        className="pointer-events-none absolute -right-6 -bottom-6 select-none font-display text-[24vw] leading-none text-ink/[0.06] sm:text-[15vw]"
-      >
-        📲
-      </span>
-      <div className="relative z-[1] mx-auto grid max-w-[1180px] items-center gap-8 lg:grid-cols-[1fr_auto] lg:gap-16">
+
+      <div className="relative z-[1] mx-auto grid max-w-[1180px] items-center gap-10 lg:grid-cols-[1fr_auto] lg:gap-20">
         <div>
-          <Eyebrow>06 · take it with you</Eyebrow>
-          <h2 className="mt-3 font-display text-[clamp(2.2rem,5.6vw,3.4rem)] leading-[1.02]">
-            Install it like a real app.
+          <Label>06 / 06 · take it with you</Label>
+          <h2 className="mt-5 font-display text-[clamp(2.4rem,6.4vw,4rem)] leading-[0.98]">
+            Install it like
           </h2>
-          <p className="mt-4 max-w-[30rem] text-[15px] font-semibold opacity-70">
+          <p className="mt-1 font-serif text-[clamp(2rem,5.4vw,3.4rem)] italic leading-tight opacity-70">
+            a real app.
+          </p>
+          <p className="mt-6 max-w-[30rem] text-[15.5px] font-semibold opacity-70">
             Add Receiptly to your phone or computer and open it straight from the home screen — no
             browser bar, works offline, still 100% on your device. Or don't. It's the same app
             either way.

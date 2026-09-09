@@ -1,61 +1,109 @@
-import Grain from './Grain'
+import { Grain, GridField, MovingGlow, PaperField, Ring, Vignette, DriftWord } from './Atmosphere'
 import Glow from './Glow'
-import { DARK_BG, LIGHT_BG } from './texture'
+import { BG } from './palette'
 
-/** Shared section wrapper. Tight vertical rhythm, an oversized faint
- *  watermark so large sections never read as empty, a tonal gradient
- *  base, and soft light-blooms for atmosphere. Pass `glow` to override
- *  the default blooms. */
-export function Section({ id, dark = false, bg, className = '', watermark, glow, children }) {
-  const defaultGlow = dark ? (
-    <>
-      <Glow color="#c9b8ff" size={1100} x="8%" y="0%" opacity={0.22} />
-      <Glow color="#6fd8ff" size={820} x="100%" y="100%" opacity={0.16} />
-      <Glow color="#ff6fb0" size={720} x="60%" y="115%" opacity={0.14} />
-    </>
-  ) : (
-    <>
-      <Glow color="#ffffff" size={1000} x="80%" y="-8%" opacity={0.55} />
-      <Glow color="#79f2c0" size={860} x="-4%" y="102%" opacity={0.26} />
-      <Glow color="#6fd8ff" size={760} x="102%" y="106%" opacity={0.24} />
-      <Glow color="#ffa84d" size={620} x="18%" y="-6%" opacity={0.14} />
-    </>
-  )
+const DARK_VARIANTS = new Set(['ink', 'wrapped', 'final'])
 
+/** Per-variant atmosphere recipe — layered behind the content. */
+function Atmosphere({ variant }) {
+  const dark = DARK_VARIANTS.has(variant)
+
+  switch (variant) {
+    case 'ink':
+      return (
+        <>
+          <MovingGlow color="var(--color-mint)" size={900} x="18%" y="30%" opacity={0.16} path={[-40, 20, -40]} />
+          <MovingGlow color="var(--color-lilac)" size={820} x="92%" y="76%" opacity={0.16} axis="y" path={[-30, 30, -30]} />
+          <Ring size={640} x="86%" y="30%" dark />
+          <DriftWord dark className="right-[-6%] top-[8%] text-[30vw] sm:text-[20vw]">MONEY</DriftWord>
+          <Grain dark />
+          <Vignette strength={0.5} />
+        </>
+      )
+    case 'insights':
+      return (
+        <>
+          <GridField />
+          <Glow color="var(--color-sky)" size={860} x="8%" y="4%" opacity={0.22} />
+          <Glow color="var(--color-lilac)" size={760} x="100%" y="100%" opacity={0.2} />
+          <DriftWord className="left-[-4%] bottom-[-6%] text-[26vw] sm:text-[17vw]">method</DriftWord>
+          <Grain />
+        </>
+      )
+    case 'wrapped':
+      return (
+        <>
+          <MovingGlow color="#ffa84d" size={1200} x="50%" y="118%" opacity={0.3} axis="x" path={[-60, 60, -60]} />
+          <Glow color="var(--color-pink)" size={820} x="92%" y="96%" opacity={0.24} />
+          <Glow color="var(--color-lilac)" size={720} x="4%" y="-4%" opacity={0.2} />
+          <DriftWord dark drift={40} className="left-[-8%] top-1/2 -translate-y-1/2 text-[34vw] sm:text-[22vw]">
+            WRAPPED
+          </DriftWord>
+          <Grain dark />
+          <Vignette strength={0.42} />
+        </>
+      )
+    case 'features':
+      return (
+        <>
+          <Glow color="var(--color-mint)" size={780} x="-4%" y="8%" opacity={0.2} />
+          <Glow color="var(--color-pink)" size={720} x="102%" y="42%" opacity={0.16} />
+          <Glow color="var(--color-sky)" size={720} x="40%" y="104%" opacity={0.16} />
+          <PaperField className="opacity-[0.04]" />
+          <DriftWord className="right-[-8%] bottom-[-4%] text-[26vw] sm:text-[16vw]">inside</DriftWord>
+          <Grain />
+        </>
+      )
+    case 'final':
+      return (
+        <>
+          <MovingGlow color="var(--color-lilac)" size={1100} x="50%" y="14%" opacity={0.24} axis="x" path={[-40, 40, -40]} />
+          <Glow color="var(--color-mint)" size={720} x="2%" y="102%" opacity={0.14} />
+          <Glow color="var(--color-pink)" size={720} x="100%" y="98%" opacity={0.14} />
+          <DriftWord dark drift={44} className="inset-x-0 bottom-[-4%] text-center text-[30vw] sm:text-[19vw]">
+            receiptly
+          </DriftWord>
+          <Grain dark />
+          <Vignette strength={0.6} />
+        </>
+      )
+    default:
+      return <Grain dark={dark} />
+  }
+}
+
+/** Shared section wrapper — tight rhythm, its own atmosphere, content on z-[1]. */
+export function Section({ id, variant = 'features', className = '', children }) {
+  const dark = DARK_VARIANTS.has(variant)
   return (
     <section
       id={id}
-      style={{ background: bg ?? (dark ? DARK_BG : LIGHT_BG) }}
-      className={`relative scroll-mt-16 overflow-hidden px-5 py-16 sm:py-20 lg:px-8 ${
+      style={{ background: BG[variant] ?? BG.features }}
+      className={`relative isolate scroll-mt-16 overflow-hidden px-5 py-20 sm:py-28 lg:px-8 ${
         dark ? 'text-bg' : 'text-ink'
       } ${className}`}
     >
-      {glow ?? defaultGlow}
-      <Grain dark={dark} />
-      {watermark && (
-        <span
-          aria-hidden
-          className={`pointer-events-none absolute -right-4 bottom-2 select-none font-display text-[22vw] leading-none tracking-tighter sm:text-[16vw] ${
-            dark ? 'text-bg/[0.05]' : 'text-ink/[0.05]'
-          }`}
-        >
-          {watermark}
-        </span>
-      )}
+      <Atmosphere variant={variant} />
       <div className="relative z-[1] mx-auto max-w-[1180px]">{children}</div>
     </section>
   )
 }
 
-/** Small editorial section label — "01 · THE IDEA" */
-export function Eyebrow({ children, dark = false }) {
+/** Small editorial label with a thin leading rule. */
+export function Label({ children, dark = false, className = '' }) {
   return (
     <p
-      className={`text-[11px] font-bold uppercase tracking-[0.24em] ${
-        dark ? 'text-yellow/70' : 'text-ink/45'
-      }`}
+      className={`flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.28em] ${
+        dark ? 'text-yellow/70' : 'text-ink/40'
+      } ${className}`}
     >
+      <span className={`h-px w-8 ${dark ? 'bg-yellow/40' : 'bg-ink/25'}`} />
       {children}
     </p>
   )
+}
+
+/** Kept for older imports. */
+export function Eyebrow({ children, dark = false }) {
+  return <Label dark={dark}>{children}</Label>
 }

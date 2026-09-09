@@ -16,6 +16,8 @@
   --font-display: 'Archivo Black', ui-sans-serif, system-ui, sans-serif;
   --font-body: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
   --font-hand: 'Caveat', ui-serif, cursive;
+  /* editorial serif — landing page accents only */
+  --font-serif: 'Fraunces', ui-serif, Georgia, serif;
 
   --shadow-hard-xs: 3px 3px 0 var(--color-ink);
   --shadow-hard-sm: 4px 4px 0 var(--color-ink);

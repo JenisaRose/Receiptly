@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import Glow from './Glow'
 import { useFloat } from './motion'
-import { Eyebrow } from './Shell'
+import { Label } from './Shell'
 
 /** A floating annotation pill that sits around a feature mockup — fills the
  *  space next to the text and reinforces what the screen shows. */
@@ -54,13 +54,11 @@ export default function FeatureRow({
       }`}
     >
       <motion.div {...rise(0)}>
-        <div className="flex items-baseline gap-3">
-          <span className={`font-display text-[16px] ${dark ? 'text-yellow' : 'text-pink'}`}>
-            {number}
-          </span>
-          <Eyebrow dark={dark}>{eyebrow}</Eyebrow>
-        </div>
-        <h3 className="mt-3 font-display text-[clamp(2rem,4.6vw,3rem)] leading-[1.02]">{title}</h3>
+        <Label dark={dark}>
+          <span className={dark ? 'text-yellow' : 'text-pink'}>{number}</span>
+          <span className={dark ? 'text-yellow/40' : 'text-ink/25'}>/</span> {eyebrow}
+        </Label>
+        <h3 className="mt-4 font-display text-[clamp(2rem,4.8vw,3.1rem)] leading-[1]">{title}</h3>
         <p
           className={`mt-5 max-w-[30rem] text-[16px] font-semibold leading-snug ${
             dark ? 'text-bg/70' : 'opacity-70'

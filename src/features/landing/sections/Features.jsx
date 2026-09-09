@@ -2,7 +2,7 @@ import { motion } from 'framer-motion'
 import FeatureRow from '../FeatureRow'
 import Glow from '../Glow'
 import { useReveal } from '../motion'
-import { Eyebrow, Section } from '../Shell'
+import { Label, Section } from '../Shell'
 import BillsScreen from '../screens/BillsScreen'
 import EnvelopesScreen from '../screens/EnvelopesScreen'
 import TodayScreen from '../screens/TodayScreen'
@@ -21,12 +21,15 @@ export default function Features() {
   const reveal = useReveal()
 
   return (
-    <Section id="features" watermark="features">
-      <div className="max-w-[38rem]">
-        <Eyebrow>04 · what's inside</Eyebrow>
-        <h2 className="mt-3 font-display text-[clamp(2.4rem,6vw,4rem)] leading-[1]">
-          A real, working product — not a concept.
+    <Section id="features" variant="features">
+      <div className="max-w-[42rem]">
+        <Label>04 / 06 · what's inside</Label>
+        <h2 className="mt-5 font-display text-[clamp(2.4rem,6.4vw,4.4rem)] leading-[0.98]">
+          A real, working product —
         </h2>
+        <p className="mt-1 font-serif text-[clamp(1.8rem,4.6vw,3rem)] italic leading-tight opacity-55">
+          not a concept.
+        </p>
       </div>
 
       <div className="mt-20 space-y-28">
@@ -117,7 +120,7 @@ export default function Features() {
 
       <div className="relative mt-28">
         <Glow color="var(--color-pink)" size={780} x="90%" y="60%" opacity={0.22} />
-        <Eyebrow>and everything else</Eyebrow>
+        <Label>and everything else</Label>
         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {MORE.map((m, i) => (
             <motion.div
