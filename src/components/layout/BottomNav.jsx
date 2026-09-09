@@ -8,7 +8,7 @@ export default function BottomNav() {
         <NavLink
           key={item.key}
           to={item.to}
-          end={item.to === '/'}
+          end={item.to === '/app'}
           className={({ isActive }) =>
             `flex flex-1 flex-col items-center gap-0.5 px-1 py-1.5 text-[9px] font-bold ${
               isActive ? 'border-[2.5px] border-ink bg-lilac' : 'border-[2.5px] border-transparent'

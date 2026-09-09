@@ -15,7 +15,7 @@ export default function Sidebar({ onLogExpense }) {
           <NavLink
             key={item.key}
             to={item.to}
-            end={item.to === '/'}
+            end={item.to === '/app'}
             className={({ isActive }) =>
               `flex items-center gap-2.5 border-[3px] px-2.5 py-2 text-sm font-semibold transition-transform ${
                 isActive
