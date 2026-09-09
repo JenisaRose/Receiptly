@@ -42,6 +42,10 @@ export default function InstallSection() {
             your home screen or dock, and it opens offline. Same Receiptly, same data, still 100%
             on your device.
           </p>
+          <p className="mt-4 max-w-[30rem] text-[12.5px] font-semibold opacity-45">
+            On a laptop, right-click Receiptly on the taskbar afterwards → “Pin to taskbar” to keep
+            it one click away. On a phone it lands on your home screen automatically.
+          </p>
         </div>
 
         <motion.div {...reveal(0.1)} className="flex flex-col items-start gap-3">
