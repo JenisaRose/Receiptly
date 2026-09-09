@@ -9,6 +9,20 @@ export const INSIGHT_TONE = {
 }
 
 /**
+ * Insights that are only meaningful once the month is over — a month-vs-average
+ * comparison, a multi-month trend, a "you did X N times this month" tally. When
+ * the analysed month is still in progress (Wrapped for the current month) these
+ * are held back rather than comparing a third of a month against full ones.
+ */
+const RETROSPECTIVE = new Set([
+  'month-vs-average',
+  'spending-direction',
+  'category-trend',
+  'category-spike',
+  'frequent-category',
+])
+
+/**
  * Run every detector over the analysed month, rank by score, keep the top
  * `limit` — one per `family` so we don't show two findings about one category.
  * `monthKey` forces a specific month (default: the last complete one).
@@ -21,7 +35,9 @@ export function runInsights(state, { limit = 4, monthKey } = {}) {
   for (const detect of DETECTORS) {
     try {
       const insight = detect(ctx)
-      if (insight) found.push(insight)
+      if (!insight) continue
+      if (ctx.partialMonth && RETROSPECTIVE.has(insight.id)) continue
+      found.push(insight)
     } catch {
       /* a detector throwing must never break the screen */
     }

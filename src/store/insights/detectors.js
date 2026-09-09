@@ -8,8 +8,6 @@
  * category); the engine keeps only the top-scoring one per family.
  */
 
-import { longestRun } from '../analyticsCore'
-
 const clamp01 = (n) => Math.max(0, Math.min(1, n))
 const pct = (part, whole) => (whole ? Math.round((part / whole) * 100) : 0)
 
@@ -118,7 +116,7 @@ export const DETECTORS = [
   },
 
   function bigSingleDay(ctx) {
-    const { dayTotals, monthTotal, monthName, rupee } = ctx
+    const { dayTotals, monthTotal, monthName, partialMonth, rupee } = ctx
     if (!monthTotal) return null
     const max = Math.max(...dayTotals)
     const day = dayTotals.indexOf(max) + 1
@@ -129,13 +127,13 @@ export const DETECTORS = [
       tone: 'watch',
       emoji: '💥',
       headline: `${monthName} ${day} alone was ${rupee(Math.round(max))}`,
-      detail: `${pct(max, monthTotal)}% of the whole month in one day`,
+      detail: `${pct(max, monthTotal)}% of the month${partialMonth ? ' so far' : ''} in one day`,
       score: clamp01(0.3 + share),
     }
   },
 
   function smallTapsDrain(ctx) {
-    const { monthSpends, monthName, rupee } = ctx
+    const { monthSpends, monthName, partialMonth, rupee } = ctx
     const small = monthSpends.filter((t) => Math.abs(t.amount) <= 120)
     const sum = small.reduce((s, t) => s + Math.abs(t.amount), 0)
     if (small.length < 12 || sum < 1200) return null
@@ -144,30 +142,52 @@ export const DETECTORS = [
       tone: 'watch',
       emoji: '🫧',
       headline: `${small.length} small taps added up to ${rupee(Math.round(sum))}`,
-      detail: `little buys under ₹120 across ${monthName}`,
+      detail: `little buys under ₹120 across ${monthName}${partialMonth ? ' so far' : ''}`,
       score: clamp01(0.25 + sum / 6000),
     }
   },
 
   function noSpendStreak(ctx) {
-    const { dayTotals, monthName } = ctx
-    const run = longestRun(dayTotals)
+    const { dayTotals, monthName, partialMonth } = ctx
+    // longest run of zero-spend days *among the days that have happened*
+    let best = 0
+    let bestEnd = -1
+    let cur = 0
+    for (let i = 0; i < dayTotals.length; i++) {
+      if (dayTotals[i] === 0) {
+        cur += 1
+        if (cur > best) {
+          best = cur
+          bestEnd = i
+        }
+      } else {
+        cur = 0
+      }
+    }
+    if (best < 3) return null
+
     const noSpend = dayTotals.filter((v) => v === 0).length
-    if (run < 3) return null
+    const ongoing = partialMonth && bestEnd === dayTotals.length - 1
     return {
       id: 'no-spend-streak',
       tone: 'good',
       emoji: '🧊',
-      headline: `You had a ${run}-day no-spend streak`,
-      detail: `${noSpend} no-spend days in ${monthName} overall`,
-      score: clamp01(0.3 + run * 0.08),
+      headline: ongoing
+        ? `You're on a ${best}-day no-spend streak`
+        : `You had a ${best}-day no-spend streak`,
+      detail: `${noSpend} no-spend day${noSpend === 1 ? '' : 's'} in ${monthName} ${
+        partialMonth ? 'so far' : 'overall'
+      }`,
+      score: clamp01(0.3 + best * 0.08),
     }
   },
 
   function priciestWeek(ctx) {
-    const { dayTotals, rupee, monthName } = ctx
+    const { dayTotals, partialMonth, rupee, monthName } = ctx
+    // mid-month, only judge weeks that have fully elapsed
+    const limit = partialMonth ? Math.floor(dayTotals.length / 7) * 7 : dayTotals.length
     const weeks = []
-    for (let i = 0; i < dayTotals.length; i += 7) {
+    for (let i = 0; i < limit; i += 7) {
       weeks.push(dayTotals.slice(i, i + 7).reduce((s, v) => s + v, 0))
     }
     if (weeks.length < 3) return null
