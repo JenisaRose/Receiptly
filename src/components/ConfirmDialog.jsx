@@ -25,7 +25,7 @@ export default function ConfirmDialog({
 
   return (
     <motion.div
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-ink/45 p-5"
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-scrim p-5"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -46,7 +46,7 @@ export default function ConfirmDialog({
           <button
             type="button"
             onClick={onCancel}
-            className="flex-1 border-[3px] border-ink bg-white py-2.5 font-display text-[13px]"
+            className="flex-1 border-[3px] border-ink bg-surface py-2.5 font-display text-[13px]"
           >
             {cancelLabel}
           </button>
@@ -55,7 +55,7 @@ export default function ConfirmDialog({
             autoFocus
             onClick={onConfirm}
             className={`press flex-1 border-[3px] border-ink py-2.5 font-display text-[13px] ${
-              tone === 'pink' ? 'bg-pink' : 'bg-ink text-yellow'
+              tone === 'pink' ? 'bg-pink text-on-accent' : 'bg-invert text-yellow'
             } shadow-hard-sm`}
             style={{ '--press-x': '4px', '--press-y': '4px' }}
           >

@@ -16,7 +16,7 @@ const BLANK = { income: 0, incomeKind: 'monthly', bills: [], goal: null, monthly
 const GROUND =
   'fixed inset-0 z-[60] flex justify-center overflow-y-auto overflow-x-hidden bg-bg px-4 py-10'
 const GROUND_STYLE = {
-  backgroundImage: 'radial-gradient(var(--color-ink) 1px, transparent 1px)',
+  backgroundImage: 'radial-gradient(var(--color-dot) 1px, transparent 1px)',
   backgroundSize: '22px 22px',
 }
 

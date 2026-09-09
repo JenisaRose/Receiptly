@@ -30,7 +30,7 @@ export const ENVELOPE_STATUS = {
   over: { tag: 'bg-pink', label: 'over', fill: 'stripes-over' },
 }
 
-export const HEAT_LEVELS = ['bg-white', 'bg-mint', 'bg-yellow', 'bg-orange', 'bg-pink']
+export const HEAT_LEVELS = ['bg-surface-2', 'bg-mint', 'bg-yellow', 'bg-orange', 'bg-pink']
 
 export function heatLevel(value) {
   if (value === 0) return 0

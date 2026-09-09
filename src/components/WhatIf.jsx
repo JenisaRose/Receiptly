@@ -13,10 +13,10 @@ export default function WhatIf({ safeToday, spentSoFar, daysLeft, spendable }) {
   const diff = spendable - projectedEnd
 
   return (
-    <div className="border-[3px] border-ink bg-ink p-4 text-white shadow-[6px_6px_0_var(--color-lilac)]">
+    <div className="border-[3px] border-ink bg-invert p-4 text-white shadow-[6px_6px_0_var(--color-lilac)]">
       <h3 className="font-hand text-[20px] text-mint">what if I spend…</h3>
       <p className="mb-3 mt-0.5 font-display text-[22px]">
-        ₹{inr(rate)} <span className="text-[13px] text-[#b7b2cc]">a day from here</span>
+        ₹{inr(rate)} <span className="text-[13px] text-white/55">a day from here</span>
       </p>
       <input
         type="range"
@@ -32,7 +32,7 @@ export default function WhatIf({ safeToday, spentSoFar, daysLeft, spendable }) {
         you’d end the month at <b className="font-display">{rupee(projectedEnd)}</b>
         <span
           className={`ml-1.5 inline-block rounded-full border-2 border-white px-2 py-[1px] text-[12px] font-bold ${
-            diff >= 0 ? 'bg-mint text-ink' : 'bg-pink text-ink'
+            diff >= 0 ? 'bg-mint text-on-accent' : 'bg-pink text-on-accent'
           }`}
         >
           {diff >= 0 ? `${rupee(diff)} spare` : `${rupee(-diff)} over`}

@@ -56,7 +56,7 @@ export default function Today({ onLogExpense }) {
           initial={{ scale: 0.6, opacity: 0, rotate: -4 }}
           animate={{ scale: 1, opacity: 1, rotate: -4 }}
           transition={{ type: 'spring', stiffness: 260, damping: 16 }}
-          className={`relative flex h-[230px] w-[230px] flex-col items-center justify-center rounded-full border-4 border-ink text-center shadow-hard-lg ${hero.bg}`}
+          className={`relative flex h-[230px] w-[230px] flex-col items-center justify-center rounded-full border-4 border-ink text-center text-on-accent shadow-hard-lg ${hero.bg}`}
         >
           <span className="absolute right-1.5 top-1.5 text-xl">✦</span>
           <span className="absolute bottom-2 left-0 text-xl">✦</span>
@@ -65,7 +65,7 @@ export default function Today({ onLogExpense }) {
             <span className="text-[22px]">₹</span>
             <SafeNumber value={hero.value} />
           </span>
-          <span className="rounded-full bg-ink px-2.5 py-[3px] text-[11.5px] font-bold text-yellow">
+          <span className="rounded-full bg-invert px-2.5 py-[3px] text-[11.5px] font-bold text-yellow">
             {hero.tag}
           </span>
         </motion.div>
@@ -105,7 +105,7 @@ export default function Today({ onLogExpense }) {
 
       {isCurrent && b.forecast && <Forecast f={b.forecast} />}
       {isCurrent && !b.forecast && (
-        <div className="-rotate-[0.6deg] border-[3px] border-ink bg-mint p-4 shadow-hard-sm">
+        <div className="-rotate-[0.6deg] border-[3px] border-ink bg-mint p-4 text-on-accent shadow-hard-sm">
           <p className="font-hand text-[19px] font-bold">{label}’s just getting started 🌱</p>
           <p className="mt-0.5 text-[12px] font-semibold">
             your pace and month-end forecast kick in once there are a few days of spending to
@@ -167,7 +167,7 @@ export default function Today({ onLogExpense }) {
         )}
         <button
           onClick={onLogExpense}
-          className="press mt-4 w-full border-[3px] border-ink bg-ink py-3.5 font-display text-sm text-yellow shadow-[6px_6px_0_var(--color-pink)]"
+          className="press mt-4 w-full border-[3px] border-ink bg-invert py-3.5 font-display text-sm text-yellow shadow-[6px_6px_0_var(--color-pink)]"
           style={{ '--press-x': '6px', '--press-y': '6px' }}
         >
           {isCurrent ? '+ log an expense' : `+ add to ${label}`}
@@ -243,7 +243,7 @@ function GoalCard({ goal, onContribute }) {
   const hasTarget = goal.target > 0
 
   return (
-    <div className="border-[3px] border-ink bg-lilac p-4 shadow-hard-sm">
+    <div className="border-[3px] border-ink bg-lilac p-4 text-on-accent shadow-hard-sm">
       <button onClick={() => setOpen((v) => !v)} className="w-full text-left">
         <div className="mb-2 flex items-center justify-between text-[12px] font-bold">
           <span>
@@ -288,7 +288,7 @@ function Step({ onClick, children }) {
   return (
     <button
       onClick={onClick}
-      className="h-[26px] w-[26px] border-[2.5px] border-ink bg-white font-display text-[13px] leading-none active:bg-yellow"
+      className="h-[26px] w-[26px] border-[2.5px] border-ink bg-surface font-display text-[13px] leading-none text-ink active:bg-yellow active:text-on-accent"
     >
       {children}
     </button>
@@ -301,7 +301,7 @@ function SafeNumber({ value }) {
 
 function Stat({ label, value, bg }) {
   return (
-    <div className={`border-[3px] border-ink p-3.5 shadow-hard-sm ${bg}`}>
+    <div className={`border-[3px] border-ink p-3.5 text-on-accent shadow-hard-sm ${bg}`}>
       <p className="text-[10.5px] font-bold uppercase tracking-wide opacity-70">{label}</p>
       <p className="mt-1 font-display text-[19px]">{value}</p>
     </div>
@@ -310,9 +310,9 @@ function Stat({ label, value, bg }) {
 
 function Line({ k, v, minus }) {
   return (
-    <div className="flex justify-between border-b border-dashed border-[#d3ccf2] py-[7px]">
+    <div className="flex justify-between border-b border-dashed border-line py-[7px]">
       <span>{k}</span>
-      <span className={minus ? 'text-[#d6335a]' : ''}>{v}</span>
+      <span className={minus ? 'text-neg' : ''}>{v}</span>
     </div>
   )
 }
@@ -326,7 +326,7 @@ function EntryRow({ entry, cat, monthAbbr }) {
       initial={entry.fresh ? { scale: 0.9, x: -10, opacity: 0 } : false}
       animate={{ scale: 1, x: 0, opacity: 1 }}
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-      className="flex items-center justify-between border-[2.5px] border-ink bg-white px-3 py-2.5"
+      className="flex items-center justify-between border-[2.5px] border-ink bg-surface px-3 py-2.5"
     >
       <div className="flex items-center gap-2.5">
         <span
@@ -338,7 +338,7 @@ function EntryRow({ entry, cat, monthAbbr }) {
           <p className="text-[13px] font-semibold">
             {entry.name}
             {entry.split && (
-              <span className="ml-1.5 rounded-full border-2 border-ink bg-lilac px-1.5 align-middle text-[9px] font-bold">
+              <span className="ml-1.5 rounded-full border-2 border-ink bg-lilac px-1.5 align-middle text-[9px] font-bold text-on-accent">
                 🔀 ×{entry.split.parts}
               </span>
             )}
@@ -350,7 +350,7 @@ function EntryRow({ entry, cat, monthAbbr }) {
         </div>
       </div>
       <div className="flex items-center gap-2">
-        <span className={`text-[13.5px] font-bold ${out ? 'text-[#d6335a]' : 'text-[#1f9a5a]'}`}>
+        <span className={`text-[13.5px] font-bold ${out ? 'text-neg' : 'text-pos'}`}>
           {out ? '– ' : '+ '}₹{inr(Math.abs(entry.amount))}
         </span>
         <DeleteTxButton tx={entry} monthAbbr={monthAbbr} />

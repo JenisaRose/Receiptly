@@ -25,7 +25,7 @@ export default function CategoryManager() {
           const isEditing = editingId === c.id
           const isReassigning = reassignId === c.id
           return (
-            <div key={c.id} className="border-[2.5px] border-ink bg-white">
+            <div key={c.id} className="border-[2.5px] border-ink bg-surface">
               <div className="flex items-center gap-2.5 px-3 py-2.5">
                 <span
                   className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-ink text-sm ${BG[c.color]}`}
@@ -44,7 +44,7 @@ export default function CategoryManager() {
                     setEditingId(isEditing ? null : c.id)
                     setReassignId(null)
                   }}
-                  className="border-2 border-ink bg-white px-2 py-1 text-[11px] font-bold active:bg-yellow"
+                  className="border-2 border-ink bg-surface px-2 py-1 text-[11px] font-bold active:bg-yellow active:text-on-accent"
                 >
                   {isEditing ? 'close' : 'edit'}
                 </button>
@@ -56,7 +56,7 @@ export default function CategoryManager() {
                       if (count > 0) setReassignId(isReassigning ? null : c.id)
                       else setConfirmDel(c)
                     }}
-                    className="flex h-6 w-6 shrink-0 items-center justify-center border-2 border-ink bg-white text-[11px] font-bold leading-none active:bg-pink"
+                    className="flex h-6 w-6 shrink-0 items-center justify-center border-2 border-ink bg-surface text-[11px] font-bold leading-none active:bg-pink active:text-on-accent"
                   >
                     ✕
                   </button>
@@ -99,7 +99,7 @@ export default function CategoryManager() {
       <AnimatePresence initial={false}>
         {adding ? (
           <Expand>
-            <div className="mt-2 border-[2.5px] border-ink bg-white">
+            <div className="mt-2 border-[2.5px] border-ink bg-surface">
               <CatForm
                 initial={{ label: '', emoji: '🏷️', color: 'lilac' }}
                 onCancel={() => setAdding(false)}
@@ -114,7 +114,7 @@ export default function CategoryManager() {
         ) : (
           <button
             onClick={() => setAdding(true)}
-            className="press mt-2 w-full border-[2.5px] border-dashed border-ink bg-white py-2.5 font-display text-[12px]"
+            className="press mt-2 w-full border-[2.5px] border-dashed border-ink bg-surface py-2.5 font-display text-[12px]"
             style={{ '--press-x': '3px', '--press-y': '3px' }}
           >
             ＋ new category
@@ -166,7 +166,7 @@ function CatForm({ initial, onSave, onCancel, saveLabel = 'save' }) {
           value={emoji}
           onChange={(e) => setEmoji([...e.target.value].slice(-2).join(''))}
           aria-label="emoji"
-          className="w-12 border-[2.5px] border-ink bg-white text-center text-lg"
+          className="w-12 border-[2.5px] border-ink bg-surface text-center text-lg"
         />
         <input
           autoFocus
@@ -174,7 +174,7 @@ function CatForm({ initial, onSave, onCancel, saveLabel = 'save' }) {
           onChange={(e) => setLabel(e.target.value)}
           placeholder="category name"
           aria-label="category name"
-          className="min-w-0 flex-1 border-[2.5px] border-ink bg-white px-2.5 py-1.5 text-[13px] font-semibold"
+          className="min-w-0 flex-1 border-[2.5px] border-ink bg-surface px-2.5 py-1.5 text-[13px] font-semibold"
         />
       </div>
       <div className="flex gap-1.5">
@@ -193,13 +193,13 @@ function CatForm({ initial, onSave, onCancel, saveLabel = 'save' }) {
       <div className="flex gap-2 pt-0.5">
         <button
           onClick={onCancel}
-          className="flex-1 border-[2.5px] border-ink bg-white py-1.5 font-display text-[11px]"
+          className="flex-1 border-[2.5px] border-ink bg-surface py-1.5 font-display text-[11px]"
         >
           cancel
         </button>
         <button
           onClick={() => label.trim() && onSave({ label, emoji, color })}
-          className="flex-1 border-[2.5px] border-ink bg-ink py-1.5 font-display text-[11px] text-yellow"
+          className="flex-1 border-[2.5px] border-ink bg-invert py-1.5 font-display text-[11px] text-yellow"
         >
           {saveLabel}
         </button>
@@ -222,7 +222,7 @@ function Reassign({ category, count, options, onConfirm, onCancel }) {
             key={o.id}
             onClick={() => setToId(o.id)}
             className={`border-[2px] border-ink px-2 py-1 text-[11px] font-bold ${
-              toId === o.id ? 'bg-yellow shadow-hard-xs' : 'bg-white'
+              toId === o.id ? 'bg-yellow text-on-accent shadow-hard-xs' : 'bg-surface'
             }`}
           >
             {o.emoji} {o.label}
@@ -232,13 +232,13 @@ function Reassign({ category, count, options, onConfirm, onCancel }) {
       <div className="flex gap-2 pt-0.5">
         <button
           onClick={onCancel}
-          className="flex-1 border-[2.5px] border-ink bg-white py-1.5 font-display text-[11px]"
+          className="flex-1 border-[2.5px] border-ink bg-surface py-1.5 font-display text-[11px]"
         >
           cancel
         </button>
         <button
           onClick={() => toId && onConfirm(toId)}
-          className="flex-1 border-[2.5px] border-ink bg-pink py-1.5 font-display text-[11px]"
+          className="flex-1 border-[2.5px] border-ink bg-pink py-1.5 font-display text-[11px] text-on-accent"
         >
           move &amp; delete
         </button>

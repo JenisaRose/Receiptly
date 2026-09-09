@@ -17,7 +17,7 @@ export default function Card({
 }) {
   return (
     <Tag
-      className={`border-[3px] border-ink bg-white ${SHADOW[shadow]} ${className}`}
+      className={`border-[3px] border-ink bg-surface ${SHADOW[shadow]} ${className}`}
       {...rest}
     >
       {children}

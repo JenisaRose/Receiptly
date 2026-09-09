@@ -6,6 +6,7 @@ import CategoryManager from './CategoryManager'
 import GoalManager from './GoalManager'
 import PresetManager from './PresetManager'
 import ResetDemo from './ResetDemo'
+import ThemeToggle from './ThemeToggle'
 
 /** Slide-over opened from the avatar. Rendered inside <AnimatePresence>. */
 export default function SettingsSheet({ onClose }) {
@@ -21,7 +22,7 @@ export default function SettingsSheet({ onClose }) {
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 bg-ink/45"
+      className="fixed inset-0 z-50 bg-scrim"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -39,13 +40,21 @@ export default function SettingsSheet({ onClose }) {
           <button
             onClick={onClose}
             aria-label="Close settings"
-            className="flex h-8 w-8 items-center justify-center border-[2.5px] border-ink bg-white text-[13px] font-bold active:bg-pink"
+            className="flex h-8 w-8 items-center justify-center border-[2.5px] border-ink bg-surface text-[13px] font-bold active:bg-pink"
           >
             ✕
           </button>
         </header>
 
         <div className="flex-1 space-y-7 overflow-y-auto p-5">
+          <section>
+            <h3 className="mb-2 font-hand text-[19px] font-bold">appearance</h3>
+            <p className="mb-2.5 text-[11.5px] opacity-60">
+              light, dark, or follow your device. changes right away.
+            </p>
+            <ThemeToggle />
+          </section>
+
           <CategoryManager />
 
           <PresetManager />
@@ -75,7 +84,7 @@ export default function SettingsSheet({ onClose }) {
                   restartOnboarding()
                 }
               }}
-              className="border-[3px] border-ink bg-white px-3.5 py-2 font-display text-[12px] shadow-hard-xs"
+              className="border-[3px] border-ink bg-surface px-3.5 py-2 font-display text-[12px] shadow-hard-xs"
             >
               ↻ run setup again
             </button>

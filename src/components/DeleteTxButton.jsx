@@ -15,7 +15,7 @@ export default function DeleteTxButton({ tx, monthAbbr, className = '' }) {
         type="button"
         onClick={() => setConfirming(true)}
         aria-label={`Delete ${tx.name}`}
-        className={`flex h-6 w-6 shrink-0 items-center justify-center border-[2px] border-ink bg-white text-[11px] font-bold leading-none transition-colors hover:bg-pink active:bg-pink ${className}`}
+        className={`flex h-6 w-6 shrink-0 items-center justify-center border-[2px] border-ink bg-surface text-[11px] font-bold leading-none transition-colors hover:bg-pink hover:text-on-accent active:bg-pink active:text-on-accent ${className}`}
       >
         ✕
       </button>

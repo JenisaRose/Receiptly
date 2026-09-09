@@ -37,7 +37,8 @@ export default function ReadyStep({ summary, onOpen, onBack }) {
         you're all set. ✨
       </motion.p>
 
-      <div className="relative">
+      {/* the setup receipt is printed on paper in every theme */}
+      <div className="relative" data-theme="light">
         {/* rubber stamp thumps on once the receipt is out */}
         <motion.span
           className="absolute -right-3 top-7 z-10 -rotate-[14deg] border-[3px] border-pink bg-[#f6f0e1] px-2.5 py-1 font-display text-[13px] uppercase tracking-wide text-pink"
@@ -118,7 +119,7 @@ export default function ReadyStep({ summary, onOpen, onBack }) {
       <motion.button
         onClick={onOpen}
         whileHover={reduced ? undefined : { x: 3 }}
-        className="press mt-6 w-full border-[3px] border-ink bg-ink py-4 font-display text-[16px] text-yellow shadow-[7px_7px_0_var(--color-mint)]"
+        className="press mt-6 w-full border-[3px] border-ink bg-invert py-4 font-display text-[16px] text-yellow shadow-[7px_7px_0_var(--color-mint)]"
         style={{ '--press-x': '7px', '--press-y': '7px' }}
         initial={reduced ? false : { y: 18 }}
         animate={{ y: 0 }}

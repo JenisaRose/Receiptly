@@ -17,12 +17,12 @@ export default function AiSummaryCard({ b }) {
   }
 
   return (
-    <div className="rotate-[0.4deg] border-[3px] border-ink bg-white p-4 shadow-hard-sm">
+    <div className="rotate-[0.4deg] border-[3px] border-ink bg-surface p-4 shadow-hard-sm">
       <div className="flex items-baseline justify-between gap-2">
         <span className="font-hand text-[19px] font-bold">🤖 your month, summarized</span>
         <button
           onClick={regenerate}
-          className="shrink-0 border-2 border-ink bg-white px-2 py-0.5 text-[10.5px] font-bold active:bg-yellow"
+          className="shrink-0 border-2 border-ink bg-surface px-2 py-0.5 text-[10.5px] font-bold active:bg-yellow active:text-on-accent"
         >
           ↻ regenerate
         </button>
