@@ -10,6 +10,9 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
+      // .json gets a correct MIME everywhere; .webmanifest is unreliable on
+      // some static hosts and a mis-typed manifest makes Chrome drop install
+      manifestFilename: 'manifest.json',
       includeAssets: [
         'icon.svg',
         'icon-maskable.svg',
@@ -49,7 +52,7 @@ export default defineConfig({
         // installed app (and its client routes) open offline
         navigateFallback: 'index.html',
         navigateFallbackDenylist: [/^\/api\//],
-        globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
+        globPatterns: ['**/*.{js,css,html,svg,png,woff2,json}'],
         // fonts come from Google's CDN — cache them so the app looks right offline
         runtimeCaching: [
           {

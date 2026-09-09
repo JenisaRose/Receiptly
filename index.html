@@ -53,8 +53,18 @@
             out.sw = 'error: ' + e.message
           }
           try {
-            var m = await fetch('/manifest.webmanifest')
-            out.manifest = { status: m.status, type: m.headers.get('content-type') }
+            var link = document.querySelector('link[rel=manifest]')
+            var m = await fetch(link ? link.href : '/manifest.json')
+            var body = await m.text()
+            var parsed = true
+            try { JSON.parse(body) } catch (err) { parsed = false }
+            out.manifest = {
+              url: link && link.href,
+              status: m.status,
+              type: m.headers.get('content-type'),
+              parsesAsJson: parsed,
+              bodyStart: parsed ? undefined : body.slice(0, 60),
+            }
           } catch (e) {
             out.manifest = 'error: ' + e.message
           }
