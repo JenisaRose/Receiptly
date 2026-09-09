@@ -1,7 +1,14 @@
+import Grain from '../Grain'
+import { LIGHT_BG } from '../texture'
+
 export default function Footer() {
   return (
-    <footer className="bg-bg px-5 py-12 lg:px-8">
-      <div className="mx-auto flex max-w-[1180px] flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+    <footer
+      style={{ background: LIGHT_BG }}
+      className="relative overflow-hidden px-5 py-12 lg:px-8"
+    >
+      <Grain />
+      <div className="relative z-[1] mx-auto flex max-w-[1180px] flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <div>
           <span className="font-display text-[16px] leading-none">
             receipt

@@ -4,6 +4,8 @@ import InstallButton from '../InstallButton'
 import { useFloat } from '../motion'
 import TodayScreen from '../screens/TodayScreen'
 import Win from '../screens/Win'
+import Grain from '../Grain'
+import { LIGHT_BG } from '../texture'
 
 const PRIMARY_CTA =
   'press inline-flex items-center justify-center border-[3px] border-ink bg-ink px-8 py-4 font-display text-[15px] text-yellow shadow-[7px_7px_0_var(--color-pink)] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-ink'
@@ -20,7 +22,11 @@ export default function Hero() {
   })
 
   return (
-    <section className="relative overflow-hidden bg-bg px-5 pb-16 pt-24 lg:px-8 lg:pt-28">
+    <section
+      style={{ background: LIGHT_BG }}
+      className="relative overflow-hidden px-5 pb-16 pt-24 lg:px-8 lg:pt-28"
+    >
+      <Grain />
       <span
         aria-hidden
         className="pointer-events-none absolute -left-6 top-40 select-none font-display text-[26vw] leading-none text-ink/[0.035] sm:text-[18vw]"
@@ -28,7 +34,7 @@ export default function Hero() {
         ₹
       </span>
 
-      <div className="mx-auto grid max-w-[1180px] items-center gap-12 lg:grid-cols-[1fr_0.9fr] lg:gap-6">
+      <div className="relative z-[1] mx-auto grid max-w-[1180px] items-center gap-12 lg:grid-cols-[1fr_0.9fr] lg:gap-6">
         <div>
           <motion.p {...rise(0)} className="text-[11px] font-bold uppercase tracking-[0.26em] opacity-45">
             personal finance / 01
@@ -115,7 +121,7 @@ export default function Hero() {
 
       <motion.p
         {...rise(0.5)}
-        className="mx-auto mt-14 max-w-[1180px] text-[10.5px] font-bold uppercase tracking-[0.22em] opacity-35"
+        className="relative z-[1] mx-auto mt-14 max-w-[1180px] text-[10.5px] font-bold uppercase tracking-[0.22em] opacity-35"
       >
         ↓ scroll to explore
       </motion.p>

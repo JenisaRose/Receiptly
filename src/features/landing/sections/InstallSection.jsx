@@ -3,6 +3,8 @@ import { useState } from 'react'
 import InstallButton from '../InstallButton'
 import { useReveal } from '../motion'
 import { Eyebrow } from '../Shell'
+import Grain from '../Grain'
+import { YELLOW_BG } from '../texture'
 
 const INSTALL_CTA =
   'press inline-flex items-center justify-center border-[3px] border-ink bg-ink px-8 py-4 font-display text-[15px] text-yellow shadow-hard-lg focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-ink'
@@ -12,14 +14,19 @@ export default function InstallSection() {
   const [dismissed, setDismissed] = useState(false)
 
   return (
-    <section id="install" className="relative overflow-hidden bg-yellow px-5 py-16 sm:py-20 lg:px-8">
+    <section
+      id="install"
+      style={{ background: YELLOW_BG }}
+      className="relative overflow-hidden px-5 py-16 sm:py-20 lg:px-8"
+    >
+      <Grain />
       <span
         aria-hidden
         className="pointer-events-none absolute -right-6 -bottom-6 select-none font-display text-[24vw] leading-none text-ink/[0.06] sm:text-[15vw]"
       >
         📲
       </span>
-      <div className="relative mx-auto grid max-w-[1180px] items-center gap-8 lg:grid-cols-[1fr_auto] lg:gap-16">
+      <div className="relative z-[1] mx-auto grid max-w-[1180px] items-center gap-8 lg:grid-cols-[1fr_auto] lg:gap-16">
         <div>
           <Eyebrow>06 · take it with you</Eyebrow>
           <h2 className="mt-3 font-display text-[clamp(2.2rem,5.6vw,3.4rem)] leading-[1.02]">

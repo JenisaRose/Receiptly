@@ -1,3 +1,6 @@
+import Grain from './Grain'
+import { DARK_BG, LIGHT_BG } from './texture'
+
 /** Shared section wrapper. Keeps vertical rhythm tight (the point of the
  *  redesign) and hangs an oversized faint watermark in the background so
  *  large sections never read as empty. */
@@ -5,10 +8,12 @@ export function Section({ id, dark = false, className = '', watermark, children 
   return (
     <section
       id={id}
+      style={{ background: dark ? DARK_BG : LIGHT_BG }}
       className={`relative scroll-mt-16 overflow-hidden px-5 py-16 sm:py-20 lg:px-8 ${
-        dark ? 'bg-ink text-bg' : 'bg-bg text-ink'
+        dark ? 'text-bg' : 'text-ink'
       } ${className}`}
     >
+      <Grain dark={dark} />
       {watermark && (
         <span
           aria-hidden
@@ -19,7 +24,7 @@ export function Section({ id, dark = false, className = '', watermark, children 
           {watermark}
         </span>
       )}
-      <div className="relative mx-auto max-w-[1180px]">{children}</div>
+      <div className="relative z-[1] mx-auto max-w-[1180px]">{children}</div>
     </section>
   )
 }
