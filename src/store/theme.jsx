@@ -32,8 +32,9 @@ function applyTheme(mode) {
  * Owns the Light / Dark / System preference.
  *
  * - The preference persists in localStorage (`receiptly.theme`), separate
- *   from all budget data.
- * - "System" tracks `prefers-color-scheme` live.
+ *   from all budget data. No stored value → Light.
+ * - "System" is an explicit choice that then tracks `prefers-color-scheme`
+ *   live; it is never the default.
  * - The public marketing landing page (any route that isn't `/app…`) always
  *   renders light — it's a separate presentation experience.
  * - An explicit Light↔Dark switch gets a ~120ms colour cross-fade (never on

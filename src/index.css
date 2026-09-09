@@ -63,6 +63,18 @@
 @layer base {
   :root {
     color-scheme: light;
+
+    /* opacity steps used for muted/secondary text. On the light theme these
+       are their nominal values; the dark theme lifts the low ones, because
+       fading white text toward a near-black ground loses contrast far faster
+       than fading dark text toward a near-white one. Pinned-light subtrees
+       (Wrapped, the receipt) reset them below. */
+    --op-25: 0.25;
+    --op-30: 0.3;
+    --op-35: 0.35;
+    --op-40: 0.4;
+    --op-45: 0.45;
+    --op-50: 0.5;
   }
   :root[data-theme='dark'] {
     color-scheme: dark;
@@ -75,11 +87,21 @@
        follow a token swap the way `bg-*` / `border-*` utilities do */
     color: var(--color-ink);
 
+    /* secondary text, dividers and disabled controls need a little more
+       presence against the dark ground — the palette and layout are
+       unchanged, just less dim */
+    --op-25: 0.42;
+    --op-30: 0.46;
+    --op-35: 0.5;
+    --op-40: 0.54;
+    --op-45: 0.6;
+    --op-50: 0.64;
+
     --color-bg: #151320;
     --color-surface: #1f1b2e;
     --color-surface-2: #2a2540;
     --color-ink: #f1ede4;
-    --color-line: #39334f;
+    --color-line: #4d4668;
     --color-invert: #100d18;
     --color-invert-ink: #f1ede4;
     --color-on-accent: #14121f;
@@ -106,6 +128,13 @@
   [data-theme='light'] {
     color: var(--color-ink);
 
+    --op-25: 0.25;
+    --op-30: 0.3;
+    --op-35: 0.35;
+    --op-40: 0.4;
+    --op-45: 0.45;
+    --op-50: 0.5;
+
     --color-bg: #ece6ff;
     --color-surface: #ffffff;
     --color-surface-2: #f2ecfe;
@@ -126,6 +155,42 @@
     --color-sky: #6fd8ff;
     --shadow-hard-color: #14121f;
   }
+}
+
+/* Muted-text opacity steps route through the theme-scoped `--op-*` vars.
+   In the `utilities` layer + after Tailwind, so these win over the stock
+   `.opacity-*` but a more specific variant (`hover:opacity-100`) still
+   wins over these. Light and the pinned-light subtrees keep the nominal
+   values; dark lifts them. */
+@layer utilities {
+  .opacity-25 {
+    opacity: var(--op-25, 0.25);
+  }
+  .opacity-30 {
+    opacity: var(--op-30, 0.3);
+  }
+  .opacity-35 {
+    opacity: var(--op-35, 0.35);
+  }
+  .opacity-40 {
+    opacity: var(--op-40, 0.4);
+  }
+  .opacity-45 {
+    opacity: var(--op-45, 0.45);
+  }
+  .opacity-50 {
+    opacity: var(--op-50, 0.5);
+  }
+}
+
+/* Dark mode: keep disabled controls and input placeholders visible enough
+   to read without losing their "inactive / hint" character. Light is
+   untouched. */
+:root[data-theme='dark'] :disabled {
+  opacity: 0.5;
+}
+:root[data-theme='dark'] ::placeholder {
+  opacity: 0.5;
 }
 
 /* ============================================================
