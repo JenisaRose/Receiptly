@@ -30,33 +30,50 @@ function isStandalone() {
 }
 
 /**
- * Everything the Install button needs. `deferredPrompt` is the real
- * `beforeinstallprompt` event where the browser fires it (Chrome / Edge /
- * Android). Safari and Firefox never fire it — the caller falls back to a
- * short explanation, with a platform-specific "Add to Home Screen" hint on
- * iOS. Nothing here ever blocks using Receiptly in the browser.
+ * Everything the Install button needs. The real `beforeinstallprompt` event
+ * (Chrome / Edge / Android) is captured by an inline script in index.html
+ * *before* this bundle loads — Chrome fires it early and only once — and
+ * parked on `window.__pwa`. This hook reads it on mount and also listens
+ * for later events. Safari / Firefox never fire it; the caller falls back
+ * to a short explanation. Nothing here ever blocks using Receiptly.
  */
 export function useInstallPrompt() {
-  const [deferredPrompt, setDeferredPrompt] = useState(null)
-  const [installed, setInstalled] = useState(isStandalone)
+  const [deferredPrompt, setDeferredPrompt] = useState(
+    () => (typeof window !== 'undefined' && window.__pwa?.deferredPrompt) || null,
+  )
+  const [installed, setInstalled] = useState(
+    () => isStandalone() || (typeof window !== 'undefined' && !!window.__pwa?.installed),
+  )
   const { platform, browser } = detect()
 
   useEffect(() => {
+    function syncFromGlobal() {
+      setDeferredPrompt(window.__pwa?.deferredPrompt ?? null)
+    }
+    // catch an event captured in the gap between render and this effect
+    if (window.__pwa?.deferredPrompt) queueMicrotask(syncFromGlobal)
+
     function onBeforeInstallPrompt(e) {
       e.preventDefault()
+      if (window.__pwa) window.__pwa.deferredPrompt = e
       setDeferredPrompt(e)
     }
     function onInstalled() {
+      if (window.__pwa) window.__pwa.deferredPrompt = null
       setInstalled(true)
       setDeferredPrompt(null)
     }
     const standalone = window.matchMedia('(display-mode: standalone)')
     const onDisplayChange = (e) => e.matches && setInstalled(true)
 
+    window.addEventListener('pwa:installable', syncFromGlobal)
+    window.addEventListener('pwa:installed', onInstalled)
     window.addEventListener('beforeinstallprompt', onBeforeInstallPrompt)
     window.addEventListener('appinstalled', onInstalled)
     standalone.addEventListener?.('change', onDisplayChange)
     return () => {
+      window.removeEventListener('pwa:installable', syncFromGlobal)
+      window.removeEventListener('pwa:installed', onInstalled)
       window.removeEventListener('beforeinstallprompt', onBeforeInstallPrompt)
       window.removeEventListener('appinstalled', onInstalled)
       standalone.removeEventListener?.('change', onDisplayChange)
@@ -64,9 +81,11 @@ export function useInstallPrompt() {
   }, [])
 
   async function promptInstall() {
-    if (!deferredPrompt) return 'unavailable'
-    deferredPrompt.prompt()
-    const { outcome } = await deferredPrompt.userChoice
+    const dp = deferredPrompt || window.__pwa?.deferredPrompt
+    if (!dp) return 'unavailable'
+    dp.prompt()
+    const { outcome } = await dp.userChoice
+    if (window.__pwa) window.__pwa.deferredPrompt = null
     setDeferredPrompt(null)
     return outcome
   }

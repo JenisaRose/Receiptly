@@ -18,6 +18,59 @@
       href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Fraunces:ital,opsz,wght@0,9..144,400;1,9..144,400;1,9..144,500&family=Space+Grotesk:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap"
       rel="stylesheet"
     />
+    <script>
+      /* Capture beforeinstallprompt before the app bundle loads — Chrome
+         fires it early and only once. The React hook reads window.__pwa. */
+      (function () {
+        var pwa = (window.__pwa = { deferredPrompt: null, installed: false, log: [] })
+        function note(m) {
+          pwa.log.push(Math.round(performance.now()) + 'ms  ' + m)
+          console.info('[PWA] ' + m)
+        }
+        note('boot')
+        window.addEventListener('beforeinstallprompt', function (e) {
+          e.preventDefault()
+          pwa.deferredPrompt = e
+          note('beforeinstallprompt captured')
+          window.dispatchEvent(new CustomEvent('pwa:installable'))
+        })
+        window.addEventListener('appinstalled', function () {
+          pwa.deferredPrompt = null
+          pwa.installed = true
+          note('appinstalled')
+          window.dispatchEvent(new CustomEvent('pwa:installed'))
+        })
+        window.__pwaDiag = async function () {
+          var out = { log: pwa.log, hasDeferredPrompt: !!pwa.deferredPrompt }
+          out.standalone =
+            matchMedia('(display-mode: standalone)').matches || navigator.standalone === true
+          try {
+            var reg = await navigator.serviceWorker.getRegistration()
+            out.sw = reg
+              ? { scope: reg.scope, active: reg.active && reg.active.state, controlling: !!navigator.serviceWorker.controller }
+              : 'none'
+          } catch (e) {
+            out.sw = 'error: ' + e.message
+          }
+          try {
+            var m = await fetch('/manifest.webmanifest')
+            out.manifest = { status: m.status, type: m.headers.get('content-type') }
+          } catch (e) {
+            out.manifest = 'error: ' + e.message
+          }
+          if (navigator.getInstalledRelatedApps) {
+            try {
+              out.installedRelatedApps = await navigator.getInstalledRelatedApps()
+            } catch (e) {
+              out.installedRelatedApps = 'error: ' + e.message
+            }
+          }
+          console.table(out.log)
+          console.log('[PWA] diagnostics', out)
+          return out
+        }
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>
