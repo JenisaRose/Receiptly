@@ -12,8 +12,8 @@ export default function Glow({
       aria-hidden
       className="pointer-events-none absolute"
       style={{
-        width: `min(${size}px, 88vw)`,
-        height: `min(${size}px, 88vw)`,
+        width: `min(${size}px, 108vw)`,
+        height: `min(${size}px, 108vw)`,
         left: x,
         top: y,
         translate: '-50% -50%',

@@ -20,8 +20,8 @@ export default function InstallSection() {
       style={{ background: YELLOW_BG }}
       className="relative overflow-hidden px-5 py-16 sm:py-20 lg:px-8"
     >
-      <Glow color="#ffffff" size={640} x="10%" y="-6%" opacity={0.4} />
-      <Glow color="var(--color-orange)" size={640} x="100%" y="110%" opacity={0.3} />
+      <Glow color="#ffffff" size={900} x="8%" y="-10%" opacity={0.45} />
+      <Glow color="var(--color-orange)" size={820} x="102%" y="112%" opacity={0.35} />
       <Grain />
       <span
         aria-hidden

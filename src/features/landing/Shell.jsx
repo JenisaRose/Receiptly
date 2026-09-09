@@ -9,14 +9,16 @@ import { DARK_BG, LIGHT_BG } from './texture'
 export function Section({ id, dark = false, bg, className = '', watermark, glow, children }) {
   const defaultGlow = dark ? (
     <>
-      <Glow color="#c9b8ff" size={680} x="12%" y="8%" opacity={0.2} />
-      <Glow color="#ff6fb0" size={560} x="100%" y="100%" opacity={0.14} />
+      <Glow color="#c9b8ff" size={1100} x="8%" y="0%" opacity={0.22} />
+      <Glow color="#6fd8ff" size={820} x="100%" y="100%" opacity={0.16} />
+      <Glow color="#ff6fb0" size={720} x="60%" y="115%" opacity={0.14} />
     </>
   ) : (
     <>
-      <Glow color="#ffffff" size={720} x="82%" y="-4%" opacity={0.5} />
-      <Glow color="#79f2c0" size={520} x="2%" y="104%" opacity={0.22} />
-      <Glow color="#6fd8ff" size={480} x="100%" y="108%" opacity={0.2} />
+      <Glow color="#ffffff" size={1000} x="80%" y="-8%" opacity={0.55} />
+      <Glow color="#79f2c0" size={860} x="-4%" y="102%" opacity={0.26} />
+      <Glow color="#6fd8ff" size={760} x="102%" y="106%" opacity={0.24} />
+      <Glow color="#ffa84d" size={620} x="18%" y="-6%" opacity={0.14} />
     </>
   )
 

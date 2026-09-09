@@ -27,9 +27,10 @@ export default function Hero() {
       style={{ background: LIGHT_BG }}
       className="relative overflow-hidden px-5 pb-16 pt-24 lg:px-8 lg:pt-28"
     >
-      <Glow color="var(--color-yellow)" size={760} x="80%" y="44%" opacity={0.32} />
-      <Glow color="var(--color-sky)" size={560} x="92%" y="4%" opacity={0.26} />
-      <Glow color="var(--color-pink)" size={540} x="2%" y="98%" opacity={0.2} />
+      <Glow color="var(--color-yellow)" size={980} x="78%" y="46%" opacity={0.36} />
+      <Glow color="var(--color-sky)" size={760} x="96%" y="0%" opacity={0.3} />
+      <Glow color="var(--color-pink)" size={720} x="-6%" y="96%" opacity={0.24} />
+      <Glow color="var(--color-mint)" size={620} x="34%" y="112%" opacity={0.16} />
       <Grain />
       <span
         aria-hidden

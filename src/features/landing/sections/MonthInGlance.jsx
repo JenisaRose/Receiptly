@@ -24,9 +24,9 @@ export default function MonthInGlance() {
       watermark="wrapped"
       glow={
         <>
-          <Glow color="#ffa84d" size={820} x="50%" y="120%" opacity={0.26} />
-          <Glow color="#ff6fb0" size={580} x="90%" y="104%" opacity={0.22} />
-          <Glow color="#c9b8ff" size={560} x="8%" y="0%" opacity={0.16} />
+          <Glow color="#ffa84d" size={1200} x="50%" y="122%" opacity={0.3} />
+          <Glow color="#ff6fb0" size={760} x="92%" y="100%" opacity={0.24} />
+          <Glow color="#c9b8ff" size={760} x="4%" y="-4%" opacity={0.2} />
         </>
       }
     >
