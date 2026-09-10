@@ -65,6 +65,8 @@ function CategoryBreakdown() {
             >
               <button
                 onClick={() => setOpenId(isOpen ? null : cat.id)}
+                aria-expanded={isOpen}
+                aria-label={`${cat.label}, ₹${inr(cat.spent)}`}
                 className="flex w-full items-center justify-between px-3.5 py-3 text-left"
               >
                 <span className="flex items-center gap-2.5">

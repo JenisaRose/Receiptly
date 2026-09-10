@@ -75,6 +75,8 @@ export default function Trends() {
                 <button
                   key={row.key}
                   onClick={() => setSel(i)}
+                  aria-pressed={idx === i}
+                  aria-label={`${row.label}: ${rupee(row.total)}`}
                   className="flex h-full flex-1 flex-col justify-end"
                 >
                   <motion.div

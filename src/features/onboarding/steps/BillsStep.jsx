@@ -67,7 +67,8 @@ export default function BillsStep({ data, set, onBack, onContinue, onSkip }) {
                 value={b.name}
                 onChange={(e) => update(b.id, { name: e.target.value })}
                 placeholder="what for?"
-                className="min-w-0 flex-1 bg-transparent text-[13px] font-semibold outline-none placeholder:opacity-35"
+                aria-label="Bill name"
+                className="min-w-0 flex-1 bg-transparent text-[13px] font-semibold outline-none placeholder:opacity-35 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
               />
               <div className="w-[92px] shrink-0 border-l-2 border-dashed border-ink/30 pl-2">
                 <RupeeInput

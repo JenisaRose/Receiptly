@@ -15,15 +15,14 @@ export default function ThemeToggle() {
 
   return (
     <div>
-      <div role="radiogroup" aria-label="Theme" className="flex gap-2">
+      <div role="group" aria-label="Theme" className="flex gap-2">
         {OPTIONS.map((o) => {
           const active = pref === o.value
           return (
             <button
               key={o.value}
               type="button"
-              role="radio"
-              aria-checked={active}
+              aria-pressed={active}
               onClick={() => setPref(o.value)}
               className={`press flex flex-1 flex-col items-center gap-1 border-[3px] border-ink px-2 py-2.5 text-[12px] font-bold shadow-hard-xs ${
                 active ? 'bg-yellow text-on-accent' : 'bg-surface'

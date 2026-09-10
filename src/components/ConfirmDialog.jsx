@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
+import { useDialog } from '../hooks/useDialog'
 
 /**
  * A neubrutalist confirm modal. Render it inside an <AnimatePresence> so it can
@@ -14,14 +15,23 @@ export default function ConfirmDialog({
   onConfirm,
   onCancel,
 }) {
+  const dialogRef = useDialog(onCancel) // focus in/out + trap + Escape
+  const confirmRef = useRef(onConfirm)
   useEffect(() => {
-    function onKey(e) {
-      if (e.key === 'Escape') onCancel()
-      if (e.key === 'Enter') onConfirm()
+    confirmRef.current = onConfirm
+  })
+
+  // Enter confirms from anywhere in the dialog (except when a button is focused —
+  // it fires its own click)
+  useEffect(() => {
+    const node = dialogRef.current
+    if (!node) return
+    const onKey = (e) => {
+      if (e.key === 'Enter' && !(e.target instanceof HTMLButtonElement)) confirmRef.current()
     }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [onCancel, onConfirm])
+    node.addEventListener('keydown', onKey)
+    return () => node.removeEventListener('keydown', onKey)
+  }, [dialogRef])
 
   return (
     <motion.div
@@ -32,8 +42,11 @@ export default function ConfirmDialog({
       onMouseDown={(e) => e.target === e.currentTarget && onCancel()}
     >
       <motion.div
+        ref={dialogRef}
         role="alertdialog"
+        aria-modal="true"
         aria-label={title}
+        tabIndex={-1}
         className="w-full max-w-[340px] border-4 border-ink bg-bg p-5 shadow-hard-lg"
         initial={{ scale: 0.8, y: 12 }}
         animate={{ scale: 1, y: 0 }}

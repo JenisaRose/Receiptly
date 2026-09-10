@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import { useDialog } from '../hooks/useDialog'
 import { rupee } from '../lib/format'
 import { slugId } from '../lib/slug'
 import { PALETTE } from '../lib/theme'
@@ -61,13 +62,7 @@ export default function LogExpenseModal({ onClose }) {
     setAddingCat(false)
   }
 
-  useEffect(() => {
-    function onKey(e) {
-      if (e.key === 'Escape') onClose()
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [onClose])
+  const dialogRef = useDialog(onClose)
 
   function submit(e) {
     e.preventDefault()
@@ -99,14 +94,21 @@ export default function LogExpenseModal({ onClose }) {
       onMouseDown={(e) => e.target === e.currentTarget && onClose()}
     >
       <motion.form
+        ref={dialogRef}
         onSubmit={submit}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="log-expense-title"
+        tabIndex={-1}
         className="max-h-[92vh] w-full max-w-[380px] overflow-y-auto border-4 border-ink bg-bg p-5 shadow-hard-lg"
         initial={{ scale: 0.8, y: 12 }}
         animate={{ scale: 1, y: 0 }}
         exit={{ scale: 0.9, opacity: 0 }}
         transition={{ type: 'spring', stiffness: 320, damping: 22 }}
       >
-        <h2 className="mb-3.5 font-display text-xl">log an expense ✏️</h2>
+        <h2 id="log-expense-title" className="mb-3.5 font-display text-xl">
+          log an expense ✏️
+        </h2>
 
         {presets.length > 0 && (
           <>
@@ -128,8 +130,11 @@ export default function LogExpenseModal({ onClose }) {
           </>
         )}
 
-        <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-wide">amount</label>
+        <label htmlFor="le-amount" className="mb-1.5 block text-[11px] font-bold uppercase tracking-wide">
+          amount
+        </label>
         <input
+          id="le-amount"
           autoFocus
           type="number"
           inputMode="numeric"
@@ -139,6 +144,7 @@ export default function LogExpenseModal({ onClose }) {
             setError(false)
           }}
           placeholder="₹0"
+          aria-invalid={error}
           className={`mb-1.5 w-full border-[3px] bg-surface px-3 py-2.5 font-display text-[22px] ${
             error ? 'border-pink' : 'border-ink'
           }`}
@@ -165,6 +171,7 @@ export default function LogExpenseModal({ onClose }) {
                 value={splitTotal}
                 onChange={(e) => onSplitTotalChange(e.target.value)}
                 placeholder="1,200"
+                aria-label="Total bill amount in rupees"
                 className="w-20 border-2 border-ink bg-surface px-2 py-1"
               />
               <span className="opacity-60">split</span>
@@ -174,6 +181,7 @@ export default function LogExpenseModal({ onClose }) {
                 min={2}
                 value={splitParts}
                 onChange={(e) => onSplitPartsChange(e.target.value)}
+                aria-label="Number of people splitting"
                 className="w-12 border-2 border-ink bg-surface px-2 py-1"
               />
               <span className="opacity-60">ways</span>
@@ -185,13 +193,14 @@ export default function LogExpenseModal({ onClose }) {
           </div>
         )}
 
-        <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-wide">category</label>
-        <div className="mb-2 flex flex-wrap gap-1.5">
+        <p className="mb-1.5 text-[11px] font-bold uppercase tracking-wide">category</p>
+        <div className="mb-2 flex flex-wrap gap-1.5" role="group" aria-label="Category">
           {spendableCategories.map((c) => (
             <button
               key={c.id}
               type="button"
               onClick={() => setCategory(c.id)}
+              aria-pressed={category === c.id}
               className={`flex items-center gap-1.5 border-[2.5px] border-ink px-2.5 py-1.5 text-[12px] font-bold ${
                 category === c.id ? 'bg-yellow text-on-accent shadow-hard-xs' : 'bg-surface'
               }`}
@@ -222,6 +231,7 @@ export default function LogExpenseModal({ onClose }) {
                 }
               }}
               placeholder="category name"
+              aria-label="New category name"
               className="min-w-0 flex-1 border-[2.5px] border-ink bg-surface px-2.5 py-1.5 text-[12px] font-semibold"
             />
             <button
@@ -235,8 +245,11 @@ export default function LogExpenseModal({ onClose }) {
         )}
         <p className="mb-4 text-[10.5px] opacity-45">manage categories in settings</p>
 
-        <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-wide">note</label>
+        <label htmlFor="le-note" className="mb-1.5 block text-[11px] font-bold uppercase tracking-wide">
+          note
+        </label>
         <input
+          id="le-note"
           type="text"
           value={note}
           onChange={(e) => setNote(e.target.value)}
@@ -271,7 +284,9 @@ export default function LogExpenseModal({ onClose }) {
           </button>
         </div>
         {error && (
-          <p className="mt-2 text-[12px] font-semibold text-pink">enter an amount above ₹0</p>
+          <p role="alert" className="mt-2 text-[12px] font-semibold text-pink">
+            enter an amount above ₹0
+          </p>
         )}
       </motion.form>
     </motion.div>

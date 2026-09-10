@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { useEffect } from 'react'
+import { useDialog } from '../hooks/useDialog'
 import { useBudget } from '../store/budgetContext'
 import BillManager from './BillManager'
 import CategoryManager from './CategoryManager'
@@ -11,14 +11,7 @@ import ThemeToggle from './ThemeToggle'
 /** Slide-over opened from the avatar. Rendered inside <AnimatePresence>. */
 export default function SettingsSheet({ onClose }) {
   const { restartOnboarding } = useBudget()
-
-  useEffect(() => {
-    function onKey(e) {
-      if (e.key === 'Escape') onClose()
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [onClose])
+  const dialogRef = useDialog(onClose) // focus in/out + trap + Escape
 
   return (
     <motion.div
@@ -29,6 +22,11 @@ export default function SettingsSheet({ onClose }) {
       onMouseDown={(e) => e.target === e.currentTarget && onClose()}
     >
       <motion.aside
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Settings"
+        tabIndex={-1}
         className="absolute inset-y-0 right-0 flex w-full max-w-[400px] flex-col border-l-[3px] border-ink bg-bg"
         initial={{ x: '100%' }}
         animate={{ x: 0 }}

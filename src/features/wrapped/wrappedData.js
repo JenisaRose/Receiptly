@@ -56,6 +56,8 @@ export function buildWrapped(b) {
 
   const daysInMonth = r.heat.length
   const countUpTo = b.month.isCurrent ? b.month.dayOfMonth : daysInMonth
+  // the month is still being lived — totals and shares are "so far", not final
+  const partial = countUpTo < daysInMonth
   const noSpendDays = []
   for (let d = 1; d <= countUpTo; d++) if (r.heat[d - 1] === 0) noSpendDays.push(d)
   const streakRange = longestZeroRun(r.heat, countUpTo)
@@ -87,6 +89,7 @@ export function buildWrapped(b) {
     firstWeekday: r.firstWeekday,
     daysInMonth,
     countUpTo,
+    partial,
     noSpendDays,
     noSpendCount: noSpendDays.length,
     streakRange,
