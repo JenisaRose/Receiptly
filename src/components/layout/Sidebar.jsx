@@ -10,7 +10,7 @@ export default function Sidebar({ onLogExpense }) {
         <Wordmark />
       </div>
 
-      <nav className="flex flex-col gap-1.5">
+      <nav aria-label="Primary" className="flex flex-col gap-1.5">
         {NAV.map((item) => (
           <NavLink
             key={item.key}

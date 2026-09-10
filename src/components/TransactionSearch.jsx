@@ -44,12 +44,16 @@ export default function TransactionSearch({ children }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2 border-[3px] border-ink bg-surface px-3 py-2.5 shadow-hard-sm">
-        <span className="text-[15px] opacity-50">🔍</span>
+      <div className="flex items-center gap-2 border-[3px] border-ink bg-surface px-3 py-2.5 shadow-hard-sm focus-within:outline focus-within:outline-[3px] focus-within:outline-offset-2 focus-within:outline-ink">
+        <span aria-hidden className="text-[15px] opacity-50">
+          🔍
+        </span>
         <input
+          type="search"
           value={f.query}
           onChange={(e) => patch({ query: e.target.value })}
           placeholder="search your expenses…"
+          aria-label="Search your expenses"
           className="min-w-0 flex-1 bg-transparent text-[14px] font-semibold outline-none placeholder:opacity-40"
         />
         {active && (
@@ -66,7 +70,11 @@ export default function TransactionSearch({ children }) {
         <button onClick={() => patch({ allMonths: !f.allMonths })} className={pill(f.allMonths)}>
           🗓️ {f.allMonths ? 'all months' : `${b.month.label.toLowerCase()} only`}
         </button>
-        <button onClick={() => setShowFilters((v) => !v)} className={pill(extraFilters)}>
+        <button
+          onClick={() => setShowFilters((v) => !v)}
+          aria-expanded={showFilters}
+          className={pill(extraFilters)}
+        >
           ⚙ filters{extraFilters ? ' · on' : ''}
         </button>
       </div>
@@ -85,11 +93,12 @@ export default function TransactionSearch({ children }) {
                 <p className="mb-1.5 text-[10.5px] font-bold uppercase tracking-wide opacity-55">
                   category
                 </p>
-                <div className="flex flex-wrap gap-1.5">
+                <div className="flex flex-wrap gap-1.5" role="group" aria-label="Filter by category">
                   {cats.map((c) => (
                     <button
                       key={c.id}
                       onClick={() => toggleCat(c.id)}
+                      aria-pressed={f.categoryIds.includes(c.id)}
                       className={`border-2 border-ink px-2 py-1 text-[11px] font-bold ${
                         f.categoryIds.includes(c.id) ? 'bg-yellow text-on-accent shadow-hard-xs' : 'bg-surface'
                       }`}
@@ -111,6 +120,7 @@ export default function TransactionSearch({ children }) {
                     value={f.min}
                     onChange={(e) => patch({ min: e.target.value })}
                     placeholder="min"
+                    aria-label="Minimum amount"
                     className="w-20 border-2 border-ink bg-surface px-2 py-1"
                   />
                   <span className="opacity-50">–</span>
@@ -120,6 +130,7 @@ export default function TransactionSearch({ children }) {
                     value={f.max}
                     onChange={(e) => patch({ max: e.target.value })}
                     placeholder="max"
+                    aria-label="Maximum amount"
                     className="w-20 border-2 border-ink bg-surface px-2 py-1"
                   />
                 </div>

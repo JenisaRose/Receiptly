@@ -180,7 +180,12 @@ export default function Today({ onLogExpense }) {
 function CurrentBreakdown({ b }) {
   const [open, setOpen] = useState(false)
   return (
-    <Card as="button" className="w-full p-4 text-left" onClick={() => setOpen((v) => !v)}>
+    <Card
+      as="button"
+      aria-expanded={open}
+      className="w-full p-4 text-left"
+      onClick={() => setOpen((v) => !v)}
+    >
       <div className="flex items-center justify-between">
         <span className="font-hand text-[21px] font-bold">how we got {rupee(b.safeToday)}</span>
         <motion.span animate={{ rotate: open ? 180 : 0 }} className="text-sm">
@@ -244,7 +249,12 @@ function GoalCard({ goal, onContribute }) {
 
   return (
     <div className="border-[3px] border-ink bg-lilac p-4 text-on-accent shadow-hard-sm">
-      <button onClick={() => setOpen((v) => !v)} className="w-full text-left">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        aria-label={`${goal.name} — add to savings`}
+        className="w-full text-left"
+      >
         <div className="mb-2 flex items-center justify-between text-[12px] font-bold">
           <span>
             {goal.emoji} {goal.name}

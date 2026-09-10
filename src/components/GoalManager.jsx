@@ -39,6 +39,7 @@ export default function GoalManager() {
                 </div>
                 <button
                   onClick={() => setEditingId(isEditing ? null : goal.id)}
+                  aria-expanded={isEditing}
                   className="border-2 border-ink bg-surface px-2 py-1 text-[11px] font-bold active:bg-yellow active:text-on-accent"
                 >
                   {isEditing ? 'close' : 'edit'}

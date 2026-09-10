@@ -32,7 +32,7 @@ export default function RupeeInput({
           const d = e.target.value.replace(/\D/g, '').slice(0, 9)
           onChange(d ? Number(d) : 0)
         }}
-        className={`min-w-0 flex-1 bg-transparent font-display tabular-nums outline-none placeholder:opacity-25 ${
+        className={`min-w-0 flex-1 bg-transparent font-display tabular-nums outline-none placeholder:opacity-25 focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink ${
           hero ? 'w-full text-[clamp(2.9rem,13vw,4rem)] leading-none' : 'w-full text-[15px]'
         }`}
       />

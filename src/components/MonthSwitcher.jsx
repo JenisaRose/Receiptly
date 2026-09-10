@@ -7,12 +7,15 @@ export default function MonthSwitcher() {
   const i = months.indexOf(b.month.key)
 
   return (
-    <div className="mb-5 flex items-center justify-center gap-2">
+    <div role="group" aria-label="Selected month" className="mb-5 flex items-center justify-center gap-2">
       <Arrow label="Previous month" disabled={i <= 0} onClick={() => b.stepMonth(-1)}>
         ‹
       </Arrow>
 
-      <span className="min-w-[150px] border-[3px] border-ink bg-surface px-4 py-1.5 text-center font-display text-[14px] shadow-hard-sm">
+      <span
+        aria-live="polite"
+        className="min-w-[150px] border-[3px] border-ink bg-surface px-4 py-1.5 text-center font-display text-[14px] shadow-hard-sm"
+      >
         {b.month.longLabel}
       </span>
 
@@ -27,6 +30,7 @@ export default function MonthSwitcher() {
       {!b.month.isCurrent && (
         <button
           onClick={b.goToCurrentMonth}
+          aria-label="Jump to the current month"
           className="press ml-1 border-[2.5px] border-ink bg-yellow px-2 py-1 text-[11px] font-bold text-on-accent shadow-hard-xs"
           style={{ '--press-x': '2px', '--press-y': '2px' }}
         >

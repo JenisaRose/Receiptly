@@ -3,7 +3,10 @@ import { NAV } from './navItems'
 
 export default function BottomNav() {
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 flex border-t-[3px] border-ink bg-surface px-1 pb-[calc(6px+env(safe-area-inset-bottom))] pt-1.5 lg:hidden">
+    <nav
+      aria-label="Primary"
+      className="fixed inset-x-0 bottom-0 z-40 flex border-t-[3px] border-ink bg-surface px-1 pb-[calc(6px+env(safe-area-inset-bottom))] pt-1.5 lg:hidden"
+    >
       {NAV.map((item) => (
         <NavLink
           key={item.key}

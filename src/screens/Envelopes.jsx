@@ -39,6 +39,8 @@ export default function Envelopes() {
             >
               <button
                 onClick={() => setOpenId(isOpen ? null : env.id)}
+                aria-expanded={isOpen}
+                aria-label={`${env.label} — move budget`}
                 className="w-full text-left"
               >
                 <div className="flex items-center justify-between">

@@ -41,15 +41,18 @@ export default function GoalStep({ data, set, onBack, onContinue, onSkip }) {
           value={goal.name}
           onChange={(e) => patch({ name: e.target.value })}
           placeholder="new laptop"
-          className="min-w-0 flex-1 border-b-[3px] border-ink bg-transparent pb-1 font-display text-[20px] outline-none placeholder:opacity-30"
+          aria-label="Goal name"
+          className="min-w-0 flex-1 border-b-[3px] border-ink bg-transparent pb-1 font-display text-[20px] outline-none placeholder:opacity-30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
         />
       </div>
 
-      <div className="mt-3 flex flex-wrap gap-1.5">
+      <div className="mt-3 flex flex-wrap gap-1.5" role="group" aria-label="Goal icon">
         {EMOJI.map((e) => (
           <button
             key={e}
             onClick={() => patch({ emoji: e })}
+            aria-pressed={goal.emoji === e}
+            aria-label={`Icon ${e}`}
             className={`grid h-8 w-8 place-items-center border-2 border-ink text-[15px] ${
               goal.emoji === e ? 'bg-yellow' : 'bg-surface'
             }`}
