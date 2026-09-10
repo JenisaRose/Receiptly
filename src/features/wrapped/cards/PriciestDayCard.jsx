@@ -68,7 +68,7 @@ export default function PriciestDayCard({ w }) {
         animate={{ y: 0 }}
         transition={{ delay: 1.15 }}
       >
-        {p.pctOfMonth}% of the month in one day
+        {p.pctOfMonth}% of {w.partial ? 'the month so far' : 'the month'} in one day
       </motion.p>
     </Bleed>
   )

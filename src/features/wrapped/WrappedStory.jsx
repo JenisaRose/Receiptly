@@ -27,7 +27,8 @@ const CARD = {
 const ANNOUNCE = {
   opening: (w) => `${w.monthLabel} ${w.year}, wrapped`,
   total: (w) => `you spent ${Math.round(w.total)} rupees in ${w.monthLabel}`,
-  leaderboard: (w) => `${w.category?.label} led your month at ${w.category?.pct} percent`,
+  leaderboard: (w) =>
+    `${w.category?.label} led your month at ${w.category?.pct} percent${w.partial ? ' so far' : ''}`,
   priciest: (w) => `priciest day: ${w.priciest?.weekday} the ${w.priciest?.day}`,
   nospend: (w) =>
     `${w.noSpendCount} no-spend days${

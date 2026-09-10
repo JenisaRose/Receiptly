@@ -87,7 +87,7 @@ export default function LeaderboardCard({ w }) {
         animate={{ y: 0 }}
         transition={{ delay: 0.3 + rows.length * 0.13 }}
       >
-        {w.category.label.toLowerCase()} took {w.category.pct}% of the month
+        {w.category.label.toLowerCase()} took {w.category.pct}% of {w.partial ? 'the month so far' : 'the month'}
       </motion.p>
     </Bleed>
   )
