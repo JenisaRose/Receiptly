@@ -168,13 +168,14 @@ export const DETECTORS = [
 
     const noSpend = dayTotals.filter((v) => v === 0).length
     const ongoing = partialMonth && bestEnd === dayTotals.length - 1
+    const a = [8, 11, 18].includes(best) ? 'an' : 'a' // "an 8-day", "an 11-day"
     return {
       id: 'no-spend-streak',
       tone: 'good',
       emoji: '🧊',
       headline: ongoing
-        ? `You're on a ${best}-day no-spend streak`
-        : `You had a ${best}-day no-spend streak`,
+        ? `You're on ${a} ${best}-day no-spend streak`
+        : `You had ${a} ${best}-day no-spend streak`,
       detail: `${noSpend} no-spend day${noSpend === 1 ? '' : 's'} in ${monthName} ${
         partialMonth ? 'so far' : 'overall'
       }`,
