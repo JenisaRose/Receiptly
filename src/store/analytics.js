@@ -85,10 +85,16 @@ export function monthReflection(state) {
     .reduce((s, c) => s + (state.budgets.default[c.id] ?? 0), 0)
   const weeksInMonth = Math.ceil(dim / 7)
   const weeklyCap = discretionary / weeksInMonth
+  // Only judge weeks that have actually started. For the current month the
+  // in-progress week is measured against a cap pro-rated to its elapsed days,
+  // so an unfinished week doesn't get counted as "held" on day one.
+  const weeksJudged = m.isCurrent ? Math.max(1, Math.ceil(countUpTo / 7)) : weeksInMonth
   let weeksUnder = 0
-  for (let w = 0; w < weeksInMonth; w++) {
-    const wSpend = heat.slice(w * 7, w * 7 + 7).reduce((s, v) => s + v, 0)
-    if (wSpend <= weeklyCap) weeksUnder += 1
+  for (let w = 0; w < weeksJudged; w++) {
+    const start = w * 7
+    const days = m.isCurrent ? Math.min(7, countUpTo - start) : 7
+    const wSpend = heat.slice(start, start + days).reduce((s, v) => s + v, 0)
+    if (wSpend <= weeklyCap * (days / 7)) weeksUnder += 1
   }
 
   const bestRun = longestRun(heat.slice(0, countUpTo))
@@ -115,7 +121,7 @@ export function monthReflection(state) {
       noSpendDays,
       bestRun,
       weeksUnder,
-      weeksInMonth,
+      weeksInMonth: weeksJudged,
       diffVsPrev: prevTotal > 0 ? diff : null,
     },
     cards: [
@@ -139,7 +145,7 @@ export function monthReflection(state) {
       },
       {
         k: 'Weekly cap held',
-        v: `${weeksUnder} / ${weeksInMonth} weeks`,
+        v: `${weeksUnder} / ${weeksJudged} week${weeksJudged === 1 ? '' : 's'}`,
         sub: `cap ≈ ${rupee(weeklyCap)} a week`,
         tone: 'pink',
       },

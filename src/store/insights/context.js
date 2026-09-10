@@ -19,6 +19,18 @@ export function buildContext(state, monthKeyOverride) {
   const monthName = MONTH_NAMES[Number(monthKey.slice(5, 7)) - 1]
   const dim = daysInMonth(monthKey)
 
+  // How much of the analysed month has actually happened. For a past month
+  // that's all of it; for the current real month it's up to and including
+  // today. Days that haven't started yet are never counted (no "no-spend
+  // days" in the future), and detectors that only make sense once a month is
+  // over are skipped by the engine when `partialMonth` is true.
+  const todayKey = state.clock.todayISO.slice(0, 7)
+  const elapsedDays =
+    monthKey === todayKey
+      ? Math.min(dim, Math.max(1, Number(state.clock.todayISO.slice(8, 10)) || 1))
+      : dim
+  const partialMonth = elapsedDays < dim
+
   const catLabel = Object.fromEntries(state.categories.map((c) => [c.id, c.label]))
   const billNames = new Set(state.bills.map((b) => b.name.trim().toLowerCase()))
 
@@ -32,8 +44,12 @@ export function buildContext(state, monthKeyOverride) {
     g.count += 1
   }
 
-  const dayTotals = Array.from({ length: dim }, () => 0)
-  for (const t of monthSpends) dayTotals[Number(t.date.slice(-2)) - 1] += abs(t)
+  // one slot per elapsed day — future days simply don't exist here
+  const dayTotals = Array.from({ length: elapsedDays }, () => 0)
+  for (const t of monthSpends) {
+    const d = Number(t.date.slice(-2)) - 1
+    if (d >= 0 && d < elapsedDays) dayTotals[d] += abs(t)
+  }
 
   // 6 completed months ending at monthKey
   const months = []
@@ -73,6 +89,8 @@ export function buildContext(state, monthKeyOverride) {
     monthKey,
     monthName,
     dim,
+    elapsedDays,
+    partialMonth,
     monthSpends,
     monthTotal,
     byCategory,
